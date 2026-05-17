@@ -17,93 +17,126 @@ signal region_clicked(region_id: String)
 const DESIGN_WIDTH := 640.0
 const DESIGN_HEIGHT := 480.0
 
-# Polygon coordinates measured against the 640×480 world_map.png by actually
-# looking at where the continents are drawn (this pass) rather than guessing.
+# Real-continent outline polygons, hand-traced against the 640×480 world map.
+# Each region uses 8-15 vertices to capture the actual coastline silhouette
+# (not just an octagon over the area). Reference: Mercator world map.
 var REGION_POLYGONS: Dictionary = {
-	# ── Americas (the Western Hemisphere occupies the left ~270px of the image) ──
+	# ── Americas ──
 	"north_america": PackedVector2Array([
-		Vector2(25, 85), Vector2(105, 65), Vector2(190, 75),
-		Vector2(235, 100), Vector2(245, 155), Vector2(220, 210),
-		Vector2(175, 245), Vector2(115, 255), Vector2(55, 235),
-		Vector2(20, 185), Vector2(10, 130),
+		Vector2(15, 105), Vector2(40, 80), Vector2(75, 70),
+		Vector2(130, 65), Vector2(180, 68), Vector2(220, 75),
+		Vector2(245, 90), Vector2(252, 115), Vector2(255, 145),
+		Vector2(248, 175), Vector2(235, 205), Vector2(220, 235),
+		Vector2(200, 252), Vector2(170, 252), Vector2(135, 248),
+		Vector2(105, 248), Vector2(80, 240), Vector2(55, 225),
+		Vector2(30, 195), Vector2(15, 160), Vector2(10, 130),
 	]),
 	"mesoamerica": PackedVector2Array([
-		Vector2(215, 258), Vector2(250, 255), Vector2(258, 272),
-		Vector2(248, 282), Vector2(220, 282), Vector2(210, 270),
+		Vector2(215, 258), Vector2(240, 255), Vector2(258, 262),
+		Vector2(260, 272), Vector2(250, 280), Vector2(230, 283),
+		Vector2(215, 278), Vector2(210, 268),
 	]),
 	"south_america": PackedVector2Array([
-		Vector2(220, 285), Vector2(298, 285), Vector2(315, 320),
-		Vector2(305, 365), Vector2(275, 410), Vector2(245, 435),
-		Vector2(220, 445), Vector2(208, 420), Vector2(205, 365),
-		Vector2(212, 320),
+		Vector2(215, 285), Vector2(245, 282), Vector2(280, 285),
+		Vector2(305, 295), Vector2(315, 320), Vector2(312, 350),
+		Vector2(300, 380), Vector2(285, 410), Vector2(265, 425),
+		Vector2(248, 435), Vector2(228, 443), Vector2(212, 432),
+		Vector2(205, 405), Vector2(202, 370), Vector2(205, 340),
+		Vector2(212, 310),
 	]),
 	# ── Europe ──
 	"england": PackedVector2Array([
-		Vector2(270, 122), Vector2(290, 118), Vector2(296, 145),
-		Vector2(288, 162), Vector2(268, 160), Vector2(262, 140),
+		Vector2(266, 138), Vector2(272, 120), Vector2(286, 116),
+		Vector2(298, 120), Vector2(304, 132), Vector2(302, 148),
+		Vector2(294, 158), Vector2(284, 162), Vector2(272, 160),
+		Vector2(266, 150),
 	]),
 	"france": PackedVector2Array([
-		Vector2(290, 165), Vector2(322, 162), Vector2(328, 188),
-		Vector2(318, 210), Vector2(292, 210), Vector2(286, 185),
+		Vector2(282, 178), Vector2(290, 165), Vector2(308, 162),
+		Vector2(320, 168), Vector2(324, 180), Vector2(322, 198),
+		Vector2(316, 215), Vector2(302, 220), Vector2(290, 218),
+		Vector2(282, 200),
 	]),
 	"iberia": PackedVector2Array([
-		Vector2(262, 192), Vector2(290, 198), Vector2(295, 222),
-		Vector2(280, 238), Vector2(258, 230),
+		Vector2(258, 200), Vector2(272, 195), Vector2(290, 195),
+		Vector2(302, 202), Vector2(302, 220), Vector2(292, 232),
+		Vector2(275, 238), Vector2(262, 232), Vector2(256, 218),
 	]),
 	"hre": PackedVector2Array([
-		Vector2(325, 152), Vector2(360, 148), Vector2(365, 178),
-		Vector2(355, 198), Vector2(326, 198), Vector2(320, 178),
+		Vector2(322, 165), Vector2(335, 152), Vector2(358, 150),
+		Vector2(365, 168), Vector2(360, 185), Vector2(355, 200),
+		Vector2(342, 215), Vector2(334, 218), Vector2(326, 200),
+		Vector2(322, 182),
 	]),
 	"eastern_eu": PackedVector2Array([
-		Vector2(365, 148), Vector2(405, 145), Vector2(412, 178),
-		Vector2(400, 200), Vector2(365, 200), Vector2(362, 175),
+		Vector2(365, 155), Vector2(382, 148), Vector2(405, 150),
+		Vector2(412, 165), Vector2(412, 185), Vector2(400, 200),
+		Vector2(380, 202), Vector2(365, 195), Vector2(362, 178),
 	]),
 	"russia": PackedVector2Array([
-		Vector2(348, 78), Vector2(440, 62), Vector2(530, 68),
-		Vector2(595, 78), Vector2(615, 112), Vector2(590, 142),
-		Vector2(515, 148), Vector2(440, 145), Vector2(385, 142),
-		Vector2(348, 120),
+		Vector2(350, 142), Vector2(395, 142), Vector2(450, 142),
+		Vector2(510, 142), Vector2(560, 142), Vector2(595, 142),
+		Vector2(612, 135), Vector2(618, 115), Vector2(615, 88),
+		Vector2(595, 72), Vector2(550, 65), Vector2(490, 62),
+		Vector2(430, 65), Vector2(385, 70), Vector2(360, 78),
+		Vector2(348, 95), Vector2(348, 122),
 	]),
 	# ── North Africa & Middle East ──
 	"maghreb": PackedVector2Array([
-		Vector2(260, 240), Vector2(360, 230), Vector2(400, 240),
-		Vector2(395, 268), Vector2(305, 278), Vector2(258, 262),
+		Vector2(258, 240), Vector2(290, 232), Vector2(340, 228),
+		Vector2(385, 232), Vector2(408, 240), Vector2(410, 252),
+		Vector2(395, 268), Vector2(370, 275), Vector2(340, 278),
+		Vector2(300, 278), Vector2(270, 275), Vector2(258, 262),
 	]),
 	"egypt": PackedVector2Array([
-		Vector2(395, 252), Vector2(445, 248), Vector2(458, 275),
-		Vector2(445, 302), Vector2(405, 300), Vector2(390, 278),
+		Vector2(395, 252), Vector2(425, 248), Vector2(455, 252),
+		Vector2(465, 268), Vector2(465, 285), Vector2(458, 302),
+		Vector2(438, 308), Vector2(412, 305), Vector2(398, 285),
+		Vector2(392, 268),
 	]),
 	"byzantium": PackedVector2Array([
-		Vector2(368, 198), Vector2(415, 195), Vector2(425, 218),
-		Vector2(415, 235), Vector2(380, 235), Vector2(365, 215),
+		Vector2(362, 200), Vector2(385, 195), Vector2(410, 195),
+		Vector2(432, 200), Vector2(442, 215), Vector2(438, 232),
+		Vector2(420, 242), Vector2(395, 240), Vector2(375, 232),
+		Vector2(362, 218),
 	]),
 	"levant": PackedVector2Array([
-		Vector2(438, 218), Vector2(462, 215), Vector2(470, 245),
-		Vector2(462, 268), Vector2(444, 268), Vector2(436, 245),
+		Vector2(438, 220), Vector2(452, 215), Vector2(465, 220),
+		Vector2(472, 238), Vector2(470, 255), Vector2(462, 268),
+		Vector2(448, 270), Vector2(440, 258), Vector2(436, 240),
 	]),
 	# ── Asia ──
 	"persia": PackedVector2Array([
-		Vector2(455, 205), Vector2(515, 200), Vector2(528, 228),
-		Vector2(518, 258), Vector2(478, 262), Vector2(455, 232),
+		Vector2(468, 212), Vector2(490, 208), Vector2(515, 212),
+		Vector2(528, 222), Vector2(530, 240), Vector2(522, 255),
+		Vector2(505, 262), Vector2(485, 262), Vector2(472, 252),
+		Vector2(465, 235), Vector2(465, 220),
 	]),
 	"central_asia": PackedVector2Array([
-		Vector2(420, 145), Vector2(525, 142), Vector2(542, 170),
-		Vector2(535, 198), Vector2(465, 200), Vector2(420, 175),
+		Vector2(422, 150), Vector2(465, 148), Vector2(510, 148),
+		Vector2(538, 155), Vector2(545, 172), Vector2(540, 192),
+		Vector2(525, 202), Vector2(490, 202), Vector2(455, 198),
+		Vector2(428, 192), Vector2(420, 175),
 	]),
 	"india": PackedVector2Array([
-		Vector2(515, 240), Vector2(562, 235), Vector2(585, 268),
-		Vector2(575, 310), Vector2(548, 335), Vector2(522, 322),
-		Vector2(510, 278),
+		Vector2(512, 245), Vector2(540, 240), Vector2(568, 245),
+		Vector2(582, 258), Vector2(585, 275), Vector2(578, 295),
+		Vector2(568, 312), Vector2(555, 325), Vector2(540, 332),
+		Vector2(522, 322), Vector2(512, 305), Vector2(508, 280),
+		Vector2(508, 260),
 	]),
 	"china": PackedVector2Array([
-		Vector2(548, 175), Vector2(612, 172), Vector2(628, 205),
-		Vector2(628, 255), Vector2(608, 282), Vector2(572, 285),
-		Vector2(548, 248), Vector2(545, 210),
+		Vector2(550, 178), Vector2(580, 175), Vector2(608, 178),
+		Vector2(625, 188), Vector2(630, 210), Vector2(628, 240),
+		Vector2(620, 265), Vector2(608, 282), Vector2(590, 285),
+		Vector2(572, 280), Vector2(558, 262), Vector2(548, 240),
+		Vector2(545, 215), Vector2(548, 192),
 	]),
 	"mongolia": PackedVector2Array([
-		Vector2(548, 135), Vector2(585, 132), Vector2(615, 138),
-		Vector2(618, 160), Vector2(595, 172), Vector2(560, 172),
-		Vector2(548, 158),
+		Vector2(515, 128), Vector2(550, 122), Vector2(588, 122),
+		Vector2(615, 128), Vector2(620, 148), Vector2(612, 168),
+		Vector2(590, 172), Vector2(555, 172), Vector2(525, 168),
+		Vector2(512, 152),
 	]),
 }
 
@@ -233,13 +266,13 @@ func _draw() -> void:
 		if r != null and String(r.owner) == GameState.player_faction and GameState.player_faction != "":
 			draw_polyline(_closed_loop(_polygon_to_canvas(REGION_POLYGONS[region_id])), COLOR_PLAYER_GLOW, 4.0, true)
 
-	# Region borders.
+	# Region borders — ink-style outlines.
 	for region_id in REGION_POLYGONS.keys():
 		var border: Color = COLOR_BORDER
-		var width: float = 2.0
+		var width: float = 2.5
 		if region_id == _hovered:
 			border = COLOR_BORDER_HOVER
-			width = 3.5
+			width = 4.0
 		draw_polyline(_closed_loop(_polygon_to_canvas(REGION_POLYGONS[region_id])), border, width, true)
 
 	# Combat rings (expanding rings after a battle). Scale ring radius too so
