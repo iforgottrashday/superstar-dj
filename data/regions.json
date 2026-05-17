@@ -1,0 +1,139 @@
+[
+  {
+    "id": "na_west",
+    "name": "Western North America",
+    "population": 80,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.15,
+    "climate": "temperate",
+    "neighbors": ["na_east", "latam"]
+  },
+  {
+    "id": "na_east",
+    "name": "Eastern North America",
+    "population": 200,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.20,
+    "climate": "temperate",
+    "neighbors": ["na_west", "latam", "eu_west"]
+  },
+  {
+    "id": "latam",
+    "name": "Latin America",
+    "population": 660,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.10,
+    "climate": "tropical",
+    "neighbors": ["na_west", "na_east"]
+  },
+  {
+    "id": "eu_west",
+    "name": "Western Europe",
+    "population": 200,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.05,
+    "climate": "temperate",
+    "neighbors": ["na_east", "eu_east", "africa_north", "uk"]
+  },
+  {
+    "id": "uk",
+    "name": "UK & Ireland",
+    "population": 75,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.10,
+    "climate": "temperate",
+    "neighbors": ["eu_west", "na_east"]
+  },
+  {
+    "id": "eu_east",
+    "name": "Eastern Europe & Russia",
+    "population": 290,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.35,
+    "climate": "cold",
+    "neighbors": ["eu_west", "mideast", "asia_central"]
+  },
+  {
+    "id": "africa_north",
+    "name": "North Africa",
+    "population": 250,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.40,
+    "climate": "arid",
+    "neighbors": ["eu_west", "mideast", "africa_sub"]
+  },
+  {
+    "id": "africa_sub",
+    "name": "Sub-Saharan Africa",
+    "population": 1100,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.45,
+    "climate": "tropical",
+    "neighbors": ["africa_north"]
+  },
+  {
+    "id": "mideast",
+    "name": "Middle East",
+    "population": 380,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.55,
+    "climate": "arid",
+    "neighbors": ["eu_east", "africa_north", "asia_south"]
+  },
+  {
+    "id": "asia_central",
+    "name": "Central Asia",
+    "population": 80,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.40,
+    "climate": "arid",
+    "neighbors": ["eu_east", "asia_south", "asia_east"]
+  },
+  {
+    "id": "asia_south",
+    "name": "South Asia",
+    "population": 1900,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.30,
+    "climate": "tropical",
+    "neighbors": ["mideast", "asia_central", "asia_east", "asia_se"]
+  },
+  {
+    "id": "asia_east",
+    "name": "East Asia",
+    "population": 1600,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.50,
+    "climate": "temperate",
+    "neighbors": ["asia_central", "asia_south", "asia_se", "nkorea"]
+  },
+  {
+    "id": "asia_se",
+    "name": "Southeast Asia & Oceania",
+    "population": 720,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.20,
+    "climate": "tropical",
+    "neighbors": ["asia_south", "asia_east"]
+  },
+  {
+    "id": "nkorea",
+    "name": "North Korea",
+    "population": 26,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.95,
+    "climate": "cold",
+    "closed": true,
+    "neighbors": ["asia_east"]
+  },
+  {
+    "id": "antarctica",
+    "name": "Antarctica (Research Stations)",
+    "population": 0.005,
+    "fanbase_pct": 0.0,
+    "culture_resistance": 0.10,
+    "climate": "cold",
+    "closed": true,
+    "neighbors": []
+  }
+]

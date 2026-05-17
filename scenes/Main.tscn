@@ -1,0 +1,156 @@
+[gd_scene load_steps=4 format=3 uid="uid://b8x0dropworldmain"]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/NewsTicker.gd" id="2_ticker"]
+[ext_resource type="Script" path="res://scripts/WorldMap.gd" id="3_worldmap"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="Ticker" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 36.0
+grow_horizontal = 2
+clip_contents = true
+script = ExtResource("2_ticker")
+
+[node name="TickerBG" type="ColorRect" parent="Ticker"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0, 0.2, 1)
+
+[node name="Label" type="Label" parent="Ticker"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 6.0
+offset_right = 4000.0
+offset_bottom = 30.0
+text = ""
+theme_override_colors/font_color = Color(1, 0.85, 0.95, 1)
+
+[node name="HSplit" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 880
+
+[node name="Left" type="PanelContainer" parent="HSplit"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WorldMap" type="Control" parent="HSplit/Left"]
+layout_mode = 2
+mouse_filter = 0
+script = ExtResource("3_worldmap")
+
+[node name="Right" type="VBoxContainer" parent="HSplit"]
+layout_mode = 2
+
+[node name="HUD" type="VBoxContainer" parent="HSplit/Right"]
+layout_mode = 2
+
+[node name="HypeLabel" type="Label" parent="HSplit/Right/HUD"]
+layout_mode = 2
+text = "Hype: 0"
+
+[node name="BacklashLabel" type="Label" parent="HSplit/Right/HUD"]
+layout_mode = 2
+text = "Backlash: 0 / 100"
+
+[node name="TickLabel" type="Label" parent="HSplit/Right/HUD"]
+layout_mode = 2
+text = "Day: 0"
+
+[node name="SpeedLabel" type="Label" parent="HSplit/Right/HUD"]
+layout_mode = 2
+text = "Speed: 0x"
+
+[node name="Help" type="Label" parent="HSplit/Right/HUD"]
+layout_mode = 2
+text = "[Space] pause   [1/2/3] speed"
+
+[node name="Sep" type="HSeparator" parent="HSplit/Right"]
+layout_mode = 2
+
+[node name="Traits" type="VBoxContainer" parent="HSplit/Right"]
+layout_mode = 2
+
+[node name="DebutPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -80.0
+offset_right = 220.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="DebutPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="DebutPanel/Margin"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="DebutPanel/Margin/VBox"]
+layout_mode = 2
+text = "Where do you drop?"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="DebutPanel/Margin/VBox"]
+layout_mode = 2
+text = "Click any unlocked region on the map to debut. Locked regions need traits."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="GameOverPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -120.0
+offset_right = 260.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="GameOverPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="GameOverPanel/Margin"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GameOverPanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 3
