@@ -17,73 +17,92 @@ signal region_clicked(region_id: String)
 const DESIGN_WIDTH := 640.0
 const DESIGN_HEIGHT := 480.0
 
-# Polygon coordinates aligned (eyeballed) against world_map.png.
-# Expect to iterate — pixel-perfect alignment requires measuring on the image.
+# Polygon coordinates aligned (eyeballed) against the 640×480 world_map.png.
+# Expect to iterate — pixel-perfect alignment requires actually measuring on
+# the image, this pass is from looking at the image and estimating.
 var REGION_POLYGONS: Dictionary = {
+	# ── Americas ──
+	"north_america": PackedVector2Array([
+		Vector2(35, 95), Vector2(120, 75), Vector2(180, 80),
+		Vector2(215, 115), Vector2(215, 175), Vector2(180, 225),
+		Vector2(120, 245), Vector2(60, 230), Vector2(28, 175), Vector2(20, 130),
+	]),
+	"mesoamerica": PackedVector2Array([
+		Vector2(125, 240), Vector2(175, 232), Vector2(195, 250),
+		Vector2(185, 275), Vector2(150, 280), Vector2(125, 262),
+	]),
+	"south_america": PackedVector2Array([
+		Vector2(155, 285), Vector2(210, 280), Vector2(230, 315),
+		Vector2(225, 365), Vector2(195, 415), Vector2(170, 440),
+		Vector2(148, 415), Vector2(135, 355), Vector2(140, 320),
+	]),
+	# ── Europe ──
 	"england": PackedVector2Array([
-		Vector2(295, 128), Vector2(318, 125), Vector2(322, 150),
-		Vector2(312, 165), Vector2(292, 162), Vector2(288, 142),
+		Vector2(288, 125), Vector2(310, 122), Vector2(315, 145),
+		Vector2(308, 160), Vector2(288, 162), Vector2(282, 142),
 	]),
 	"france": PackedVector2Array([
-		Vector2(320, 170), Vector2(358, 168), Vector2(365, 195),
-		Vector2(352, 215), Vector2(322, 215), Vector2(315, 192),
+		Vector2(308, 165), Vector2(342, 162), Vector2(350, 188),
+		Vector2(340, 210), Vector2(312, 210), Vector2(305, 185),
 	]),
 	"iberia": PackedVector2Array([
-		Vector2(290, 200), Vector2(322, 205), Vector2(325, 228),
-		Vector2(308, 240), Vector2(286, 232),
-	]),
-	"maghreb": PackedVector2Array([
-		Vector2(290, 245), Vector2(372, 238), Vector2(405, 248),
-		Vector2(395, 268), Vector2(310, 275), Vector2(285, 265),
+		Vector2(280, 195), Vector2(310, 200), Vector2(315, 225),
+		Vector2(295, 240), Vector2(275, 232),
 	]),
 	"hre": PackedVector2Array([
-		Vector2(360, 165), Vector2(395, 165), Vector2(398, 190),
-		Vector2(388, 208), Vector2(360, 208), Vector2(355, 185),
+		Vector2(346, 155), Vector2(382, 152), Vector2(388, 180),
+		Vector2(375, 205), Vector2(348, 205), Vector2(342, 178),
 	]),
 	"eastern_eu": PackedVector2Array([
-		Vector2(400, 168), Vector2(440, 168), Vector2(448, 192),
-		Vector2(434, 212), Vector2(400, 212), Vector2(395, 190),
+		Vector2(388, 152), Vector2(425, 152), Vector2(432, 180),
+		Vector2(420, 205), Vector2(390, 205), Vector2(385, 178),
 	]),
 	"russia": PackedVector2Array([
-		Vector2(355, 95), Vector2(450, 75), Vector2(550, 78),
-		Vector2(615, 90), Vector2(625, 130), Vector2(590, 160),
-		Vector2(520, 165), Vector2(440, 162), Vector2(390, 158),
-		Vector2(360, 142), Vector2(352, 120),
+		Vector2(355, 75), Vector2(450, 60), Vector2(540, 65),
+		Vector2(605, 75), Vector2(620, 115), Vector2(595, 145),
+		Vector2(525, 152), Vector2(440, 150), Vector2(385, 148),
+		Vector2(355, 130), Vector2(348, 100),
 	]),
-	"byzantium": PackedVector2Array([
-		Vector2(405, 218), Vector2(445, 215), Vector2(458, 232),
-		Vector2(445, 250), Vector2(410, 248), Vector2(402, 232),
-	]),
-	"levant": PackedVector2Array([
-		Vector2(452, 225), Vector2(475, 222), Vector2(480, 250),
-		Vector2(472, 278), Vector2(458, 275), Vector2(450, 250),
+	# ── North Africa & Middle East ──
+	"maghreb": PackedVector2Array([
+		Vector2(280, 240), Vector2(370, 232), Vector2(405, 240),
+		Vector2(400, 268), Vector2(310, 275), Vector2(278, 260),
 	]),
 	"egypt": PackedVector2Array([
-		Vector2(420, 265), Vector2(465, 262), Vector2(478, 285),
-		Vector2(465, 308), Vector2(425, 305), Vector2(415, 285),
+		Vector2(412, 255), Vector2(458, 250), Vector2(472, 275),
+		Vector2(460, 305), Vector2(420, 302), Vector2(408, 280),
 	]),
+	"byzantium": PackedVector2Array([
+		Vector2(385, 205), Vector2(430, 200), Vector2(450, 220),
+		Vector2(435, 240), Vector2(395, 240), Vector2(382, 222),
+	]),
+	"levant": PackedVector2Array([
+		Vector2(438, 215), Vector2(465, 215), Vector2(475, 240),
+		Vector2(465, 268), Vector2(450, 268), Vector2(438, 245),
+	]),
+	# ── Asia ──
 	"persia": PackedVector2Array([
-		Vector2(468, 215), Vector2(518, 212), Vector2(530, 235),
-		Vector2(518, 260), Vector2(478, 262), Vector2(462, 238),
+		Vector2(478, 215), Vector2(520, 212), Vector2(532, 235),
+		Vector2(518, 262), Vector2(485, 262), Vector2(472, 238),
 	]),
 	"central_asia": PackedVector2Array([
-		Vector2(445, 165), Vector2(540, 162), Vector2(560, 185),
-		Vector2(548, 208), Vector2(470, 210), Vector2(445, 188),
+		Vector2(440, 152), Vector2(540, 150), Vector2(555, 180),
+		Vector2(545, 205), Vector2(470, 208), Vector2(440, 180),
 	]),
 	"india": PackedVector2Array([
-		Vector2(515, 245), Vector2(558, 242), Vector2(580, 270),
-		Vector2(568, 305), Vector2(540, 332), Vector2(518, 318),
+		Vector2(515, 245), Vector2(560, 245), Vector2(580, 275),
+		Vector2(568, 310), Vector2(540, 335), Vector2(518, 320),
 		Vector2(508, 278),
 	]),
 	"china": PackedVector2Array([
-		Vector2(555, 188), Vector2(615, 182), Vector2(628, 215),
-		Vector2(625, 258), Vector2(605, 280), Vector2(572, 282),
-		Vector2(555, 258), Vector2(548, 222),
+		Vector2(550, 180), Vector2(615, 178), Vector2(625, 215),
+		Vector2(620, 260), Vector2(598, 282), Vector2(565, 282),
+		Vector2(548, 245), Vector2(545, 210),
 	]),
 	"mongolia": PackedVector2Array([
-		Vector2(510, 125), Vector2(575, 120), Vector2(620, 122),
-		Vector2(628, 150), Vector2(605, 178), Vector2(550, 178),
-		Vector2(515, 172),
+		Vector2(510, 125), Vector2(575, 120), Vector2(615, 122),
+		Vector2(620, 150), Vector2(600, 175), Vector2(550, 175),
+		Vector2(515, 170),
 	]),
 }
 
@@ -174,10 +193,15 @@ func _polygon_to_canvas(pts: PackedVector2Array) -> PackedVector2Array:
 # ─── drawing ────────────────────────────────────────────────────────────────
 
 func _draw() -> void:
-	# Background: scaled world-map texture if available, otherwise procedural
-	# parchment color (so the script still works pre-import).
+	# Background: fill any letterbox area with a dark sepia, then draw the
+	# world map at the same uniform-scaled rect that the polygons use, so
+	# every continent in the texture stays aligned with its polygon.
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.10, 0.07, 0.05), true)
 	if bg_texture != null:
-		draw_texture_rect(bg_texture, Rect2(Vector2.ZERO, size), false)
+		var s: float = _map_scale()
+		var off: Vector2 = _map_offset()
+		var img_rect: Rect2 = Rect2(off, Vector2(DESIGN_WIDTH, DESIGN_HEIGHT) * s)
+		draw_texture_rect(bg_texture, img_rect, false)
 	else:
 		draw_rect(Rect2(Vector2.ZERO, size), COLOR_OCEAN, true)
 

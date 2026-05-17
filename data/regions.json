@@ -67,7 +67,37 @@
     "army": 25,
     "fortified": false,
     "climate": "cold",
-    "neighbors": ["hre", "eastern_eu", "central_asia", "mongolia"]
+    "neighbors": ["hre", "eastern_eu", "central_asia", "mongolia", "north_america"]
+  },
+  {
+    "id": "north_america",
+    "name": "Mississippian Confederation",
+    "population": 4,
+    "owner": "neutral",
+    "army": 30,
+    "fortified": false,
+    "climate": "temperate",
+    "neighbors": ["russia", "mesoamerica"]
+  },
+  {
+    "id": "mesoamerica",
+    "name": "Aztec Triple Alliance",
+    "population": 6,
+    "owner": "neutral",
+    "army": 45,
+    "fortified": true,
+    "climate": "tropical",
+    "neighbors": ["north_america", "south_america"]
+  },
+  {
+    "id": "south_america",
+    "name": "Inca Civilization",
+    "population": 7,
+    "owner": "neutral",
+    "army": 50,
+    "fortified": true,
+    "climate": "tropical",
+    "neighbors": ["mesoamerica"]
   },
   {
     "id": "byzantium",
