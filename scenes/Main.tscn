@@ -201,7 +201,8 @@ offset_right = 0.0
 offset_bottom = -72.0
 grow_horizontal = 2
 grow_vertical = 2
-split_offset = 760
+split_offset = 620
+dragger_visibility = 2
 
 [node name="Left" type="PanelContainer" parent="HSplit"]
 layout_mode = 2
