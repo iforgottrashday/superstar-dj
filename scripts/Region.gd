@@ -12,6 +12,7 @@ var army: int = 0                # army strength garrisoned here
 var fortified: bool = false      # walls/castles — defense multiplier in combat
 var climate: String = "temperate" # temperate | tropical | arid | cold
 var neighbors: Array = []        # neighboring region ids — only adjacent regions can attack
+var acted_this_tick: bool = false # set when this region attacks/reinforces or is captured; reset each tick
 
 
 func from_dict(d: Dictionary) -> void:

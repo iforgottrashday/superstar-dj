@@ -20,6 +20,9 @@ const TREASURY_PER_VICTORY := 25
 
 
 static func step(gs: Node) -> void:
+	# Reset per-tick action flags — every region can act once per tick.
+	for r in gs.regions:
+		r.acted_this_tick = false
 	gs.decay_modifiers()
 	_recruit(gs)
 	_ai_actions(gs)
@@ -111,8 +114,10 @@ static func resolve_player_attack(gs: Node, from_r, to_r, send: int) -> Dictiona
 
 
 static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction: String) -> Dictionary:
-	# Subtract the attacking force from the home region.
+	# Subtract the attacking force from the home region; mark it as having
+	# acted this tick so it can't chain another attack.
 	from_r.army = int(from_r.army) - send
+	from_r.acted_this_tick = true
 	gs.emit_signal("region_army_changed", from_r.id)
 
 	var atk_def: Dictionary = gs.FACTION_CATALOG[attacker_faction]
@@ -153,10 +158,12 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 	}
 
 	if atk_strength > def_strength:
-		# Attacker wins. Survivors occupy.
+		# Attacker wins. Survivors occupy. Captured region can't act again
+		# this tick — the army has just marched in and is consolidating.
 		var survivors: int = max(1, int((atk_strength - def_strength) * 0.55))
 		to_r.army = survivors
 		gs.set_region_owner(to_r.id, attacker_faction)
+		to_r.acted_this_tick = true
 		# When a region flips, it loses its fortification status (siege wreckage).
 		to_r.fortified = false
 		gs.emit_signal("news_emitted",

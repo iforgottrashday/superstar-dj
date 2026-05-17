@@ -247,10 +247,14 @@ func _build_attack_row(from_r, to_r) -> Control:
 		amount_label.text = "Send %d troops (keeping %d)" % [int(v), int(from_r.army) - int(v)]
 	)
 	var btn := Button.new()
-	btn.text = "Reinforce" if is_reinforce else "Attack"
-	btn.pressed.connect(func():
-		_on_player_send(from_r, to_r, int(slider.value))
-	)
+	if bool(from_r.acted_this_tick):
+		btn.text = ("Reinforce" if is_reinforce else "Attack") + "  (acted this turn — wait for next tick)"
+		btn.disabled = true
+	else:
+		btn.text = "Reinforce" if is_reinforce else "Attack"
+		btn.pressed.connect(func():
+			_on_player_send(from_r, to_r, int(slider.value))
+		)
 	vbox.add_child(btn)
 	return row
 
@@ -260,9 +264,11 @@ func _on_player_send(from_r, to_r, send: int) -> void:
 	if send > int(from_r.army):
 		send = int(from_r.army)
 	if String(to_r.owner) == GameState.player_faction:
-		# Reinforce — straight transfer, no combat.
+		# Reinforce — straight transfer, no combat. Source still spends its
+		# action for the tick.
 		from_r.army = int(from_r.army) - send
 		to_r.army = int(to_r.army) + send
+		from_r.acted_this_tick = true
 		GameState.emit_signal("region_army_changed", from_r.id)
 		GameState.emit_signal("region_army_changed", to_r.id)
 		GameState.emit_signal("news_emitted",
