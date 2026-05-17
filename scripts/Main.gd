@@ -251,9 +251,10 @@ func _on_region_ownership_changed(region_id: String, _new_owner: String) -> void
 	_refresh_hud()
 
 func _on_region_army_changed(_region_id: String) -> void:
-	# Light rebuild — only matters when panel is open on the affected region.
-	if region_panel.visible:
-		_rebuild_region_panel()
+	# Don't rebuild on every army tick — it would reset the player's slider
+	# every second during recruitment. The panel will refresh after the next
+	# user action (sending troops, clicking another region, or closing/reopening).
+	pass
 
 func _build_tech_shop() -> void:
 	for child in traits_box.get_children():
