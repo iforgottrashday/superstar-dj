@@ -12,89 +12,84 @@ extends Control
 
 signal region_clicked(region_id: String)
 
-# Authoring space. All polygons below are coordinates in this rectangle.
-const DESIGN_WIDTH := 880.0
-const DESIGN_HEIGHT := 600.0
+# Authoring space matches the world_map.png (640×480). All polygons below
+# are pixel coordinates within that image, so they overlay actual continents.
+const DESIGN_WIDTH := 640.0
+const DESIGN_HEIGHT := 480.0
 
-# Hand-drawn rough geographic shapes for medieval Eurasia.
-# Mercator-style; gaps between regions read as seas / mountain ranges.
-# Adjacency for combat is in regions.json, not polygon contact.
+# Polygon coordinates aligned (eyeballed) against world_map.png.
+# Expect to iterate — pixel-perfect alignment requires measuring on the image.
 var REGION_POLYGONS: Dictionary = {
 	"england": PackedVector2Array([
-		Vector2(120, 175), Vector2(155, 165), Vector2(172, 195),
-		Vector2(165, 225), Vector2(138, 235), Vector2(115, 215), Vector2(110, 195),
+		Vector2(295, 128), Vector2(318, 125), Vector2(322, 150),
+		Vector2(312, 165), Vector2(292, 162), Vector2(288, 142),
 	]),
 	"france": PackedVector2Array([
-		Vector2(178, 230), Vector2(235, 222), Vector2(273, 245),
-		Vector2(272, 290), Vector2(245, 310), Vector2(200, 308), Vector2(175, 285),
+		Vector2(320, 170), Vector2(358, 168), Vector2(365, 195),
+		Vector2(352, 215), Vector2(322, 215), Vector2(315, 192),
 	]),
 	"iberia": PackedVector2Array([
-		Vector2(55, 295), Vector2(130, 290), Vector2(172, 308),
-		Vector2(175, 345), Vector2(155, 370), Vector2(108, 380),
-		Vector2(65, 370), Vector2(40, 340),
+		Vector2(290, 200), Vector2(322, 205), Vector2(325, 228),
+		Vector2(308, 240), Vector2(286, 232),
 	]),
 	"maghreb": PackedVector2Array([
-		Vector2(50, 410), Vector2(200, 402), Vector2(305, 415),
-		Vector2(370, 432), Vector2(375, 465), Vector2(320, 480),
-		Vector2(215, 478), Vector2(105, 472), Vector2(50, 452),
+		Vector2(290, 245), Vector2(372, 238), Vector2(405, 248),
+		Vector2(395, 268), Vector2(310, 275), Vector2(285, 265),
 	]),
 	"hre": PackedVector2Array([
-		Vector2(280, 225), Vector2(350, 220), Vector2(392, 245),
-		Vector2(392, 290), Vector2(370, 320), Vector2(320, 320),
-		Vector2(282, 308), Vector2(275, 260),
+		Vector2(360, 165), Vector2(395, 165), Vector2(398, 190),
+		Vector2(388, 208), Vector2(360, 208), Vector2(355, 185),
 	]),
 	"eastern_eu": PackedVector2Array([
-		Vector2(395, 222), Vector2(485, 220), Vector2(528, 250),
-		Vector2(530, 295), Vector2(500, 325), Vector2(450, 325),
-		Vector2(408, 320), Vector2(395, 285),
+		Vector2(400, 168), Vector2(440, 168), Vector2(448, 192),
+		Vector2(434, 212), Vector2(400, 212), Vector2(395, 190),
 	]),
 	"russia": PackedVector2Array([
-		Vector2(255, 75), Vector2(440, 68), Vector2(580, 75),
-		Vector2(680, 85), Vector2(700, 135), Vector2(680, 175),
-		Vector2(585, 195), Vector2(495, 200), Vector2(390, 200),
-		Vector2(315, 195), Vector2(268, 165), Vector2(250, 110),
+		Vector2(355, 95), Vector2(450, 75), Vector2(550, 78),
+		Vector2(615, 90), Vector2(625, 130), Vector2(590, 160),
+		Vector2(520, 165), Vector2(440, 162), Vector2(390, 158),
+		Vector2(360, 142), Vector2(352, 120),
 	]),
 	"byzantium": PackedVector2Array([
-		Vector2(410, 335), Vector2(475, 330), Vector2(530, 345),
-		Vector2(568, 360), Vector2(560, 388), Vector2(525, 400),
-		Vector2(475, 395), Vector2(430, 385), Vector2(410, 365),
+		Vector2(405, 218), Vector2(445, 215), Vector2(458, 232),
+		Vector2(445, 250), Vector2(410, 248), Vector2(402, 232),
 	]),
 	"levant": PackedVector2Array([
-		Vector2(540, 370), Vector2(590, 365), Vector2(605, 395),
-		Vector2(605, 440), Vector2(585, 460), Vector2(560, 460),
-		Vector2(540, 430), Vector2(535, 395),
+		Vector2(452, 225), Vector2(475, 222), Vector2(480, 250),
+		Vector2(472, 278), Vector2(458, 275), Vector2(450, 250),
 	]),
 	"egypt": PackedVector2Array([
-		Vector2(412, 472), Vector2(490, 465), Vector2(530, 485),
-		Vector2(525, 525), Vector2(475, 545), Vector2(420, 542),
-		Vector2(395, 515), Vector2(400, 488),
+		Vector2(420, 265), Vector2(465, 262), Vector2(478, 285),
+		Vector2(465, 308), Vector2(425, 305), Vector2(415, 285),
 	]),
 	"persia": PackedVector2Array([
-		Vector2(585, 282), Vector2(680, 277), Vector2(730, 292),
-		Vector2(738, 332), Vector2(718, 365), Vector2(660, 380),
-		Vector2(610, 370), Vector2(585, 340),
+		Vector2(468, 215), Vector2(518, 212), Vector2(530, 235),
+		Vector2(518, 260), Vector2(478, 262), Vector2(462, 238),
 	]),
 	"central_asia": PackedVector2Array([
-		Vector2(490, 205), Vector2(615, 200), Vector2(700, 200),
-		Vector2(745, 225), Vector2(742, 270), Vector2(680, 277),
-		Vector2(610, 275), Vector2(520, 252), Vector2(488, 225),
+		Vector2(445, 165), Vector2(540, 162), Vector2(560, 185),
+		Vector2(548, 208), Vector2(470, 210), Vector2(445, 188),
 	]),
 	"india": PackedVector2Array([
-		Vector2(700, 390), Vector2(775, 385), Vector2(815, 405),
-		Vector2(820, 445), Vector2(790, 490), Vector2(755, 520),
-		Vector2(720, 510), Vector2(705, 470), Vector2(695, 425),
+		Vector2(515, 245), Vector2(558, 242), Vector2(580, 270),
+		Vector2(568, 305), Vector2(540, 332), Vector2(518, 318),
+		Vector2(508, 278),
 	]),
 	"china": PackedVector2Array([
-		Vector2(745, 215), Vector2(830, 215), Vector2(875, 230),
-		Vector2(875, 360), Vector2(855, 400), Vector2(820, 410),
-		Vector2(790, 400), Vector2(760, 375), Vector2(745, 270),
+		Vector2(555, 188), Vector2(615, 182), Vector2(628, 215),
+		Vector2(625, 258), Vector2(605, 280), Vector2(572, 282),
+		Vector2(555, 258), Vector2(548, 222),
 	]),
 	"mongolia": PackedVector2Array([
-		Vector2(680, 105), Vector2(760, 100), Vector2(840, 105),
-		Vector2(875, 115), Vector2(875, 200), Vector2(745, 200),
-		Vector2(700, 195), Vector2(700, 145),
+		Vector2(510, 125), Vector2(575, 120), Vector2(620, 122),
+		Vector2(628, 150), Vector2(605, 178), Vector2(550, 178),
+		Vector2(515, 172),
 	]),
 }
+
+# World-map background image (parchment style). Loaded at runtime so the
+# script still parses if the file isn't present yet.
+var bg_texture: Texture2D = null
 
 # Parchment / medieval-cartography palette.
 const COLOR_OCEAN := Color(0.78, 0.69, 0.52)
@@ -118,6 +113,7 @@ var _hovered: String = ""
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	bg_texture = load("res://assets/world_map.png") as Texture2D
 	for region_id in REGION_POLYGONS.keys():
 		_displayed_pulse[region_id] = 0.0
 	GameState.region_ownership_changed.connect(_on_ownership_changed)
@@ -178,28 +174,33 @@ func _polygon_to_canvas(pts: PackedVector2Array) -> PackedVector2Array:
 # ─── drawing ────────────────────────────────────────────────────────────────
 
 func _draw() -> void:
-	# Ocean + parchment grid use raw Control size (full background).
-	draw_rect(Rect2(Vector2.ZERO, size), COLOR_OCEAN, true)
-	for gx in range(0, int(size.x) + 1, 80):
-		draw_line(Vector2(gx, 0), Vector2(gx, size.y), COLOR_GRID, 1.0)
-	for gy in range(0, int(size.y) + 1, 80):
-		draw_line(Vector2(0, gy), Vector2(size.x, gy), COLOR_GRID, 1.0)
+	# Background: scaled world-map texture if available, otherwise procedural
+	# parchment color (so the script still works pre-import).
+	if bg_texture != null:
+		draw_texture_rect(bg_texture, Rect2(Vector2.ZERO, size), false)
+	else:
+		draw_rect(Rect2(Vector2.ZERO, size), COLOR_OCEAN, true)
 
-	# Region fills, tinted by owner faction over parchment.
+	# Region fills — only color claimed (non-neutral) regions, and only at
+	# low opacity so the underlying map texture still reads through.
 	for region_id in REGION_POLYGONS.keys():
 		var pts: PackedVector2Array = _polygon_to_canvas(REGION_POLYGONS[region_id])
 		var r = GameState.regions_by_id.get(region_id)
-		var fill: Color = COLOR_NEUTRAL_FILL
+		var fill: Color = Color(0, 0, 0, 0)  # neutrals: no tint, show the map
 		if r != null:
 			var owner_id: String = String(r.owner)
 			if owner_id != "neutral" and GameState.FACTION_CATALOG.has(owner_id):
-				fill = GameState.FACTION_CATALOG[owner_id]["color"].lerp(Color(0.94, 0.87, 0.70), 0.55)
+				fill = GameState.FACTION_CATALOG[owner_id]["color"]
+				fill.a = 0.45  # translucent wash so the map continent shows through
 		var pulse_v: float = float(_displayed_pulse[region_id])
 		if pulse_v > 0.0:
-			fill = fill.lerp(Color(1.0, 1.0, 1.0), pulse_v * 0.45)
+			fill = fill.lerp(Color(1.0, 1.0, 1.0, fill.a), pulse_v * 0.5)
 		if region_id == _hovered:
-			fill = fill.lerp(Color(0.20, 0.10, 0.02), 0.15)
-		draw_colored_polygon(pts, fill)
+			# A subtle dark overlay on hover so the player sees which region
+			# the cursor is over without obliterating the map underneath.
+			fill = fill.lerp(Color(0.10, 0.05, 0.02, 0.35), 0.4)
+		if fill.a > 0.0:
+			draw_colored_polygon(pts, fill)
 
 	# Player-owned glow halo.
 	for region_id in REGION_POLYGONS.keys():
