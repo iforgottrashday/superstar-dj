@@ -360,11 +360,17 @@ func _on_faction_power_pressed() -> void:
 
 func _refresh_hud() -> void:
 	if GameState.player_faction == "":
-		hype_label.text = "—"
-		backlash_label.text = ""
-		tick_label.text = ""
-		speed_label.text = ""
+		# No faction yet — hide HUD labels so the right column doesn't show a
+		# tall empty patch above the rest.
+		hype_label.visible = false
+		backlash_label.visible = false
+		tick_label.visible = false
+		speed_label.visible = false
 		return
+	hype_label.visible = true
+	backlash_label.visible = true
+	tick_label.visible = true
+	speed_label.visible = true
 	var faction_def: Dictionary = GameState.FACTION_CATALOG[GameState.player_faction]
 	var owned: int = GameState.owned_regions(GameState.player_faction).size()
 	var total: int = GameState.regions.size()
