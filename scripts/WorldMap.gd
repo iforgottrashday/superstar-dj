@@ -27,16 +27,16 @@ var REGION_POLYGONS: Dictionary = {
 		Vector2(28, 190), Vector2(28, 145),
 	]),
 	"mesoamerica": PackedVector2Array([
-		Vector2(220, 295), Vector2(270, 290), Vector2(295, 305),
-		Vector2(300, 325), Vector2(280, 340), Vector2(240, 345),
-		Vector2(215, 335), Vector2(208, 315),
+		Vector2(130, 295), Vector2(190, 290), Vector2(215, 305),
+		Vector2(215, 325), Vector2(195, 345), Vector2(155, 350),
+		Vector2(120, 340), Vector2(110, 315),
 	]),
 	"south_america": PackedVector2Array([
-		Vector2(200, 355), Vector2(270, 350), Vector2(320, 365),
-		Vector2(345, 385), Vector2(355, 415), Vector2(350, 455),
-		Vector2(335, 500), Vector2(310, 540), Vector2(270, 570),
-		Vector2(230, 580), Vector2(200, 565), Vector2(185, 530),
-		Vector2(180, 485), Vector2(185, 435), Vector2(190, 395),
+		Vector2(110, 360), Vector2(180, 355), Vector2(230, 370),
+		Vector2(260, 395), Vector2(270, 425), Vector2(265, 465),
+		Vector2(250, 510), Vector2(220, 545), Vector2(180, 570),
+		Vector2(140, 575), Vector2(105, 555), Vector2(85, 515),
+		Vector2(80, 470), Vector2(85, 420), Vector2(95, 385),
 	]),
 	# ── Europe ──
 	"england": PackedVector2Array([
@@ -65,11 +65,11 @@ var REGION_POLYGONS: Dictionary = {
 		Vector2(515, 270), Vector2(510, 235),
 	]),
 	"russia": PackedVector2Array([
-		Vector2(340, 75), Vector2(440, 60), Vector2(550, 55),
-		Vector2(660, 58), Vector2(740, 65), Vector2(790, 80),
-		Vector2(810, 110), Vector2(800, 150), Vector2(765, 175),
-		Vector2(690, 185), Vector2(580, 190), Vector2(470, 190),
-		Vector2(390, 185), Vector2(345, 160), Vector2(335, 115),
+		Vector2(420, 70), Vector2(510, 60), Vector2(610, 55),
+		Vector2(700, 58), Vector2(770, 65), Vector2(810, 85),
+		Vector2(820, 115), Vector2(810, 145), Vector2(775, 170),
+		Vector2(700, 180), Vector2(605, 185), Vector2(520, 185),
+		Vector2(450, 180), Vector2(420, 155), Vector2(415, 115),
 	]),
 	# ── North Africa & Middle East ──
 	"maghreb": PackedVector2Array([
@@ -106,10 +106,10 @@ var REGION_POLYGONS: Dictionary = {
 		Vector2(610, 250),
 	]),
 	"india": PackedVector2Array([
-		Vector2(785, 360), Vector2(840, 355), Vector2(875, 380),
-		Vector2(880, 420), Vector2(860, 460), Vector2(830, 490),
-		Vector2(795, 500), Vector2(770, 480), Vector2(755, 445),
-		Vector2(755, 405), Vector2(765, 375),
+		Vector2(785, 360), Vector2(830, 358), Vector2(845, 390),
+		Vector2(840, 425), Vector2(820, 460), Vector2(790, 490),
+		Vector2(760, 495), Vector2(745, 470), Vector2(742, 435),
+		Vector2(748, 400), Vector2(760, 372),
 	]),
 	"china": PackedVector2Array([
 		Vector2(830, 240), Vector2(895, 235), Vector2(935, 260),
@@ -118,9 +118,9 @@ var REGION_POLYGONS: Dictionary = {
 		Vector2(815, 380), Vector2(810, 335), Vector2(815, 280),
 	]),
 	"mongolia": PackedVector2Array([
-		Vector2(830, 195), Vector2(880, 188), Vector2(925, 195),
-		Vector2(945, 220), Vector2(935, 248), Vector2(895, 255),
-		Vector2(845, 250), Vector2(825, 230), Vector2(820, 210),
+		Vector2(830, 155), Vector2(880, 148), Vector2(925, 158),
+		Vector2(945, 180), Vector2(935, 210), Vector2(895, 218),
+		Vector2(845, 215), Vector2(825, 195), Vector2(820, 175),
 	]),
 }
 
