@@ -114,7 +114,10 @@ var _hovered: String = ""
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	custom_minimum_size = Vector2(880, 680)
+	# No custom_minimum_size — let the container constrain. Polygons are
+	# designed against an 880×680 canvas but the parchment background uses
+	# self.size, so it fits whatever the container gives us. Polygons past
+	# the visible area get clipped by HSplit/Left's clip_contents.
 	for region_id in REGION_POLYGONS.keys():
 		_displayed_pulse[region_id] = 0.0
 	GameState.region_ownership_changed.connect(_on_ownership_changed)
