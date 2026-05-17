@@ -45,6 +45,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 48.0
+offset_bottom = -72.0
 grow_horizontal = 2
 grow_vertical = 2
 split_offset = 880
@@ -119,8 +120,94 @@ theme_override_font_sizes/font_size = 12
 [node name="Sep2" type="HSeparator" parent="HSplit/Right"]
 layout_mode = 2
 
-[node name="Traits" type="VBoxContainer" parent="HSplit/Right"]
+[node name="RegionPanel" type="PanelContainer" parent="HSplit/Right"]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="HSplit/Right/RegionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="HSplit/Right/RegionPanel/Margin"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="HSplit/Right/RegionPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="HSplit/Right/RegionPanel/Margin/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select a region"
+theme_override_font_sizes/font_size = 20
+
+[node name="CloseBtn" type="Button" parent="HSplit/Right/RegionPanel/Margin/VBox/Header"]
+visible = false
+layout_mode = 2
+text = "✕"
+flat = true
+theme_override_font_sizes/font_size = 18
+
+[node name="Stats" type="Label" parent="HSplit/Right/RegionPanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="Sep" type="HSeparator" parent="HSplit/Right/RegionPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="ChannelsLabel" type="Label" parent="HSplit/Right/RegionPanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+theme_override_font_sizes/font_size = 13
+
+[node name="ChannelsScroll" type="ScrollContainer" parent="HSplit/Right/RegionPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Channels" type="VBoxContainer" parent="HSplit/Right/RegionPanel/Margin/VBox/ChannelsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TechBar" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -72.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BG" type="ColorRect" parent="TechBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.08, 0.06, 0.14, 1)
+
+[node name="Margin" type="MarginContainer" parent="TechBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 6
+
+[node name="HBox" type="HBoxContainer" parent="TechBar/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="TechBar/Margin/HBox"]
+layout_mode = 2
+text = "TECHNOLOGY"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.85, 0.78, 0.55, 1)
 
 [node name="DebutPanel" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -158,68 +245,6 @@ text = ""
 horizontal_alignment = 1
 autowrap_mode = 3
 theme_override_font_sizes/font_size = 14
-
-[node name="RegionPanel" type="PanelContainer" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -420.0
-offset_top = 48.0
-offset_right = 0.0
-offset_bottom = 0.0
-grow_horizontal = 0
-grow_vertical = 2
-
-[node name="Margin" type="MarginContainer" parent="RegionPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 14
-
-[node name="VBox" type="VBoxContainer" parent="RegionPanel/Margin"]
-layout_mode = 2
-
-[node name="Header" type="HBoxContainer" parent="RegionPanel/Margin/VBox"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="RegionPanel/Margin/VBox/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Region"
-theme_override_font_sizes/font_size = 22
-
-[node name="CloseBtn" type="Button" parent="RegionPanel/Margin/VBox/Header"]
-layout_mode = 2
-text = "✕"
-flat = true
-theme_override_font_sizes/font_size = 18
-
-[node name="Stats" type="Label" parent="RegionPanel/Margin/VBox"]
-layout_mode = 2
-text = ""
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 15
-
-[node name="Sep" type="HSeparator" parent="RegionPanel/Margin/VBox"]
-layout_mode = 2
-
-[node name="ChannelsLabel" type="Label" parent="RegionPanel/Margin/VBox"]
-layout_mode = 2
-text = ""
-theme_override_font_sizes/font_size = 14
-
-[node name="ChannelsScroll" type="ScrollContainer" parent="RegionPanel/Margin/VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Channels" type="VBoxContainer" parent="RegionPanel/Margin/VBox/ChannelsScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="EventPanel" type="PanelContainer" parent="."]
 visible = false

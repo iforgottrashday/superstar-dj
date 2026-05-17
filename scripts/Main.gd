@@ -19,18 +19,18 @@ extends Control
 @onready var power_name_label: Label = $HSplit/Right/FactionPower/PowerName
 @onready var power_btn: Button = $HSplit/Right/FactionPower/PowerBtn
 @onready var power_blurb_label: Label = $HSplit/Right/FactionPower/PowerBlurb
-@onready var traits_box: VBoxContainer = $HSplit/Right/Traits
+@onready var tech_bar: HBoxContainer = $TechBar/Margin/HBox
 
 @onready var debut_panel: PanelContainer = $DebutPanel
 @onready var debut_title: Label = $DebutPanel/Margin/VBox/Title
 @onready var debut_subtitle: Label = $DebutPanel/Margin/VBox/Subtitle
 
-@onready var region_panel: PanelContainer = $RegionPanel
-@onready var region_title: Label = $RegionPanel/Margin/VBox/Header/Title
-@onready var region_close: Button = $RegionPanel/Margin/VBox/Header/CloseBtn
-@onready var region_stats: Label = $RegionPanel/Margin/VBox/Stats
-@onready var region_channels_box: VBoxContainer = $RegionPanel/Margin/VBox/ChannelsScroll/Channels
-@onready var region_channels_label: Label = $RegionPanel/Margin/VBox/ChannelsLabel
+@onready var region_panel: PanelContainer = $HSplit/Right/RegionPanel
+@onready var region_title: Label = $HSplit/Right/RegionPanel/Margin/VBox/Header/Title
+@onready var region_close: Button = $HSplit/Right/RegionPanel/Margin/VBox/Header/CloseBtn
+@onready var region_stats: Label = $HSplit/Right/RegionPanel/Margin/VBox/Stats
+@onready var region_channels_box: VBoxContainer = $HSplit/Right/RegionPanel/Margin/VBox/ChannelsScroll/Channels
+@onready var region_channels_label: Label = $HSplit/Right/RegionPanel/Margin/VBox/ChannelsLabel
 
 @onready var event_panel: PanelContainer = $EventPanel
 @onready var event_title: Label = $EventPanel/Margin/VBox/Title
@@ -58,7 +58,7 @@ func _ready() -> void:
 	_show_faction_picker()
 	_build_tech_shop()
 	_refresh_hud()
-	region_panel.visible = false
+	_rebuild_region_panel()  # render the empty/placeholder state
 	event_panel.visible = false
 	game_over_panel.visible = false
 	_refresh_power_button()
@@ -111,28 +111,41 @@ func _on_region_clicked(region_id: String) -> void:
 func _open_region_panel(region_id: String) -> void:
 	_open_region_id = region_id
 	_rebuild_region_panel()
-	region_panel.visible = true
 
 func _close_region_panel() -> void:
+	# Now a "deselect" — panel stays visible but shows the placeholder.
 	_open_region_id = ""
-	region_panel.visible = false
+	_rebuild_region_panel()
 
 func _rebuild_region_panel() -> void:
+	for child in region_channels_box.get_children():
+		child.queue_free()
+	if _open_region_id == "":
+		region_title.text = "Select a region"
+		region_title.remove_theme_color_override("font_color")
+		region_stats.text = ""
+		region_channels_label.text = ""
+		region_close.visible = false
+		var hint := Label.new()
+		hint.text = "Click any region on the map to inspect or order an action."
+		hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
+		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		region_channels_box.add_child(hint)
+		return
 	var r = GameState.regions_by_id.get(_open_region_id)
 	if r == null:
 		return
+	region_close.visible = true
 	var owner_id: String = String(r.owner)
 	var owner_def: Dictionary = GameState.FACTION_CATALOG.get(owner_id, GameState.FACTION_CATALOG["neutral"])
 	var fort_tag: String = "  🏰 fortified" if bool(r.fortified) else ""
 	region_title.text = "%s%s" % [String(r.name), fort_tag]
 	region_title.add_theme_color_override("font_color", owner_def["color"])
-	region_stats.text = "Owner: %s   ·   Army: %d   ·   Population: %.1fM" % [
+	region_stats.text = "Owner: %s   ·   Army: %d   ·   Pop: %.1fM" % [
 		String(owner_def["name"]),
 		int(r.army),
 		float(r.population),
 	]
-	for child in region_channels_box.get_children():
-		child.queue_free()
 	if owner_id == GameState.player_faction:
 		region_channels_label.text = "DEPLOY FROM HERE"
 		_build_outgoing_rows(r)
@@ -257,18 +270,21 @@ func _on_region_army_changed(_region_id: String) -> void:
 	pass
 
 func _build_tech_shop() -> void:
-	for child in traits_box.get_children():
-		child.queue_free()
-	var title := Label.new()
-	title.text = "TECHNOLOGY"
-	traits_box.add_child(title)
+	# tech_bar is the bottom strip — preserve its static "TECHNOLOGY" Label,
+	# only clear and rebuild the Button children.
+	for child in tech_bar.get_children():
+		if child is Button:
+			child.queue_free()
+	_tech_buttons.clear()
 	for tech_id in GameState.TECH_CATALOG.keys():
 		var def: Dictionary = GameState.TECH_CATALOG[tech_id]
 		var btn := Button.new()
-		btn.text = "%s — %d gold" % [String(def["name"]), int(def["cost"])]
+		btn.text = "%s — %d g" % [String(def["name"]), int(def["cost"])]
 		btn.tooltip_text = String(def["blurb"])
+		btn.custom_minimum_size = Vector2(200, 50)
+		btn.add_theme_font_size_override("font_size", 13)
 		btn.pressed.connect(_on_buy_tech.bind(tech_id))
-		traits_box.add_child(btn)
+		tech_bar.add_child(btn)
 		_tech_buttons[tech_id] = btn
 
 func _on_buy_tech(tech_id: String) -> void:
