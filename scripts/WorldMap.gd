@@ -18,25 +18,25 @@ const DESIGN_HEIGHT := 700.0
 # are gameplay zones laid out for clarity. Each region is large enough to
 # fit its name + army badge with no crowding.
 var REGION_POLYGONS: Dictionary = {
-	# ── Americas ──
+	# ── Americas (compact vertical chain on the left side) ──
 	"north_america": PackedVector2Array([
-		Vector2(60, 90), Vector2(160, 70), Vector2(260, 80),
-		Vector2(310, 105), Vector2(325, 150), Vector2(320, 200),
-		Vector2(300, 250), Vector2(265, 295), Vector2(215, 320),
-		Vector2(155, 325), Vector2(100, 305), Vector2(60, 270),
-		Vector2(35, 220), Vector2(30, 160), Vector2(40, 115),
+		Vector2(50, 100), Vector2(140, 85), Vector2(220, 80),
+		Vector2(275, 100), Vector2(305, 130), Vector2(305, 175),
+		Vector2(285, 220), Vector2(245, 255), Vector2(190, 275),
+		Vector2(130, 275), Vector2(80, 260), Vector2(45, 230),
+		Vector2(28, 190), Vector2(28, 145),
 	]),
 	"mesoamerica": PackedVector2Array([
-		Vector2(225, 335), Vector2(280, 330), Vector2(305, 350),
-		Vector2(295, 380), Vector2(255, 390), Vector2(220, 380),
-		Vector2(210, 358),
+		Vector2(220, 295), Vector2(270, 290), Vector2(295, 305),
+		Vector2(300, 325), Vector2(280, 340), Vector2(240, 345),
+		Vector2(215, 335), Vector2(208, 315),
 	]),
 	"south_america": PackedVector2Array([
-		Vector2(215, 395), Vector2(290, 390), Vector2(330, 410),
-		Vector2(345, 440), Vector2(340, 485), Vector2(320, 535),
-		Vector2(285, 580), Vector2(245, 615), Vector2(210, 630),
-		Vector2(180, 605), Vector2(168, 555), Vector2(170, 500),
-		Vector2(185, 450), Vector2(200, 415),
+		Vector2(200, 355), Vector2(270, 350), Vector2(320, 365),
+		Vector2(345, 385), Vector2(355, 415), Vector2(350, 455),
+		Vector2(335, 500), Vector2(310, 540), Vector2(270, 570),
+		Vector2(230, 580), Vector2(200, 565), Vector2(185, 530),
+		Vector2(180, 485), Vector2(185, 435), Vector2(190, 395),
 	]),
 	# ── Europe ──
 	"england": PackedVector2Array([
@@ -65,12 +65,11 @@ var REGION_POLYGONS: Dictionary = {
 		Vector2(515, 270), Vector2(510, 235),
 	]),
 	"russia": PackedVector2Array([
-		Vector2(340, 75), Vector2(450, 60), Vector2(580, 55),
-		Vector2(710, 60), Vector2(830, 70), Vector2(900, 90),
-		Vector2(920, 130), Vector2(905, 170), Vector2(850, 190),
-		Vector2(750, 195), Vector2(640, 195), Vector2(540, 195),
-		Vector2(450, 195), Vector2(390, 185), Vector2(345, 160),
-		Vector2(335, 120),
+		Vector2(340, 75), Vector2(440, 60), Vector2(550, 55),
+		Vector2(660, 58), Vector2(740, 65), Vector2(790, 80),
+		Vector2(810, 110), Vector2(800, 150), Vector2(765, 175),
+		Vector2(690, 185), Vector2(580, 190), Vector2(470, 190),
+		Vector2(390, 185), Vector2(345, 160), Vector2(335, 115),
 	]),
 	# ── North Africa & Middle East ──
 	"maghreb": PackedVector2Array([
@@ -119,9 +118,9 @@ var REGION_POLYGONS: Dictionary = {
 		Vector2(815, 380), Vector2(810, 335), Vector2(815, 280),
 	]),
 	"mongolia": PackedVector2Array([
-		Vector2(820, 165), Vector2(880, 160), Vector2(925, 170),
-		Vector2(940, 195), Vector2(930, 225), Vector2(895, 235),
-		Vector2(845, 235), Vector2(815, 220), Vector2(810, 190),
+		Vector2(830, 195), Vector2(880, 188), Vector2(925, 195),
+		Vector2(945, 220), Vector2(935, 248), Vector2(895, 255),
+		Vector2(845, 250), Vector2(825, 230), Vector2(820, 210),
 	]),
 }
 

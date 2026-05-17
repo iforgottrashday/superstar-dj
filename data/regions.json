@@ -7,7 +7,7 @@
     "army": 25,
     "fortified": true,
     "climate": "temperate",
-    "neighbors": ["france"]
+    "neighbors": ["france", "north_america"]
   },
   {
     "id": "france",
@@ -77,7 +77,7 @@
     "army": 30,
     "fortified": false,
     "climate": "temperate",
-    "neighbors": ["russia", "mesoamerica"]
+    "neighbors": ["russia", "mesoamerica", "england"]
   },
   {
     "id": "mesoamerica",
