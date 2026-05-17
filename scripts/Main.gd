@@ -71,14 +71,17 @@ func _show_faction_picker() -> void:
 		if child.has_meta("faction_btn"):
 			child.queue_free()
 	for faction_id in GameState.FACTION_CATALOG.keys():
-		if faction_id == "neutral":
-			continue
 		var def: Dictionary = GameState.FACTION_CATALOG[faction_id]
+		# Skip non-playable factions: neutral + the antagonist coalitions that
+		# spawn only via escalation (Crusader, Steppe Horde).
+		if String(def["start_region"]) == "":
+			continue
 		var btn := Button.new()
 		btn.set_meta("faction_btn", true)
 		btn.text = String(def["name"]) + "  —  " + String(GameState.regions_by_id[String(def["start_region"])].name)
 		btn.tooltip_text = String(def["blurb"])
 		btn.add_theme_color_override("font_color", def["color"])
+		btn.add_theme_font_size_override("font_size", 16)
 		btn.pressed.connect(_on_faction_picked.bind(faction_id))
 		debut_subtitle.get_parent().add_child(btn)
 	debut_panel.visible = true
@@ -132,25 +135,24 @@ func _rebuild_region_panel() -> void:
 		child.queue_free()
 	if owner_id == GameState.player_faction:
 		region_channels_label.text = "DEPLOY FROM HERE"
-		_build_outgoing_attack_rows(r)
+		_build_outgoing_rows(r)
 	else:
 		region_channels_label.text = "ATTACK THIS PROVINCE"
 		_build_incoming_attack_rows(r)
 
-func _build_outgoing_attack_rows(from_r) -> void:
-	# Show one row per adjacent non-player region (target options from this region).
+func _build_outgoing_rows(from_r) -> void:
+	# Show one row per adjacent region. Owned neighbors get a "Reinforce" button
+	# (transfer troops, no combat); non-owned get an "Attack" button.
 	var any_targets: bool = false
 	for nid in from_r.neighbors:
 		var n = GameState.regions_by_id.get(nid)
 		if n == null:
 			continue
-		if String(n.owner) == GameState.player_faction:
-			continue
 		any_targets = true
 		region_channels_box.add_child(_build_attack_row(from_r, n))
 	if not any_targets:
 		var l := Label.new()
-		l.text = "No adjacent enemies. Pick a frontier region or expand."
+		l.text = "No adjacent regions."
 		l.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
 		region_channels_box.add_child(l)
 
@@ -172,7 +174,10 @@ func _build_incoming_attack_rows(to_r) -> void:
 		region_channels_box.add_child(l)
 
 func _build_attack_row(from_r, to_r) -> Control:
-	# A row showing the "from → to" pair with a send-amount slider and Attack button.
+	# A row showing the "from → to" pair with a send-amount slider and an action
+	# button. If `to_r` is player-owned the button reinforces (no combat); if
+	# `to_r` is enemy/neutral the button attacks.
+	var is_reinforce: bool = String(to_r.owner) == GameState.player_faction
 	var row := PanelContainer.new()
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 8)
@@ -185,20 +190,26 @@ func _build_attack_row(from_r, to_r) -> Control:
 	var header := HBoxContainer.new()
 	vbox.add_child(header)
 	var label := Label.new()
-	label.text = "%s (army %d) → %s (def %d%s)" % [
-		String(from_r.name),
-		int(from_r.army),
-		String(to_r.name),
+	var target_label: String = "yours" if is_reinforce else "def %d%s" % [
 		int(to_r.army),
 		"  🏰" if bool(to_r.fortified) else "",
 	]
+	if is_reinforce:
+		target_label = "yours, garrison %d" % int(to_r.army)
+	label.text = "%s (army %d) → %s (%s)" % [
+		String(from_r.name),
+		int(from_r.army),
+		String(to_r.name),
+		target_label,
+	]
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(label)
-	# Slider sets attack size; default 70% of source army.
+	# Slider sets send size; default 70% of source army for attacks, 50% for moves.
+	var default_pct: float = 0.5 if is_reinforce else 0.7
 	var slider := HSlider.new()
 	slider.min_value = 0
 	slider.max_value = int(from_r.army)
-	slider.value = int(int(from_r.army) * 0.7)
+	slider.value = int(int(from_r.army) * default_pct)
 	slider.step = 1
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox.add_child(slider)
@@ -209,20 +220,28 @@ func _build_attack_row(from_r, to_r) -> Control:
 		amount_label.text = "Send %d troops (keeping %d)" % [int(v), int(from_r.army) - int(v)]
 	)
 	var btn := Button.new()
-	btn.text = "Attack"
+	btn.text = "Reinforce" if is_reinforce else "Attack"
 	btn.pressed.connect(func():
-		_on_player_attack(from_r, to_r, int(slider.value))
+		_on_player_send(from_r, to_r, int(slider.value))
 	)
 	vbox.add_child(btn)
 	return row
 
-func _on_player_attack(from_r, to_r, send: int) -> void:
+func _on_player_send(from_r, to_r, send: int) -> void:
 	if send <= 0:
 		return
 	if send > int(from_r.army):
 		send = int(from_r.army)
-	SimTick.resolve_player_attack(GameState, from_r, to_r, send)
-	# Refresh panel in case the player wants another attack.
+	if String(to_r.owner) == GameState.player_faction:
+		# Reinforce — straight transfer, no combat.
+		from_r.army = int(from_r.army) - send
+		to_r.army = int(to_r.army) + send
+		GameState.emit_signal("region_army_changed", from_r.id)
+		GameState.emit_signal("region_army_changed", to_r.id)
+		GameState.emit_signal("news_emitted",
+			"%d troops march from %s to %s." % [send, String(from_r.name), String(to_r.name)])
+	else:
+		SimTick.resolve_player_attack(GameState, from_r, to_r, send)
 	_rebuild_region_panel()
 	_refresh_hud()
 
