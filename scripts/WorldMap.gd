@@ -4,16 +4,21 @@ extends Control
 ## Each region's fill color = its owning faction's color.
 ## Army strength is drawn as a number; fortified regions show a small marker.
 ##
-## Click any region to open the RegionPanel modal.
+## Polygon coordinates are authored against a fixed DESIGN_WIDTH × DESIGN_HEIGHT
+## "world" space. At draw and hit-test time we map world coords to the actual
+## Control size — so the map auto-scales to fit whatever space the column
+## gives it (responds to splitter drag, window resize, etc).
 ##
 
 signal region_clicked(region_id: String)
 
+# Authoring space. All polygons below are coordinates in this rectangle.
+const DESIGN_WIDTH := 880.0
+const DESIGN_HEIGHT := 600.0
+
 # Hand-drawn rough geographic shapes for medieval Eurasia.
-# Designed against an 880×680 canvas. Coordinates are eyeballed against a
-# Mercator-style world map; gaps between regions read as seas / mountain
-# ranges. Adjacency for combat is determined by regions.json `neighbors`,
-# not by polygon contact.
+# Mercator-style; gaps between regions read as seas / mountain ranges.
+# Adjacency for combat is in regions.json, not polygon contact.
 var REGION_POLYGONS: Dictionary = {
 	"england": PackedVector2Array([
 		Vector2(120, 175), Vector2(155, 165), Vector2(172, 195),
@@ -91,37 +96,33 @@ var REGION_POLYGONS: Dictionary = {
 	]),
 }
 
-# Parchment / medieval-cartography palette. Cream ocean, sepia text, dark
-# brown borders, faction colors muted with parchment to feel hand-tinted.
-const COLOR_OCEAN := Color(0.78, 0.69, 0.52)          # aged parchment
-const COLOR_GRID := Color(0.65, 0.55, 0.40, 0.35)     # faint latlong lines
-const COLOR_BORDER := Color(0.22, 0.13, 0.05)         # dark sepia ink
-const COLOR_BORDER_HOVER := Color(0.10, 0.05, 0.02)   # darker ink on hover
+# Parchment / medieval-cartography palette.
+const COLOR_OCEAN := Color(0.78, 0.69, 0.52)
+const COLOR_GRID := Color(0.65, 0.55, 0.40, 0.35)
+const COLOR_BORDER := Color(0.22, 0.13, 0.05)
+const COLOR_BORDER_HOVER := Color(0.10, 0.05, 0.02)
 const COLOR_HOVER_OVERLAY := Color(0.0, 0.0, 0.0, 0.10)
-const COLOR_RING := Color(0.60, 0.15, 0.10, 0.85)     # warm vermillion
-const COLOR_NEUTRAL_FILL := Color(0.86, 0.78, 0.62)   # lighter parchment for unclaimed
-const COLOR_LABEL := Color(0.18, 0.10, 0.03)          # sepia ink
-const COLOR_ARMY_LABEL := Color(0.95, 0.88, 0.70)         # cream text
-const COLOR_ARMY_LABEL_BG := Color(0.22, 0.13, 0.05, 1.0) # dark brown chip
+const COLOR_RING := Color(0.60, 0.15, 0.10, 0.85)
+const COLOR_NEUTRAL_FILL := Color(0.86, 0.78, 0.62)
+const COLOR_LABEL := Color(0.18, 0.10, 0.03)
+const COLOR_ARMY_LABEL := Color(0.95, 0.88, 0.70)
+const COLOR_ARMY_LABEL_BG := Color(0.22, 0.13, 0.05, 1.0)
 const COLOR_ARMY_LABEL_BORDER := Color(0.45, 0.30, 0.10, 1.0)
-const COLOR_PLAYER_GLOW := Color(0.55, 0.10, 0.05)    # vermillion player halo
+const COLOR_PLAYER_GLOW := Color(0.55, 0.10, 0.05)
 const LABEL_FONT_SIZE := 15
 const ARMY_FONT_SIZE := 18
 
-var _displayed_pulse: Dictionary = {}  # region_id -> 0..1 (decays after combat/event)
-var _rings: Array = []                 # [{region_id, age, max_age, color}]
+var _displayed_pulse: Dictionary = {}
+var _rings: Array = []
 var _hovered: String = ""
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	# No custom_minimum_size — let the container constrain. Polygons are
-	# designed against an 880×680 canvas but the parchment background uses
-	# self.size, so it fits whatever the container gives us. Polygons past
-	# the visible area get clipped by HSplit/Left's clip_contents.
 	for region_id in REGION_POLYGONS.keys():
 		_displayed_pulse[region_id] = 0.0
 	GameState.region_ownership_changed.connect(_on_ownership_changed)
 	GameState.region_army_changed.connect(_on_army_changed)
+	resized.connect(queue_redraw)
 
 func _process(delta: float) -> void:
 	var dirty: bool = false
@@ -141,8 +142,43 @@ func _process(delta: float) -> void:
 	if dirty:
 		queue_redraw()
 
+
+# ─── world ⇄ canvas transform ───────────────────────────────────────────────
+
+func _map_scale() -> float:
+	if size.x <= 0.0 or size.y <= 0.0:
+		return 1.0
+	return minf(size.x / DESIGN_WIDTH, size.y / DESIGN_HEIGHT)
+
+func _map_offset() -> Vector2:
+	var s: float = _map_scale()
+	return Vector2(
+		(size.x - DESIGN_WIDTH * s) * 0.5,
+		(size.y - DESIGN_HEIGHT * s) * 0.5,
+	)
+
+func _to_canvas(p: Vector2) -> Vector2:
+	return p * _map_scale() + _map_offset()
+
+func _from_canvas(p: Vector2) -> Vector2:
+	var s: float = _map_scale()
+	if s == 0.0:
+		return Vector2.ZERO
+	return (p - _map_offset()) / s
+
+func _polygon_to_canvas(pts: PackedVector2Array) -> PackedVector2Array:
+	var s: float = _map_scale()
+	var off: Vector2 = _map_offset()
+	var out: PackedVector2Array = PackedVector2Array()
+	for p in pts:
+		out.append(p * s + off)
+	return out
+
+
+# ─── drawing ────────────────────────────────────────────────────────────────
+
 func _draw() -> void:
-	# Ocean + parchment grid.
+	# Ocean + parchment grid use raw Control size (full background).
 	draw_rect(Rect2(Vector2.ZERO, size), COLOR_OCEAN, true)
 	for gx in range(0, int(size.x) + 1, 80):
 		draw_line(Vector2(gx, 0), Vector2(gx, size.y), COLOR_GRID, 1.0)
@@ -151,26 +187,25 @@ func _draw() -> void:
 
 	# Region fills, tinted by owner faction over parchment.
 	for region_id in REGION_POLYGONS.keys():
-		var pts: PackedVector2Array = REGION_POLYGONS[region_id]
+		var pts: PackedVector2Array = _polygon_to_canvas(REGION_POLYGONS[region_id])
 		var r = GameState.regions_by_id.get(region_id)
 		var fill: Color = COLOR_NEUTRAL_FILL
 		if r != null:
 			var owner_id: String = String(r.owner)
 			if owner_id != "neutral" and GameState.FACTION_CATALOG.has(owner_id):
-				# Wash faction color over parchment cream — looks hand-tinted.
 				fill = GameState.FACTION_CATALOG[owner_id]["color"].lerp(Color(0.94, 0.87, 0.70), 0.55)
 		var pulse_v: float = float(_displayed_pulse[region_id])
 		if pulse_v > 0.0:
 			fill = fill.lerp(Color(1.0, 1.0, 1.0), pulse_v * 0.45)
 		if region_id == _hovered:
-			fill = fill.lerp(Color(0.20, 0.10, 0.02), 0.15)  # darken slightly on hover
+			fill = fill.lerp(Color(0.20, 0.10, 0.02), 0.15)
 		draw_colored_polygon(pts, fill)
 
-	# Player-owned glow halo (extra outline) — so the player can always tell which are theirs.
+	# Player-owned glow halo.
 	for region_id in REGION_POLYGONS.keys():
 		var r = GameState.regions_by_id.get(region_id)
 		if r != null and String(r.owner) == GameState.player_faction and GameState.player_faction != "":
-			draw_polyline(_closed_loop(REGION_POLYGONS[region_id]), COLOR_PLAYER_GLOW, 4.0, true)
+			draw_polyline(_closed_loop(_polygon_to_canvas(REGION_POLYGONS[region_id])), COLOR_PLAYER_GLOW, 4.0, true)
 
 	# Region borders.
 	for region_id in REGION_POLYGONS.keys():
@@ -179,31 +214,32 @@ func _draw() -> void:
 		if region_id == _hovered:
 			border = COLOR_BORDER_HOVER
 			width = 3.5
-		draw_polyline(_closed_loop(REGION_POLYGONS[region_id]), border, width, true)
+		draw_polyline(_closed_loop(_polygon_to_canvas(REGION_POLYGONS[region_id])), border, width, true)
 
-	# Combat rings (expanding rings after a battle).
+	# Combat rings (expanding rings after a battle). Scale ring radius too so
+	# they're proportional to the map.
+	var s: float = _map_scale()
 	for ring in _rings:
 		var pts: PackedVector2Array = REGION_POLYGONS[ring["region_id"]]
-		var center: Vector2 = _centroid(pts)
+		var center: Vector2 = _to_canvas(_centroid(pts))
 		var t: float = float(ring["age"]) / float(ring["max_age"])
-		var radius: float = lerpf(15.0, 90.0, t)
+		var radius: float = lerpf(15.0, 90.0, t) * s
 		var alpha: float = (1.0 - t) * 0.85
 		var col: Color = ring.get("color", COLOR_RING)
 		col.a = alpha
 		draw_arc(center, radius, 0.0, TAU, 64, col, 2.5, true)
 
-	# Labels: region name + army strength badge + fortified marker.
+	# Labels: region name + army strength badge. Font sizes stay constant
+	# (don't scale with the map) so they remain readable at any size.
 	var font: Font = ThemeDB.fallback_font
 	for region_id in REGION_POLYGONS.keys():
 		var pts: PackedVector2Array = REGION_POLYGONS[region_id]
-		var center: Vector2 = _centroid(pts)
+		var center: Vector2 = _to_canvas(_centroid(pts))
 		var r = GameState.regions_by_id.get(region_id)
-		# Name.
 		var label_text: String = String(r.name) if r != null else region_id
 		var label_size: Vector2 = font.get_string_size(label_text, HORIZONTAL_ALIGNMENT_CENTER, -1, LABEL_FONT_SIZE)
 		draw_string(font, center - Vector2(label_size.x * 0.5, 4.0), label_text,
 			HORIZONTAL_ALIGNMENT_CENTER, -1, LABEL_FONT_SIZE, COLOR_LABEL)
-		# Army badge below the name.
 		if r != null:
 			var army_text: String = str(int(r.army))
 			if bool(r.fortified):
@@ -216,6 +252,9 @@ func _draw() -> void:
 			draw_rect(badge_rect, COLOR_ARMY_LABEL_BORDER, false, 1.0)
 			draw_string(font, Vector2(badge_rect.position.x + 6.0, badge_rect.position.y + ARMY_FONT_SIZE),
 				army_text, HORIZONTAL_ALIGNMENT_LEFT, -1, ARMY_FONT_SIZE, COLOR_ARMY_LABEL)
+
+
+# ─── input ──────────────────────────────────────────────────────────────────
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -233,14 +272,19 @@ func _gui_input(event: InputEvent) -> void:
 				emit_signal("region_clicked", picked)
 
 func _region_at(p: Vector2) -> String:
+	# Inverse-transform the click into world space, then test against the
+	# original polygons.
+	var world_p: Vector2 = _from_canvas(p)
 	for region_id in REGION_POLYGONS.keys():
-		if Geometry2D.is_point_in_polygon(p, REGION_POLYGONS[region_id]):
+		if Geometry2D.is_point_in_polygon(world_p, REGION_POLYGONS[region_id]):
 			return region_id
 	return ""
 
+
+# ─── signals ────────────────────────────────────────────────────────────────
+
 func _on_ownership_changed(region_id: String, _new_owner: String) -> void:
 	_displayed_pulse[region_id] = 1.0
-	# Flash an expanding ring colored by the new owner's faction.
 	var ring_color: Color = COLOR_RING
 	var r = GameState.regions_by_id.get(region_id)
 	if r != null and GameState.FACTION_CATALOG.has(String(r.owner)):
@@ -250,6 +294,9 @@ func _on_ownership_changed(region_id: String, _new_owner: String) -> void:
 
 func _on_army_changed(_region_id: String) -> void:
 	queue_redraw()
+
+
+# ─── geometry helpers ───────────────────────────────────────────────────────
 
 func _closed_loop(pts: PackedVector2Array) -> PackedVector2Array:
 	var out: PackedVector2Array = PackedVector2Array()
