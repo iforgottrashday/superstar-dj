@@ -8,6 +8,7 @@ signal tick_advanced(tick: int)
 signal hype_changed(new_total: int)
 signal backlash_changed(new_total: float)
 signal news_emitted(headline: String)
+@warning_ignore("unused_signal")
 signal region_milestone(region_id: String, threshold: float)
 signal game_over(reason: String, won: bool)
 

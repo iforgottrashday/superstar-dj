@@ -21,3 +21,6 @@ exports/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Local tools (gh CLI portable, etc — not part of the project)
+.tools/
