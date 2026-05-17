@@ -12,31 +12,32 @@ extends Control
 ##
 
 @onready var world_map: Control = $HSplit/Left/WorldMap
-@onready var hype_label: Label = $HSplit/Right/HUD/HypeLabel
-@onready var backlash_label: Label = $HSplit/Right/HUD/BacklashLabel
-@onready var tick_label: Label = $HSplit/Right/HUD/TickLabel
-@onready var speed_label: Label = $HSplit/Right/HUD/SpeedLabel
-@onready var power_name_label: Label = $HSplit/Right/FactionPower/PowerName
-@onready var power_btn: Button = $HSplit/Right/FactionPower/PowerBtn
-@onready var power_blurb_label: Label = $HSplit/Right/FactionPower/PowerBlurb
-@onready var pause_btn: Button = $HSplit/Right/HUD/Controls/PauseBtn
-@onready var speed1_btn: Button = $HSplit/Right/HUD/Controls/Speed1Btn
-@onready var speed2_btn: Button = $HSplit/Right/HUD/Controls/Speed2Btn
-@onready var speed4_btn: Button = $HSplit/Right/HUD/Controls/Speed4Btn
-@onready var help_label: Label = $HSplit/Right/HUD/Help
-@onready var controls_row: HBoxContainer = $HSplit/Right/HUD/Controls
+
+# Top status bar — replaces the right-column HUD.
+@onready var faction_label: Label = $HudBar/Margin/HBox/FactionLabel
+@onready var gold_label: Label = $HudBar/Margin/HBox/GoldLabel
+@onready var provinces_label: Label = $HudBar/Margin/HBox/ProvincesLabel
+@onready var army_label: Label = $HudBar/Margin/HBox/ArmyLabel
+@onready var year_label: Label = $HudBar/Margin/HBox/YearLabel
+@onready var pause_btn: Button = $HudBar/Margin/HBox/PauseBtn
+@onready var speed1_btn: Button = $HudBar/Margin/HBox/Speed1Btn
+@onready var speed2_btn: Button = $HudBar/Margin/HBox/Speed2Btn
+@onready var speed4_btn: Button = $HudBar/Margin/HBox/Speed4Btn
+@onready var power_name_label: Label = $HudBar/Margin/HBox/PowerNameLabel
+@onready var power_btn: Button = $HudBar/Margin/HBox/PowerBtn
+
 @onready var tech_bar: HBoxContainer = $TechBar/Margin/HBox
 
 @onready var debut_panel: PanelContainer = $DebutPanel
 @onready var debut_title: Label = $DebutPanel/Margin/VBox/Title
 @onready var debut_subtitle: Label = $DebutPanel/Margin/VBox/Subtitle
 
-@onready var region_panel: PanelContainer = $HSplit/Right/RegionPanel
-@onready var region_title: Label = $HSplit/Right/RegionPanel/Margin/VBox/Header/Title
-@onready var region_close: Button = $HSplit/Right/RegionPanel/Margin/VBox/Header/CloseBtn
-@onready var region_stats: Label = $HSplit/Right/RegionPanel/Margin/VBox/Stats
-@onready var region_channels_box: VBoxContainer = $HSplit/Right/RegionPanel/Margin/VBox/ChannelsScroll/Channels
-@onready var region_channels_label: Label = $HSplit/Right/RegionPanel/Margin/VBox/ChannelsLabel
+@onready var region_panel: PanelContainer = $HSplit/RegionPanel
+@onready var region_title: Label = $HSplit/RegionPanel/Margin/VBox/Header/Title
+@onready var region_close: Button = $HSplit/RegionPanel/Margin/VBox/Header/CloseBtn
+@onready var region_stats: Label = $HSplit/RegionPanel/Margin/VBox/Stats
+@onready var region_channels_box: VBoxContainer = $HSplit/RegionPanel/Margin/VBox/ChannelsScroll/Channels
+@onready var region_channels_label: Label = $HSplit/RegionPanel/Margin/VBox/ChannelsLabel
 
 @onready var event_panel: PanelContainer = $EventPanel
 @onready var event_title: Label = $EventPanel/Margin/VBox/Title
@@ -349,19 +350,19 @@ func _refresh_power_button() -> void:
 		power_name_label.text = "—"
 		power_btn.text = "—"
 		power_btn.disabled = true
-		power_blurb_label.text = ""
+		power_btn.tooltip_text = ""
 		return
-	power_name_label.text = GameState.faction_power_name()
-	power_blurb_label.text = GameState.faction_power_blurb()
+	power_name_label.text = "POWER: " + GameState.faction_power_name()
+	power_btn.tooltip_text = GameState.faction_power_blurb()
 	var cd: int = GameState.faction_power_cooldown()
 	if GameState.player_faction == "song" and GameState.gunpowder_pending:
-		power_btn.text = "Primed — your next attack will be 3x"
+		power_btn.text = "Primed (3× next)"
 		power_btn.disabled = true
 	elif cd <= 0:
-		power_btn.text = "Use power"
+		power_btn.text = "Use"
 		power_btn.disabled = false
 	else:
-		power_btn.text = "Ready in %d turns" % cd
+		power_btn.text = "%d turns" % cd
 		power_btn.disabled = true
 
 func _on_faction_power_pressed() -> void:
@@ -371,39 +372,35 @@ func _on_faction_power_pressed() -> void:
 
 func _refresh_hud() -> void:
 	if GameState.player_faction == "":
-		# No faction yet — hide HUD labels so the right column doesn't show a
-		# tall empty patch above the rest.
-		hype_label.visible = false
-		backlash_label.visible = false
-		tick_label.visible = false
-		speed_label.visible = false
-		controls_row.visible = false
-		help_label.visible = false
+		# No faction yet — clear the bar.
+		faction_label.text = "—"
+		faction_label.remove_theme_color_override("font_color")
+		gold_label.text = ""
+		provinces_label.text = ""
+		army_label.text = ""
+		year_label.text = ""
+		pause_btn.disabled = true
+		speed1_btn.disabled = true
+		speed2_btn.disabled = true
+		speed4_btn.disabled = true
 		return
-	hype_label.visible = true
-	backlash_label.visible = true
-	tick_label.visible = true
-	speed_label.visible = true
-	controls_row.visible = true
-	help_label.visible = true
+	pause_btn.disabled = false
 	# Pause/resume toggle.
 	if GameState.speed == 0.0:
 		pause_btn.text = "▶ Resume"
 	else:
 		pause_btn.text = "⏸ Pause"
-	# Highlight the active speed button.
 	_mark_active_speed_button()
 	var faction_def: Dictionary = GameState.FACTION_CATALOG[GameState.player_faction]
 	var owned: int = GameState.owned_regions(GameState.player_faction).size()
 	var total: int = GameState.regions.size()
 	var army: int = GameState.total_army(GameState.player_faction)
-	hype_label.text = "%s\nGold: %d" % [String(faction_def["name"]), GameState.treasury]
-	backlash_label.text = "Provinces: %d / %d\nTotal army: %d" % [owned, total, army]
-	tick_label.text = "Year %d" % GameState.tick
-	if GameState.speed == 0.0:
-		speed_label.text = "Speed: paused"
-	else:
-		speed_label.text = "Speed: %.0fx" % GameState.speed
+	faction_label.text = String(faction_def["name"])
+	faction_label.add_theme_color_override("font_color", faction_def["color"])
+	gold_label.text = "Gold: %d" % GameState.treasury
+	provinces_label.text = "Provinces: %d / %d" % [owned, total]
+	army_label.text = "Army: %d" % army
+	year_label.text = "Year %d" % GameState.tick
 	# Tech buttons.
 	for tech_id in _tech_buttons.keys():
 		var btn: Button = _tech_buttons[tech_id]
