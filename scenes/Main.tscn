@@ -1,8 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://b8x0dropworldmain"]
+[gd_scene load_steps=5 format=3 uid="uid://b8x0dropworldmain"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/NewsTicker.gd" id="2_ticker"]
 [ext_resource type="Script" path="res://scripts/WorldMap.gd" id="3_worldmap"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.06, 0.05, 0.12, 1.0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.55, 0.46, 0.30, 1.0)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_size = 12
+shadow_color = Color(0, 0, 0, 0.5)
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -226,6 +240,7 @@ offset_right = 300.0
 offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
 [node name="Margin" type="MarginContainer" parent="DebutPanel"]
 layout_mode = 2
@@ -264,6 +279,7 @@ offset_right = 320.0
 offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
 [node name="Margin" type="MarginContainer" parent="EventPanel"]
 layout_mode = 2
@@ -311,6 +327,7 @@ offset_right = 260.0
 offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
 [node name="Margin" type="MarginContainer" parent="GameOverPanel"]
 layout_mode = 2
