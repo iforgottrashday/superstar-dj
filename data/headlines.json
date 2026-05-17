@@ -1,41 +1,38 @@
 {
   "ambient": [
-    "Pope releases statement: 'The beat is not of God.'",
-    "Federal Reserve Chair caught at your set in Berghain. Markets dip 2%.",
-    "TikTok algorithm achieves sentience, refuses to stop playing your hook.",
-    "Antarctic penguins observed BPM-syncing in unison. Researchers concerned.",
-    "K-pop trainee program adds your track to mandatory choreography.",
-    "Senate inquiry opens into your remix of the national anthem.",
-    "Saudi Arabia bans your sunglasses. Sales of sunglasses triple.",
-    "Pitchfork rates your album '0.0 / I cannot review what is no longer music.'",
-    "Tomorrowland announces 14-hour set. EU declares national holiday.",
-    "Major label exec quoted: 'We don't sign artists anymore. We just send them you.'",
-    "Spotify Wrapped reveals 78% of users listened only to you this year.",
-    "Three competing DJs file joint restraining order. Citing 'oxygen.'",
-    "AI deepfake of you accidentally elected mayor of a small town in Iowa.",
-    "Cruise ship rebrands as floating residency. Capacity: 4000. Sold out for 11 years.",
-    "Cancun beach declared 'unsafe noise levels.' Tourism up 400%.",
-    "Tween caught humming your hook in math class. Class dismissed in awe.",
-    "Vatican choir releases gregorian remix. You retweet 'lol nice.'",
-    "United Nations briefly considers dedicating Article 14 to your bassline.",
-    "Streaming royalty check arrives. Bank refuses to cash it without a meeting."
+    "Court astrologer claims unfavorable conjunction. Two horses, no harvest.",
+    "A blind monk in a coastal abbey is heard predicting your coronation.",
+    "Bandits in the high passes have begun robbing only nobles. Popular.",
+    "A pope and an antipope mutually excommunicate each other. Again.",
+    "Plague reported in three port cities. Three more port cities deny it.",
+    "Emissaries arrive bearing gifts of silk, salt, and several scorpions.",
+    "A spice ship runs aground. The cargo is auctioned at four times its weight.",
+    "Pilgrims report seeing a comet shaped like a galloping horse.",
+    "Mercenary company offers their service to whoever can prove they have coin.",
+    "The Khan of the Steppe is said to be 'considering options.' Coastal cities buy candles.",
+    "Cartographer presents an updated world map. Twelve cities are misspelled.",
+    "Royal mint reports counterfeit coins flooding the markets. The counterfeits are better.",
+    "Two princes ride into a forest. One returns. The court does not press the matter.",
+    "Heretical text discovered in an abbey library. Two abbots quietly transcribe it.",
+    "A camel caravan vanishes between waystations. Survivors carry tea, not goods.",
+    "A new translation of an Arabic mathematics treatise reaches Paris. Five priests faint.",
+    "Merchant guild seizes a customs house. They issue receipts for everything they take.",
+    "Bishops fail to agree on the date of Easter. Easter happens anyway.",
+    "Royal falconer found drunk in a tower. The falcon is also drunk."
   ],
-  "milestone_50": [
-    "{region} hits 50% fandom. Local radio is now mostly you.",
-    "{region} reports half the population owns at least one of your tour shirts.",
-    "Public schools in {region} begin teaching your discography as social studies."
-  ],
-  "milestone_90": [
-    "{region} achieves total saturation. Government issues earplug subsidies.",
-    "{region} airports now play only your tracks. Flights delayed by spontaneous dancing.",
-    "{region} census reclassifies religion. Top answer: 'fan.'"
+  "battle_reports": [
+    "A messenger arrives at court covered in mud and good news.",
+    "The chronicler grimaces. He has only one quill left and the ink is freezing.",
+    "Crows gather over a valley to the east. Local farmers stay inside.",
+    "A young captain returns missing a horse, a cloak, and one finger.",
+    "Banners are taken at a crossroads. Some are kept; some are burned."
   ],
   "backlash": [
-    "Critic publishes 8000-word essay. You skim it on the toilet.",
-    "Rival DJ subtweets you. Engagement: massive.",
-    "Documentary 'How Did We Let This Happen?' premieres at Sundance.",
-    "Generational rejection detected. Teens declare you 'cheugy.' You google the word.",
-    "Influencer apologizes for liking your old EP. Posts a 12-part Notes-app statement.",
-    "Article: 'Are we sure he's actually a DJ?' Comment section: yes."
+    "Coalition forming against you in the west. The Pope writes a strongly worded letter.",
+    "Mercenaries demand back pay or they will work for whoever defeated you.",
+    "Peasant revolt in your interior. Tax collectors arrive home in pieces.",
+    "An old enemy returns with new allies. Trumpets sound at dawn over the eastern hills.",
+    "Excommunication. Your trade routes north begin asking awkward questions.",
+    "A rival sultan publishes your private letters. Most of them are forgeries. The bad ones are real."
   ]
 }

@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Drop The World"
-config/description="A satirical Plague-Inc-style sim where you spread your DJ career across the planet."
+config/name="Khans"
+config/description="Medieval real-time conquest sim. Pick a faction, take Eurasia. Working title."
 run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"

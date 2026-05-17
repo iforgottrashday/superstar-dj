@@ -1,139 +1,152 @@
 [
   {
-    "id": "na_west",
-    "name": "Western North America",
-    "population": 80,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.15,
+    "id": "england",
+    "name": "England",
+    "population": 3,
+    "owner": "neutral",
+    "army": 25,
+    "fortified": true,
     "climate": "temperate",
-    "neighbors": ["na_east", "latam"]
+    "neighbors": ["france"]
   },
   {
-    "id": "na_east",
-    "name": "Eastern North America",
-    "population": 200,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.20,
+    "id": "france",
+    "name": "France",
+    "population": 12,
+    "owner": "neutral",
+    "army": 35,
+    "fortified": false,
     "climate": "temperate",
-    "neighbors": ["na_west", "latam", "eu_west"]
+    "neighbors": ["england", "iberia", "hre"]
   },
   {
-    "id": "latam",
-    "name": "Latin America",
-    "population": 660,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.10,
-    "climate": "tropical",
-    "neighbors": ["na_west", "na_east"]
-  },
-  {
-    "id": "eu_west",
-    "name": "Western Europe",
-    "population": 200,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.05,
+    "id": "iberia",
+    "name": "Iberia",
+    "population": 5,
+    "owner": "neutral",
+    "army": 30,
+    "fortified": false,
     "climate": "temperate",
-    "neighbors": ["na_east", "eu_east", "africa_north", "uk"]
+    "neighbors": ["france", "maghreb"]
   },
   {
-    "id": "uk",
-    "name": "UK & Ireland",
-    "population": 75,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.10,
+    "id": "maghreb",
+    "name": "Maghreb",
+    "population": 5,
+    "owner": "neutral",
+    "army": 25,
+    "fortified": false,
+    "climate": "arid",
+    "neighbors": ["iberia", "egypt"]
+  },
+  {
+    "id": "hre",
+    "name": "Holy Roman Empire",
+    "population": 30,
+    "owner": "hre",
+    "army": 60,
+    "fortified": true,
     "climate": "temperate",
-    "neighbors": ["eu_west", "na_east"]
+    "neighbors": ["france", "eastern_eu", "byzantium", "russia"]
   },
   {
-    "id": "eu_east",
-    "name": "Eastern Europe & Russia",
-    "population": 290,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.35,
+    "id": "eastern_eu",
+    "name": "Poland-Hungary",
+    "population": 8,
+    "owner": "neutral",
+    "army": 30,
+    "fortified": false,
+    "climate": "temperate",
+    "neighbors": ["hre", "russia", "byzantium"]
+  },
+  {
+    "id": "russia",
+    "name": "Kievan Rus",
+    "population": 8,
+    "owner": "neutral",
+    "army": 25,
+    "fortified": false,
     "climate": "cold",
-    "neighbors": ["eu_west", "mideast", "asia_central"]
+    "neighbors": ["hre", "eastern_eu", "central_asia", "mongolia"]
   },
   {
-    "id": "africa_north",
-    "name": "North Africa",
-    "population": 250,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.40,
+    "id": "byzantium",
+    "name": "Byzantine Empire",
+    "population": 15,
+    "owner": "byzantium",
+    "army": 55,
+    "fortified": true,
+    "climate": "temperate",
+    "neighbors": ["hre", "eastern_eu", "levant", "persia"]
+  },
+  {
+    "id": "levant",
+    "name": "Levant",
+    "population": 3,
+    "owner": "mamluk",
+    "army": 20,
+    "fortified": false,
     "climate": "arid",
-    "neighbors": ["eu_west", "mideast", "africa_sub"]
+    "neighbors": ["byzantium", "egypt", "persia"]
   },
   {
-    "id": "africa_sub",
-    "name": "Sub-Saharan Africa",
-    "population": 1100,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.45,
-    "climate": "tropical",
-    "neighbors": ["africa_north"]
-  },
-  {
-    "id": "mideast",
-    "name": "Middle East",
-    "population": 380,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.55,
+    "id": "egypt",
+    "name": "Egypt",
+    "population": 5,
+    "owner": "mamluk",
+    "army": 40,
+    "fortified": true,
     "climate": "arid",
-    "neighbors": ["eu_east", "africa_north", "asia_south"]
+    "neighbors": ["maghreb", "levant"]
   },
   {
-    "id": "asia_central",
+    "id": "persia",
+    "name": "Persia",
+    "population": 6,
+    "owner": "neutral",
+    "army": 35,
+    "fortified": false,
+    "climate": "arid",
+    "neighbors": ["byzantium", "levant", "central_asia", "india"]
+  },
+  {
+    "id": "central_asia",
     "name": "Central Asia",
-    "population": 80,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.40,
+    "population": 4,
+    "owner": "neutral",
+    "army": 25,
+    "fortified": false,
     "climate": "arid",
-    "neighbors": ["eu_east", "asia_south", "asia_east"]
+    "neighbors": ["russia", "mongolia", "persia", "india", "china"]
   },
   {
-    "id": "asia_south",
-    "name": "South Asia",
-    "population": 1900,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.30,
+    "id": "india",
+    "name": "India",
+    "population": 80,
+    "owner": "neutral",
+    "army": 60,
+    "fortified": false,
     "climate": "tropical",
-    "neighbors": ["mideast", "asia_central", "asia_east", "asia_se"]
+    "neighbors": ["persia", "central_asia", "china"]
   },
   {
-    "id": "asia_east",
-    "name": "East Asia",
-    "population": 1600,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.50,
+    "id": "china",
+    "name": "Song China",
+    "population": 100,
+    "owner": "china",
+    "army": 90,
+    "fortified": true,
     "climate": "temperate",
-    "neighbors": ["asia_central", "asia_south", "asia_se", "nkorea"]
+    "neighbors": ["mongolia", "central_asia", "india"]
   },
   {
-    "id": "asia_se",
-    "name": "Southeast Asia & Oceania",
-    "population": 720,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.20,
-    "climate": "tropical",
-    "neighbors": ["asia_south", "asia_east"]
-  },
-  {
-    "id": "nkorea",
-    "name": "North Korea",
-    "population": 26,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.95,
+    "id": "mongolia",
+    "name": "Mongolia",
+    "population": 1,
+    "owner": "mongol",
+    "army": 30,
+    "fortified": false,
     "climate": "cold",
-    "closed": true,
-    "neighbors": ["asia_east"]
-  },
-  {
-    "id": "antarctica",
-    "name": "Antarctica (Research Stations)",
-    "population": 0.005,
-    "fanbase_pct": 0.0,
-    "culture_resistance": 0.10,
-    "climate": "cold",
-    "closed": true,
-    "neighbors": []
+    "neighbors": ["russia", "central_asia", "china"]
   }
 ]
