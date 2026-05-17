@@ -135,11 +135,35 @@ layout_mode = 2
 text = ""
 theme_override_font_sizes/font_size = 14
 
+[node name="Controls" type="HBoxContainer" parent="HSplit/Right/HUD"]
+layout_mode = 2
+
+[node name="PauseBtn" type="Button" parent="HSplit/Right/HUD/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "⏸ Pause"
+theme_override_font_sizes/font_size = 14
+
+[node name="Speed1Btn" type="Button" parent="HSplit/Right/HUD/Controls"]
+layout_mode = 2
+text = "1×"
+theme_override_font_sizes/font_size = 14
+
+[node name="Speed2Btn" type="Button" parent="HSplit/Right/HUD/Controls"]
+layout_mode = 2
+text = "2×"
+theme_override_font_sizes/font_size = 14
+
+[node name="Speed4Btn" type="Button" parent="HSplit/Right/HUD/Controls"]
+layout_mode = 2
+text = "4×"
+theme_override_font_sizes/font_size = 14
+
 [node name="Help" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
-text = "[Space] pause   [1/2/3] speed"
+text = "(or Space / 1 / 2 / 3 keys)"
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 
 [node name="Sep" type="HSeparator" parent="HSplit/Right"]
 layout_mode = 2

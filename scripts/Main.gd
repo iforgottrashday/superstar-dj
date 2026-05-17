@@ -19,6 +19,12 @@ extends Control
 @onready var power_name_label: Label = $HSplit/Right/FactionPower/PowerName
 @onready var power_btn: Button = $HSplit/Right/FactionPower/PowerBtn
 @onready var power_blurb_label: Label = $HSplit/Right/FactionPower/PowerBlurb
+@onready var pause_btn: Button = $HSplit/Right/HUD/Controls/PauseBtn
+@onready var speed1_btn: Button = $HSplit/Right/HUD/Controls/Speed1Btn
+@onready var speed2_btn: Button = $HSplit/Right/HUD/Controls/Speed2Btn
+@onready var speed4_btn: Button = $HSplit/Right/HUD/Controls/Speed4Btn
+@onready var help_label: Label = $HSplit/Right/HUD/Help
+@onready var controls_row: HBoxContainer = $HSplit/Right/HUD/Controls
 @onready var tech_bar: HBoxContainer = $TechBar/Margin/HBox
 
 @onready var debut_panel: PanelContainer = $DebutPanel
@@ -43,6 +49,7 @@ extends Control
 var _tech_buttons: Dictionary = {}    # tech_id -> Button
 var _picking_faction: bool = true
 var _open_region_id: String = ""
+var _last_active_speed: float = 1.0   # last non-zero speed; used when un-pausing
 
 func _ready() -> void:
 	GameState.tick_advanced.connect(_on_tick)
@@ -54,6 +61,10 @@ func _ready() -> void:
 	world_map.region_clicked.connect(_on_region_clicked)
 	region_close.pressed.connect(_close_region_panel)
 	power_btn.pressed.connect(_on_faction_power_pressed)
+	pause_btn.pressed.connect(_on_pause_pressed)
+	speed1_btn.pressed.connect(_set_speed.bind(1.0))
+	speed2_btn.pressed.connect(_set_speed.bind(2.0))
+	speed4_btn.pressed.connect(_set_speed.bind(4.0))
 	GameState.speed = 0.0
 	_show_faction_picker()
 	_build_tech_shop()
@@ -366,11 +377,22 @@ func _refresh_hud() -> void:
 		backlash_label.visible = false
 		tick_label.visible = false
 		speed_label.visible = false
+		controls_row.visible = false
+		help_label.visible = false
 		return
 	hype_label.visible = true
 	backlash_label.visible = true
 	tick_label.visible = true
 	speed_label.visible = true
+	controls_row.visible = true
+	help_label.visible = true
+	# Pause/resume toggle.
+	if GameState.speed == 0.0:
+		pause_btn.text = "▶ Resume"
+	else:
+		pause_btn.text = "⏸ Pause"
+	# Highlight the active speed button.
+	_mark_active_speed_button()
 	var faction_def: Dictionary = GameState.FACTION_CATALOG[GameState.player_faction]
 	var owned: int = GameState.owned_regions(GameState.player_faction).size()
 	var total: int = GameState.regions.size()
@@ -390,20 +412,46 @@ func _refresh_hud() -> void:
 		var cost: int = int(GameState.TECH_CATALOG[tech_id]["cost"])
 		btn.disabled = GameState.treasury < cost
 
+func _on_pause_pressed() -> void:
+	if GameState.speed > 0.0:
+		_last_active_speed = GameState.speed
+		GameState.speed = 0.0
+	else:
+		GameState.speed = _last_active_speed
+	_refresh_hud()
+
+
+func _set_speed(s: float) -> void:
+	GameState.speed = s
+	_last_active_speed = s
+	_refresh_hud()
+
+
+func _mark_active_speed_button() -> void:
+	# Visually mark which speed button is currently active.
+	var current: float = GameState.speed
+	speed1_btn.disabled = (current == 1.0)
+	speed2_btn.disabled = (current == 2.0)
+	speed4_btn.disabled = (current == 4.0)
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if _picking_faction or GameState.pending_event != null:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_SPACE:
-				GameState.speed = 0.0 if GameState.speed > 0.0 else 1.0
+				_on_pause_pressed()
+				return
 			KEY_1:
-				GameState.speed = 1.0
+				_set_speed(1.0)
+				return
 			KEY_2:
-				GameState.speed = 2.0
+				_set_speed(2.0)
+				return
 			KEY_3:
-				GameState.speed = 4.0
-		_refresh_hud()
+				_set_speed(4.0)
+				return
 
 func _on_game_over(reason: String, won: bool) -> void:
 	GameState.speed = 0.0
