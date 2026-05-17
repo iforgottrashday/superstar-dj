@@ -48,10 +48,12 @@ static func step(gs: Node) -> void:
 		var neighbor_pressure: float = _neighbor_pressure(r, gs)
 		var c_bonus: float = float(climate_bonus.get(r.climate, 0.0))
 		var current: float = float(r.fanbase_pct)
+		var channel_bonus: float = gs.region_channel_bonus(r.id)
 		var growth: float = BASE_GROWTH \
 			* (1.0 - float(r.culture_resistance)) \
 			* (1.0 + spread_bonus) \
 			* (1.0 + c_bonus) \
+			* (1.0 + channel_bonus) \
 			* (1.0 + neighbor_pressure * NEIGHBOR_WEIGHT)
 		# Seeded regions (already > 0) grow faster than pristine ones.
 		if current > 0.0:
@@ -73,6 +75,9 @@ static func step(gs: Node) -> void:
 
 	if new_fans_global > 0.0:
 		gs.add_hype(int(new_fans_global * HYPE_PER_FAN_MILLION))
+
+	# Tick down timed channels (Live Tour, TikTok Push) — permanent ones stay.
+	gs.decay_channels()
 
 	gs.check_world_domination()
 

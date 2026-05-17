@@ -118,6 +118,7 @@ func _ready() -> void:
 		_displayed_pct[region_id] = 0.0
 		_pulse[region_id] = 0.0
 	GameState.region_milestone.connect(_on_milestone)
+	GameState.channels_changed.connect(_on_channels_changed)
 
 func _process(delta: float) -> void:
 	var dirty: bool = false
@@ -201,6 +202,18 @@ func _draw() -> void:
 		var pct_size: Vector2 = font.get_string_size(pct_text, HORIZONTAL_ALIGNMENT_CENTER, -1, PCT_FONT_SIZE)
 		draw_string(font, center - Vector2(pct_size.x * 0.5, -14.0), pct_text,
 			HORIZONTAL_ALIGNMENT_CENTER, -1, PCT_FONT_SIZE, Color(1, 1, 1, 0.7))
+		# Active channel dots — one per active channel, color from CHANNEL_CATALOG.
+		var active: Array = GameState.region_channels.get(region_id, [])
+		if active.size() > 0:
+			var dot_radius: float = 3.0
+			var spacing: float = 9.0
+			var total_w: float = (active.size() - 1) * spacing
+			var dot_y: float = center.y + 26.0
+			var dot_x_start: float = center.x - total_w * 0.5
+			for i in active.size():
+				var ch_id: String = String(active[i]["channel_id"])
+				var ch_def: Dictionary = GameState.CHANNEL_CATALOG[ch_id]
+				draw_circle(Vector2(dot_x_start + i * spacing, dot_y), dot_radius, ch_def["color"])
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -226,6 +239,9 @@ func _region_at(p: Vector2) -> String:
 func _on_milestone(region_id: String, _threshold: float) -> void:
 	_pulse[region_id] = 1.0
 	_rings.append({"region_id": region_id, "age": 0.0, "max_age": 1.8})
+	queue_redraw()
+
+func _on_channels_changed(_region_id: String) -> void:
 	queue_redraw()
 
 func _closed_loop(pts: PackedVector2Array) -> PackedVector2Array:
