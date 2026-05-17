@@ -41,7 +41,7 @@
   },
   {
     "id": "hre",
-    "name": "Holy Roman Empire",
+    "name": "HRE",
     "population": 30,
     "owner": "hre",
     "army": 60,
@@ -51,7 +51,7 @@
   },
   {
     "id": "eastern_eu",
-    "name": "Poland-Hungary",
+    "name": "Poland",
     "population": 8,
     "owner": "neutral",
     "army": 30,
@@ -61,7 +61,7 @@
   },
   {
     "id": "russia",
-    "name": "Kievan Rus",
+    "name": "Russia",
     "population": 8,
     "owner": "neutral",
     "army": 25,
@@ -71,7 +71,7 @@
   },
   {
     "id": "north_america",
-    "name": "Mississippian Confederation",
+    "name": "N. America",
     "population": 4,
     "owner": "neutral",
     "army": 30,
@@ -81,7 +81,7 @@
   },
   {
     "id": "mesoamerica",
-    "name": "Aztec Triple Alliance",
+    "name": "Aztec",
     "population": 6,
     "owner": "neutral",
     "army": 45,
@@ -91,7 +91,7 @@
   },
   {
     "id": "south_america",
-    "name": "Inca Civilization",
+    "name": "Inca",
     "population": 7,
     "owner": "neutral",
     "army": 50,
@@ -101,7 +101,7 @@
   },
   {
     "id": "byzantium",
-    "name": "Byzantine Empire",
+    "name": "Byzantium",
     "population": 15,
     "owner": "byzantium",
     "army": 55,
@@ -141,7 +141,7 @@
   },
   {
     "id": "central_asia",
-    "name": "Central Asia",
+    "name": "C. Asia",
     "population": 4,
     "owner": "neutral",
     "army": 25,
@@ -161,7 +161,7 @@
   },
   {
     "id": "china",
-    "name": "Song China",
+    "name": "China",
     "population": 100,
     "owner": "china",
     "army": 90,

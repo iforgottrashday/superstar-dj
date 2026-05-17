@@ -123,8 +123,8 @@ const COLOR_ARMY_LABEL := Color(0.95, 0.88, 0.70)
 const COLOR_ARMY_LABEL_BG := Color(0.22, 0.13, 0.05, 1.0)
 const COLOR_ARMY_LABEL_BORDER := Color(0.45, 0.30, 0.10, 1.0)
 const COLOR_PLAYER_GLOW := Color(0.55, 0.10, 0.05)
-const LABEL_FONT_SIZE := 15
-const ARMY_FONT_SIZE := 18
+const LABEL_FONT_SIZE := 11
+const ARMY_FONT_SIZE := 14
 
 var _displayed_pulse: Dictionary = {}
 var _rings: Array = []
@@ -268,14 +268,14 @@ func _draw() -> void:
 		if r != null:
 			var army_text: String = str(int(r.army))
 			if bool(r.fortified):
-				army_text = "🏰 " + army_text
+				army_text = "🏰" + army_text
 			var atxt_size: Vector2 = font.get_string_size(army_text, HORIZONTAL_ALIGNMENT_CENTER, -1, ARMY_FONT_SIZE)
-			var badge_w: float = atxt_size.x + 12.0
-			var badge_h: float = ARMY_FONT_SIZE + 6.0
-			var badge_rect: Rect2 = Rect2(center.x - badge_w * 0.5, center.y + 10.0, badge_w, badge_h)
+			var badge_w: float = atxt_size.x + 8.0
+			var badge_h: float = ARMY_FONT_SIZE + 4.0
+			var badge_rect: Rect2 = Rect2(center.x - badge_w * 0.5, center.y + 4.0, badge_w, badge_h)
 			draw_rect(badge_rect, COLOR_ARMY_LABEL_BG, true)
 			draw_rect(badge_rect, COLOR_ARMY_LABEL_BORDER, false, 1.0)
-			draw_string(font, Vector2(badge_rect.position.x + 6.0, badge_rect.position.y + ARMY_FONT_SIZE),
+			draw_string(font, Vector2(badge_rect.position.x + 4.0, badge_rect.position.y + ARMY_FONT_SIZE),
 				army_text, HORIZONTAL_ALIGNMENT_LEFT, -1, ARMY_FONT_SIZE, COLOR_ARMY_LABEL)
 
 
