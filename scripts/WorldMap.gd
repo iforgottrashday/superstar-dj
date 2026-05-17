@@ -17,92 +17,92 @@ signal region_clicked(region_id: String)
 const DESIGN_WIDTH := 640.0
 const DESIGN_HEIGHT := 480.0
 
-# Polygon coordinates aligned (eyeballed) against the 640×480 world_map.png.
-# Expect to iterate — pixel-perfect alignment requires actually measuring on
-# the image, this pass is from looking at the image and estimating.
+# Polygon coordinates measured against the 640×480 world_map.png by actually
+# looking at where the continents are drawn (this pass) rather than guessing.
 var REGION_POLYGONS: Dictionary = {
-	# ── Americas ──
+	# ── Americas (the Western Hemisphere occupies the left ~270px of the image) ──
 	"north_america": PackedVector2Array([
-		Vector2(35, 95), Vector2(120, 75), Vector2(180, 80),
-		Vector2(215, 115), Vector2(215, 175), Vector2(180, 225),
-		Vector2(120, 245), Vector2(60, 230), Vector2(28, 175), Vector2(20, 130),
+		Vector2(25, 85), Vector2(105, 65), Vector2(190, 75),
+		Vector2(235, 100), Vector2(245, 155), Vector2(220, 210),
+		Vector2(175, 245), Vector2(115, 255), Vector2(55, 235),
+		Vector2(20, 185), Vector2(10, 130),
 	]),
 	"mesoamerica": PackedVector2Array([
-		Vector2(125, 240), Vector2(175, 232), Vector2(195, 250),
-		Vector2(185, 275), Vector2(150, 280), Vector2(125, 262),
+		Vector2(145, 245), Vector2(205, 240), Vector2(225, 262),
+		Vector2(215, 285), Vector2(170, 290), Vector2(140, 270),
 	]),
 	"south_america": PackedVector2Array([
-		Vector2(155, 285), Vector2(210, 280), Vector2(230, 315),
-		Vector2(225, 365), Vector2(195, 415), Vector2(170, 440),
-		Vector2(148, 415), Vector2(135, 355), Vector2(140, 320),
+		Vector2(185, 285), Vector2(235, 285), Vector2(275, 315),
+		Vector2(285, 365), Vector2(255, 415), Vector2(220, 440),
+		Vector2(180, 425), Vector2(160, 365), Vector2(168, 315),
 	]),
 	# ── Europe ──
 	"england": PackedVector2Array([
-		Vector2(288, 125), Vector2(310, 122), Vector2(315, 145),
-		Vector2(308, 160), Vector2(288, 162), Vector2(282, 142),
+		Vector2(270, 122), Vector2(290, 118), Vector2(296, 145),
+		Vector2(288, 162), Vector2(268, 160), Vector2(262, 140),
 	]),
 	"france": PackedVector2Array([
-		Vector2(308, 165), Vector2(342, 162), Vector2(350, 188),
-		Vector2(340, 210), Vector2(312, 210), Vector2(305, 185),
+		Vector2(290, 165), Vector2(322, 162), Vector2(328, 188),
+		Vector2(318, 210), Vector2(292, 210), Vector2(286, 185),
 	]),
 	"iberia": PackedVector2Array([
-		Vector2(280, 195), Vector2(310, 200), Vector2(315, 225),
-		Vector2(295, 240), Vector2(275, 232),
+		Vector2(262, 192), Vector2(290, 198), Vector2(295, 222),
+		Vector2(280, 238), Vector2(258, 230),
 	]),
 	"hre": PackedVector2Array([
-		Vector2(346, 155), Vector2(382, 152), Vector2(388, 180),
-		Vector2(375, 205), Vector2(348, 205), Vector2(342, 178),
+		Vector2(325, 152), Vector2(360, 148), Vector2(365, 178),
+		Vector2(355, 198), Vector2(326, 198), Vector2(320, 178),
 	]),
 	"eastern_eu": PackedVector2Array([
-		Vector2(388, 152), Vector2(425, 152), Vector2(432, 180),
-		Vector2(420, 205), Vector2(390, 205), Vector2(385, 178),
+		Vector2(365, 148), Vector2(405, 145), Vector2(412, 178),
+		Vector2(400, 200), Vector2(365, 200), Vector2(362, 175),
 	]),
 	"russia": PackedVector2Array([
-		Vector2(355, 75), Vector2(450, 60), Vector2(540, 65),
-		Vector2(605, 75), Vector2(620, 115), Vector2(595, 145),
-		Vector2(525, 152), Vector2(440, 150), Vector2(385, 148),
-		Vector2(355, 130), Vector2(348, 100),
+		Vector2(348, 78), Vector2(440, 62), Vector2(530, 68),
+		Vector2(595, 78), Vector2(615, 112), Vector2(590, 142),
+		Vector2(515, 148), Vector2(440, 145), Vector2(385, 142),
+		Vector2(348, 120),
 	]),
 	# ── North Africa & Middle East ──
 	"maghreb": PackedVector2Array([
-		Vector2(280, 240), Vector2(370, 232), Vector2(405, 240),
-		Vector2(400, 268), Vector2(310, 275), Vector2(278, 260),
+		Vector2(260, 240), Vector2(360, 230), Vector2(400, 240),
+		Vector2(395, 268), Vector2(305, 278), Vector2(258, 262),
 	]),
 	"egypt": PackedVector2Array([
-		Vector2(412, 255), Vector2(458, 250), Vector2(472, 275),
-		Vector2(460, 305), Vector2(420, 302), Vector2(408, 280),
+		Vector2(395, 252), Vector2(445, 248), Vector2(458, 275),
+		Vector2(445, 302), Vector2(405, 300), Vector2(390, 278),
 	]),
 	"byzantium": PackedVector2Array([
-		Vector2(385, 205), Vector2(430, 200), Vector2(450, 220),
-		Vector2(435, 240), Vector2(395, 240), Vector2(382, 222),
+		Vector2(368, 198), Vector2(415, 195), Vector2(425, 218),
+		Vector2(415, 235), Vector2(380, 235), Vector2(365, 215),
 	]),
 	"levant": PackedVector2Array([
-		Vector2(438, 215), Vector2(465, 215), Vector2(475, 240),
-		Vector2(465, 268), Vector2(450, 268), Vector2(438, 245),
+		Vector2(420, 215), Vector2(445, 212), Vector2(452, 240),
+		Vector2(442, 268), Vector2(428, 268), Vector2(420, 245),
 	]),
 	# ── Asia ──
 	"persia": PackedVector2Array([
-		Vector2(478, 215), Vector2(520, 212), Vector2(532, 235),
-		Vector2(518, 262), Vector2(485, 262), Vector2(472, 238),
+		Vector2(455, 205), Vector2(515, 200), Vector2(528, 228),
+		Vector2(518, 258), Vector2(478, 262), Vector2(455, 232),
 	]),
 	"central_asia": PackedVector2Array([
-		Vector2(440, 152), Vector2(540, 150), Vector2(555, 180),
-		Vector2(545, 205), Vector2(470, 208), Vector2(440, 180),
+		Vector2(420, 145), Vector2(530, 142), Vector2(555, 172),
+		Vector2(548, 198), Vector2(465, 200), Vector2(420, 175),
 	]),
 	"india": PackedVector2Array([
-		Vector2(515, 245), Vector2(560, 245), Vector2(580, 275),
-		Vector2(568, 310), Vector2(540, 335), Vector2(518, 320),
-		Vector2(508, 278),
+		Vector2(515, 240), Vector2(562, 235), Vector2(585, 268),
+		Vector2(575, 310), Vector2(548, 335), Vector2(522, 322),
+		Vector2(510, 278),
 	]),
 	"china": PackedVector2Array([
-		Vector2(550, 180), Vector2(615, 178), Vector2(625, 215),
-		Vector2(620, 260), Vector2(598, 282), Vector2(565, 282),
-		Vector2(548, 245), Vector2(545, 210),
+		Vector2(548, 175), Vector2(612, 172), Vector2(628, 205),
+		Vector2(628, 255), Vector2(608, 282), Vector2(572, 285),
+		Vector2(548, 248), Vector2(545, 210),
 	]),
 	"mongolia": PackedVector2Array([
-		Vector2(510, 125), Vector2(575, 120), Vector2(615, 122),
-		Vector2(620, 150), Vector2(600, 175), Vector2(550, 175),
-		Vector2(515, 170),
+		Vector2(508, 118), Vector2(570, 115), Vector2(615, 118),
+		Vector2(625, 145), Vector2(605, 170), Vector2(550, 170),
+		Vector2(512, 165),
 	]),
 }
 
