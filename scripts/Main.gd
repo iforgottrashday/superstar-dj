@@ -205,10 +205,10 @@ func _build_attack_row(from_r, to_r) -> Control:
 	var is_reinforce: bool = String(to_r.owner) == GameState.player_faction
 	var row := PanelContainer.new()
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 8)
-	margin.add_theme_constant_override("margin_right", 8)
-	margin.add_theme_constant_override("margin_top", 6)
-	margin.add_theme_constant_override("margin_bottom", 6)
+	margin.add_theme_constant_override("margin_left", 6)
+	margin.add_theme_constant_override("margin_right", 6)
+	margin.add_theme_constant_override("margin_top", 4)
+	margin.add_theme_constant_override("margin_bottom", 4)
 	row.add_child(margin)
 	var vbox := VBoxContainer.new()
 	margin.add_child(vbox)
@@ -248,7 +248,7 @@ func _build_attack_row(from_r, to_r) -> Control:
 	)
 	var btn := Button.new()
 	if bool(from_r.acted_this_tick):
-		btn.text = ("Reinforce" if is_reinforce else "Attack") + "  (acted this turn — wait for next tick)"
+		btn.text = ("Reinforce" if is_reinforce else "Attack") + " — used this turn"
 		btn.disabled = true
 	else:
 		btn.text = "Reinforce" if is_reinforce else "Attack"
