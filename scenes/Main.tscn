@@ -92,6 +92,33 @@ theme_override_font_sizes/font_size = 13
 [node name="Sep" type="HSeparator" parent="HSplit/Right"]
 layout_mode = 2
 
+[node name="FactionPower" type="VBoxContainer" parent="HSplit/Right"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="HSplit/Right/FactionPower"]
+layout_mode = 2
+text = "FACTION POWER"
+theme_override_font_sizes/font_size = 13
+
+[node name="PowerName" type="Label" parent="HSplit/Right/FactionPower"]
+layout_mode = 2
+text = "—"
+theme_override_font_sizes/font_size = 16
+
+[node name="PowerBtn" type="Button" parent="HSplit/Right/FactionPower"]
+layout_mode = 2
+text = "—"
+theme_override_font_sizes/font_size = 14
+
+[node name="PowerBlurb" type="Label" parent="HSplit/Right/FactionPower"]
+layout_mode = 2
+text = ""
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 12
+
+[node name="Sep2" type="HSeparator" parent="HSplit/Right"]
+layout_mode = 2
+
 [node name="Traits" type="VBoxContainer" parent="HSplit/Right"]
 layout_mode = 2
 
@@ -193,6 +220,53 @@ size_flags_vertical = 3
 [node name="Channels" type="VBoxContainer" parent="RegionPanel/Margin/VBox/ChannelsScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="EventPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -200.0
+offset_right = 320.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="EventPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="EventPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="EventPanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.92, 0.7, 1)
+
+[node name="Text" type="Label" parent="EventPanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 15
+
+[node name="Sep" type="HSeparator" parent="EventPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="Choices" type="VBoxContainer" parent="EventPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 6
 
 [node name="GameOverPanel" type="PanelContainer" parent="."]
 visible = false

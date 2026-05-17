@@ -20,9 +20,13 @@ const TREASURY_PER_VICTORY := 25
 
 
 static func step(gs: Node) -> void:
+	gs.decay_modifiers()
 	_recruit(gs)
 	_ai_actions(gs)
 	_passive_income(gs)
+	_faction_curse_check(gs)
+	gs.check_escalations()
+	gs.try_trigger_event()
 	gs.check_victory()
 
 
@@ -124,6 +128,11 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 	if bool(to_r.fortified):
 		if attacker_faction == gs.player_faction:
 			atk_strength *= 1.0 + gs.player_siege_bonus()
+	# Song Gunpowder Stratagem — one-shot 3x multiplier on the player's next attack.
+	if attacker_faction == gs.player_faction and gs.gunpowder_pending:
+		atk_strength *= 3.0
+		gs.gunpowder_pending = false
+		gs.emit_signal("news_emitted", "GUNPOWDER DRAGONS roar from %s." % String(from_r.name))
 	atk_strength *= randf_range(1.0 - COMBAT_NOISE, 1.0 + COMBAT_NOISE)
 
 	# Defender strength.
@@ -143,6 +152,20 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 		"def_strength": def_strength,
 	}
 
+	# Byzantium Greek Fire: a single attack on the player is repelled regardless.
+	var greek_fire_save: bool = (
+		gs.greek_fire_pending
+		and defender_faction == gs.player_faction
+		and atk_strength > def_strength
+	)
+	if greek_fire_save:
+		gs.greek_fire_pending = false
+		to_r.army = max(1, int(float(to_r.army) * 0.4))
+		gs.emit_signal("news_emitted",
+			"GREEK FIRE! %s's assault on %s burns in the harbor." % [atk_name, String(to_r.name)])
+		gs.emit_signal("region_army_changed", to_r.id)
+		return result
+
 	if atk_strength > def_strength:
 		# Attacker wins. Survivors occupy.
 		var survivors: int = max(1, int((atk_strength - def_strength) * 0.55))
@@ -161,6 +184,11 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 		to_r.army = defender_survivors
 		gs.emit_signal("news_emitted",
 			"%s breaks the assault on %s. %s retreats with heavy losses." % [def_name, String(to_r.name), atk_name])
+		# Mamluk Slave Soldier Reinforcement — passive: surviving defenders get reinforced.
+		if defender_faction == "mamluk" and defender_faction == gs.player_faction:
+			to_r.army = int(to_r.army) + 25
+			gs.emit_signal("news_emitted",
+				"Slave-soldier markets reopen overnight. %s gains 25 troops." % String(to_r.name))
 
 	gs.emit_signal("region_army_changed", to_r.id)
 	return result
@@ -170,3 +198,47 @@ static func _passive_income(gs: Node) -> void:
 	var owned: int = gs.owned_regions(gs.player_faction).size()
 	if owned > 0:
 		gs.add_treasury(owned * TREASURY_PER_REGION_PER_TICK)
+
+
+# Each faction has a passive curse that periodically rolls a check against them.
+static func _faction_curse_check(gs: Node) -> void:
+	if gs.tick <= 0:
+		return
+	var f: String = String(gs.player_faction)
+	if f == "mongol" and gs.tick % 15 == 0 and randf() < 0.25:
+		var owned: Array = gs.owned_regions(f)
+		if owned.size() > 1:
+			var r = owned[randi() % owned.size()]
+			gs.set_region_owner(r.id, "neutral")
+			gs.emit_signal("news_emitted",
+				"%s tires of steppe rule and raises its own banners." % String(r.name))
+	elif f == "hre" and gs.tick % 30 == 0 and randf() < 0.30:
+		gs.apply_modifier("production", -1.0, 5)
+		gs.emit_signal("news_emitted",
+			"The princes squabble at Augsburg. Tax collection stalls for five years.")
+	elif f == "byzantium" and gs.tick % 25 == 0 and randf() < 0.25:
+		var r2 = _random_owned(gs)
+		if r2 != null:
+			r2.army = max(1, int(float(r2.army) * 0.85))
+			gs.emit_signal("region_army_changed", r2.id)
+			gs.emit_signal("news_emitted",
+				"Iconoclast riots in %s. The garrison thins." % String(r2.name))
+	elif f == "mamluk" and gs.tick % 40 == 0 and randf() < 0.30:
+		gs.treasury = maxi(0, gs.treasury - 50)
+		gs.apply_modifier("production", -0.5, 5)
+		gs.emit_signal("news_emitted",
+			"A coup in Cairo. The new sultan empties the treasury — and the granaries.")
+	elif f == "song" and gs.tick % 20 == 0 and randf() < 0.25:
+		var r3 = _random_owned(gs)
+		if r3 != null:
+			r3.army = max(1, int(float(r3.army) * 0.90))
+			gs.emit_signal("region_army_changed", r3.id)
+			gs.emit_signal("news_emitted",
+				"Peasant revolt in %s. Tax collectors flee for the capital." % String(r3.name))
+
+
+static func _random_owned(gs: Node):
+	var owned: Array = gs.owned_regions(gs.player_faction)
+	if owned.is_empty():
+		return null
+	return owned[randi() % owned.size()]

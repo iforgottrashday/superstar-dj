@@ -16,6 +16,9 @@ extends Control
 @onready var backlash_label: Label = $HSplit/Right/HUD/BacklashLabel
 @onready var tick_label: Label = $HSplit/Right/HUD/TickLabel
 @onready var speed_label: Label = $HSplit/Right/HUD/SpeedLabel
+@onready var power_name_label: Label = $HSplit/Right/FactionPower/PowerName
+@onready var power_btn: Button = $HSplit/Right/FactionPower/PowerBtn
+@onready var power_blurb_label: Label = $HSplit/Right/FactionPower/PowerBlurb
 @onready var traits_box: VBoxContainer = $HSplit/Right/Traits
 
 @onready var debut_panel: PanelContainer = $DebutPanel
@@ -29,6 +32,11 @@ extends Control
 @onready var region_channels_box: VBoxContainer = $RegionPanel/Margin/VBox/ChannelsScroll/Channels
 @onready var region_channels_label: Label = $RegionPanel/Margin/VBox/ChannelsLabel
 
+@onready var event_panel: PanelContainer = $EventPanel
+@onready var event_title: Label = $EventPanel/Margin/VBox/Title
+@onready var event_text: Label = $EventPanel/Margin/VBox/Text
+@onready var event_choices_box: VBoxContainer = $EventPanel/Margin/VBox/Choices
+
 @onready var game_over_panel: PanelContainer = $GameOverPanel
 @onready var game_over_label: Label = $GameOverPanel/Margin/VBox/Label
 
@@ -41,14 +49,19 @@ func _ready() -> void:
 	GameState.game_over.connect(_on_game_over)
 	GameState.region_ownership_changed.connect(_on_region_ownership_changed)
 	GameState.region_army_changed.connect(_on_region_army_changed)
+	GameState.pending_event_changed.connect(_on_pending_event_changed)
+	GameState.faction_power_state_changed.connect(_refresh_power_button)
 	world_map.region_clicked.connect(_on_region_clicked)
 	region_close.pressed.connect(_close_region_panel)
+	power_btn.pressed.connect(_on_faction_power_pressed)
 	GameState.speed = 0.0
 	_show_faction_picker()
 	_build_tech_shop()
 	_refresh_hud()
 	region_panel.visible = false
+	event_panel.visible = false
 	game_over_panel.visible = false
+	_refresh_power_button()
 
 func _show_faction_picker() -> void:
 	debut_title.text = "CHOOSE YOUR FACTION"
@@ -85,6 +98,7 @@ func _on_faction_picked(faction_id: String) -> void:
 		"TIP: Click any region to inspect or order an attack. Adjacent regions only.")
 	world_map.queue_redraw()
 	_refresh_hud()
+	_refresh_power_button()
 
 func _on_region_clicked(region_id: String) -> void:
 	if _picking_faction:
@@ -246,6 +260,65 @@ func _on_buy_tech(tech_id: String) -> void:
 
 func _on_tick(_t: int) -> void:
 	_refresh_hud()
+	_refresh_power_button()
+
+
+# ─── Event modal ───
+
+func _on_pending_event_changed() -> void:
+	if GameState.pending_event == null:
+		event_panel.visible = false
+		return
+	var ev: Dictionary = GameState.pending_event
+	event_title.text = String(ev["title"])
+	event_text.text = String(ev["text"])
+	for child in event_choices_box.get_children():
+		child.queue_free()
+	var choices: Array = ev["choices"]
+	for i in choices.size():
+		var c: Dictionary = choices[i]
+		var btn := Button.new()
+		btn.text = String(c["label"])
+		btn.add_theme_font_size_override("font_size", 14)
+		var requires_gold: int = int(c.get("requires_gold", 0))
+		if requires_gold > 0 and GameState.treasury < requires_gold:
+			btn.disabled = true
+			btn.text += "   (need %d gold)" % requires_gold
+		btn.pressed.connect(_on_event_choice.bind(i))
+		event_choices_box.add_child(btn)
+	event_panel.visible = true
+
+func _on_event_choice(i: int) -> void:
+	GameState.resolve_event_choice(i)
+	_refresh_hud()
+
+
+# ─── Faction power button ───
+
+func _refresh_power_button() -> void:
+	if GameState.player_faction == "" or GameState.player_faction == "neutral":
+		power_name_label.text = "—"
+		power_btn.text = "—"
+		power_btn.disabled = true
+		power_blurb_label.text = ""
+		return
+	power_name_label.text = GameState.faction_power_name()
+	power_blurb_label.text = GameState.faction_power_blurb()
+	var cd: int = GameState.faction_power_cooldown()
+	if GameState.player_faction == "song" and GameState.gunpowder_used:
+		power_btn.text = "Already used"
+		power_btn.disabled = true
+	elif cd <= 0:
+		power_btn.text = "Use power"
+		power_btn.disabled = false
+	else:
+		power_btn.text = "Ready in %d turns" % cd
+		power_btn.disabled = true
+
+func _on_faction_power_pressed() -> void:
+	GameState.use_faction_power()
+	_refresh_power_button()
+	_refresh_hud()
 
 func _refresh_hud() -> void:
 	if GameState.player_faction == "":
@@ -274,7 +347,7 @@ func _refresh_hud() -> void:
 		btn.disabled = GameState.treasury < cost
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _picking_faction:
+	if _picking_faction or GameState.pending_event != null:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:

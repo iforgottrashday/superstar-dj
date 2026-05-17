@@ -1,0 +1,240 @@
+[
+  {
+    "id": "plague_ship",
+    "title": "A Plague Ship",
+    "text": "A foreign vessel staggers into one of your ports. The crew is dying — sores, fever, blackened tongues. The captain begs to come ashore.",
+    "weight": 10,
+    "min_year": 3,
+    "choices": [
+      {
+        "label": "Quarantine the port (army -25% in one province)",
+        "effects": {"army_pct_random_owned": -0.25}
+      },
+      {
+        "label": "Welcome the refugees (+50 gold, defense -20% for 6 turns)",
+        "effects": {"gold": 50, "modifier": {"type": "defense", "value": -0.20, "ticks": 6}}
+      },
+      {
+        "label": "Burn the ship (-15 gold, sleep easy)",
+        "effects": {"gold": -15}
+      }
+    ]
+  },
+  {
+    "id": "comet",
+    "title": "A Comet in the Sky",
+    "text": "A long-tailed star burns across the heavens for seven nights. Astrologers and priests argue what it means. Your court awaits a sign.",
+    "weight": 9,
+    "min_year": 5,
+    "choices": [
+      {
+        "label": "Build a shrine (-40 gold, fortify a random province)",
+        "effects": {"gold": -40, "fortify_random_owned": true}
+      },
+      {
+        "label": "Read it as a sign of victory (attack +30% for 6 turns)",
+        "effects": {"modifier": {"type": "attack", "value": 0.30, "ticks": 6}}
+      },
+      {
+        "label": "Dismiss it as foolery (no effect)",
+        "effects": {}
+      }
+    ]
+  },
+  {
+    "id": "mercenary_company",
+    "title": "A Mercenary Company",
+    "text": "Five hundred Catalan veterans appear at your gates, freshly fired from another war. Their captain has one eye, two languages, and a price.",
+    "weight": 9,
+    "min_year": 4,
+    "min_gold": 0,
+    "choices": [
+      {
+        "label": "Hire them (-80 gold, +60 army in your strongest province)",
+        "effects": {"gold": -80, "army_flat_strongest_owned": 60},
+        "requires_gold": 80
+      },
+      {
+        "label": "Send them packing (an enemy hires them: +40 army to a random enemy)",
+        "effects": {"enemy_army_boost": 40}
+      }
+    ]
+  },
+  {
+    "id": "pretender",
+    "title": "A Pretender Appears",
+    "text": "A man with your grandfather's nose appears at court claiming the throne. He brings letters from three counts and a small mob.",
+    "weight": 8,
+    "min_year": 6,
+    "min_provinces": 3,
+    "choices": [
+      {
+        "label": "Crush him publicly (-30 gold, -15 army in a random province)",
+        "effects": {"gold": -30, "army_flat_random_owned": -15}
+      },
+      {
+        "label": "Buy him off (-80 gold, no other consequences)",
+        "effects": {"gold": -80},
+        "requires_gold": 80
+      },
+      {
+        "label": "Marry him into the family (production -10% for 8 turns)",
+        "effects": {"modifier": {"type": "production", "value": -0.10, "ticks": 8}}
+      }
+    ]
+  },
+  {
+    "id": "severe_winter",
+    "title": "A Brutal Winter",
+    "text": "Rivers freeze solid. Snow buries the roads from the Rhine to the Volga. Armies huddle in barns and chew leather. Campaign season is canceled.",
+    "weight": 7,
+    "min_year": 8,
+    "choices": [
+      {
+        "label": "Endure (all armies -20% strength for 5 turns)",
+        "effects": {
+          "modifier": {"type": "attack", "value": -0.20, "ticks": 5},
+          "modifier2": {"type": "defense", "value": -0.10, "ticks": 5}
+        }
+      }
+    ]
+  },
+  {
+    "id": "heretical_movement",
+    "title": "A Heretical Preacher",
+    "text": "A barefoot man in one of your towns preaches that the rich must give all to the poor, the priests are demons, and the end of days is near. The crowds grow daily.",
+    "weight": 8,
+    "min_year": 5,
+    "min_provinces": 4,
+    "choices": [
+      {
+        "label": "Burn him and his followers (-25 gold, defense +15% for 10 turns)",
+        "effects": {"gold": -25, "modifier": {"type": "defense", "value": 0.15, "ticks": 10}}
+      },
+      {
+        "label": "Embrace reform, seize Church lands (+70 gold, defense -15% for 10 turns)",
+        "effects": {"gold": 70, "modifier": {"type": "defense", "value": -0.15, "ticks": 10}}
+      },
+      {
+        "label": "Ignore him (production -25% in random province for 6 turns)",
+        "effects": {"modifier": {"type": "production", "value": -0.25, "ticks": 6}}
+      }
+    ]
+  },
+  {
+    "id": "trade_caravan",
+    "title": "A Silk Caravan",
+    "text": "Five hundred camels arrive bearing silk, spice, and lapis. Their lead merchant offers customs duties — or you could simply take the goods.",
+    "weight": 10,
+    "min_year": 2,
+    "min_provinces": 2,
+    "choices": [
+      {
+        "label": "Tax them properly (+50 gold)",
+        "effects": {"gold": 50}
+      },
+      {
+        "label": "Welcome them as guests (+20 gold, production +10% for 5 turns)",
+        "effects": {"gold": 20, "modifier": {"type": "production", "value": 0.10, "ticks": 5}}
+      },
+      {
+        "label": "Seize everything (+90 gold, attack -10% for 6 turns — word spreads)",
+        "effects": {"gold": 90, "modifier": {"type": "attack", "value": -0.10, "ticks": 6}}
+      }
+    ]
+  },
+  {
+    "id": "popes_demand",
+    "title": "The Pope's Demand",
+    "text": "A papal legate arrives with a sealed letter. His Holiness requires tribute for the rebuilding of Saint Peter's, and a fitting display of obedience.",
+    "weight": 7,
+    "min_year": 10,
+    "min_provinces": 4,
+    "forbidden_factions": ["song", "mamluk"],
+    "choices": [
+      {
+        "label": "Pay the tribute (-80 gold)",
+        "effects": {"gold": -80},
+        "requires_gold": 80
+      },
+      {
+        "label": "Defy him (accelerate Crusade — fires at 4 provinces instead of 5)",
+        "effects": {"accelerate_crusade": true}
+      }
+    ]
+  },
+  {
+    "id": "hero_emerges",
+    "title": "A Hero of the Realm",
+    "text": "A young captain wins a duel, then a skirmish, then the loyalty of a thousand men. Songs are sung in his name.",
+    "weight": 8,
+    "min_year": 5,
+    "choices": [
+      {
+        "label": "Give him a banner (+35 army in a random owned province)",
+        "effects": {"army_flat_random_owned": 35}
+      }
+    ]
+  },
+  {
+    "id": "foreign_embassy",
+    "title": "Embassy of a Distant Court",
+    "text": "Strangers in unfamiliar silks arrive bearing parrots and a written treaty in a language nobody at court reads.",
+    "weight": 8,
+    "min_year": 6,
+    "min_provinces": 3,
+    "choices": [
+      {
+        "label": "Accept their gifts (+40 gold, defense -10% for 4 turns)",
+        "effects": {"gold": 40, "modifier": {"type": "defense", "value": -0.10, "ticks": 4}}
+      },
+      {
+        "label": "Treat them politely (no effect)",
+        "effects": {}
+      },
+      {
+        "label": "Behead them as spies (-30 gold to bury the bodies, +5% defense for 8 turns from fear)",
+        "effects": {"gold": -30, "modifier": {"type": "defense", "value": 0.05, "ticks": 8}}
+      }
+    ]
+  },
+  {
+    "id": "religious_vision",
+    "title": "A Vision in the Cathedral",
+    "text": "A monk wakes in tears claiming the Virgin appeared to him with instructions. The Bishop is uncertain. The crowds are not.",
+    "weight": 7,
+    "min_year": 7,
+    "choices": [
+      {
+        "label": "Endorse the vision (-50 gold to build a cathedral, fortify a random province)",
+        "effects": {"gold": -50, "fortify_random_owned": true},
+        "requires_gold": 50
+      },
+      {
+        "label": "Quietly send the monk to a remote abbey (no effect)",
+        "effects": {}
+      },
+      {
+        "label": "Declare him a heretic (production -20% for 6 turns from unrest)",
+        "effects": {"modifier": {"type": "production", "value": -0.20, "ticks": 6}}
+      }
+    ]
+  },
+  {
+    "id": "black_death",
+    "title": "THE BLACK DEATH",
+    "text": "A new plague arrives on rats from the east. It does not stop. Whole villages are silent. Bodies stacked in cathedrals. Half the world will be dead before this passes.",
+    "weight": 4,
+    "min_year": 20,
+    "choices": [
+      {
+        "label": "Endure (army -40% in two random provinces; production -25% globally for 10 turns)",
+        "effects": {
+          "army_pct_random_owned": -0.40,
+          "army_pct_random_owned_again": -0.40,
+          "modifier": {"type": "production", "value": -0.25, "ticks": 10}
+        }
+      }
+    ]
+  }
+]
