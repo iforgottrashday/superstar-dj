@@ -91,17 +91,20 @@ var REGION_POLYGONS: Dictionary = {
 	]),
 }
 
-const COLOR_OCEAN := Color(0.04, 0.06, 0.12)
-const COLOR_GRID := Color(0.07, 0.10, 0.18)
-const COLOR_BORDER := Color(0.85, 0.78, 0.62)         # parchment
-const COLOR_BORDER_HOVER := Color(1.0, 0.95, 0.75)
-const COLOR_HOVER_OVERLAY := Color(1.0, 1.0, 1.0, 0.12)
-const COLOR_RING := Color(1.0, 0.85, 0.45, 0.85)
-const COLOR_NEUTRAL_FILL := Color(0.40, 0.40, 0.44)
-const COLOR_LABEL := Color(1.0, 0.98, 0.92, 0.95)
-const COLOR_ARMY_LABEL := Color(0.05, 0.05, 0.05)
-const COLOR_ARMY_LABEL_BG := Color(1.0, 0.98, 0.85, 0.95)
-const COLOR_PLAYER_GLOW := Color(0.20, 0.85, 1.00)    # cyan halo around player regions
+# Parchment / medieval-cartography palette. Cream ocean, sepia text, dark
+# brown borders, faction colors muted with parchment to feel hand-tinted.
+const COLOR_OCEAN := Color(0.78, 0.69, 0.52)          # aged parchment
+const COLOR_GRID := Color(0.65, 0.55, 0.40, 0.35)     # faint latlong lines
+const COLOR_BORDER := Color(0.22, 0.13, 0.05)         # dark sepia ink
+const COLOR_BORDER_HOVER := Color(0.10, 0.05, 0.02)   # darker ink on hover
+const COLOR_HOVER_OVERLAY := Color(0.0, 0.0, 0.0, 0.10)
+const COLOR_RING := Color(0.60, 0.15, 0.10, 0.85)     # warm vermillion
+const COLOR_NEUTRAL_FILL := Color(0.86, 0.78, 0.62)   # lighter parchment for unclaimed
+const COLOR_LABEL := Color(0.18, 0.10, 0.03)          # sepia ink
+const COLOR_ARMY_LABEL := Color(0.95, 0.88, 0.70)         # cream text
+const COLOR_ARMY_LABEL_BG := Color(0.22, 0.13, 0.05, 1.0) # dark brown chip
+const COLOR_ARMY_LABEL_BORDER := Color(0.45, 0.30, 0.10, 1.0)
+const COLOR_PLAYER_GLOW := Color(0.55, 0.10, 0.05)    # vermillion player halo
 const LABEL_FONT_SIZE := 15
 const ARMY_FONT_SIZE := 18
 
@@ -143,7 +146,7 @@ func _draw() -> void:
 	for gy in range(0, int(size.y) + 1, 80):
 		draw_line(Vector2(0, gy), Vector2(size.x, gy), COLOR_GRID, 1.0)
 
-	# Region fills, tinted by owner faction.
+	# Region fills, tinted by owner faction over parchment.
 	for region_id in REGION_POLYGONS.keys():
 		var pts: PackedVector2Array = REGION_POLYGONS[region_id]
 		var r = GameState.regions_by_id.get(region_id)
@@ -151,29 +154,28 @@ func _draw() -> void:
 		if r != null:
 			var owner_id: String = String(r.owner)
 			if owner_id != "neutral" and GameState.FACTION_CATALOG.has(owner_id):
-				fill = GameState.FACTION_CATALOG[owner_id]["color"]
-			# Slightly desaturate fill — full saturation is hard on the eyes.
-			fill = fill.lerp(Color(0.15, 0.12, 0.18), 0.35)
+				# Wash faction color over parchment cream — looks hand-tinted.
+				fill = GameState.FACTION_CATALOG[owner_id]["color"].lerp(Color(0.94, 0.87, 0.70), 0.55)
 		var pulse_v: float = float(_displayed_pulse[region_id])
 		if pulse_v > 0.0:
-			fill = fill.lerp(Color.WHITE, pulse_v * 0.5)
+			fill = fill.lerp(Color(1.0, 1.0, 1.0), pulse_v * 0.45)
 		if region_id == _hovered:
-			fill = fill.lerp(Color.WHITE, 0.20)
+			fill = fill.lerp(Color(0.20, 0.10, 0.02), 0.15)  # darken slightly on hover
 		draw_colored_polygon(pts, fill)
 
 	# Player-owned glow halo (extra outline) — so the player can always tell which are theirs.
 	for region_id in REGION_POLYGONS.keys():
 		var r = GameState.regions_by_id.get(region_id)
 		if r != null and String(r.owner) == GameState.player_faction and GameState.player_faction != "":
-			draw_polyline(_closed_loop(REGION_POLYGONS[region_id]), COLOR_PLAYER_GLOW, 3.0, true)
+			draw_polyline(_closed_loop(REGION_POLYGONS[region_id]), COLOR_PLAYER_GLOW, 4.0, true)
 
 	# Region borders.
 	for region_id in REGION_POLYGONS.keys():
 		var border: Color = COLOR_BORDER
-		var width: float = 1.5
+		var width: float = 2.0
 		if region_id == _hovered:
 			border = COLOR_BORDER_HOVER
-			width = 2.5
+			width = 3.5
 		draw_polyline(_closed_loop(REGION_POLYGONS[region_id]), border, width, true)
 
 	# Combat rings (expanding rings after a battle).
@@ -208,6 +210,7 @@ func _draw() -> void:
 			var badge_h: float = ARMY_FONT_SIZE + 6.0
 			var badge_rect: Rect2 = Rect2(center.x - badge_w * 0.5, center.y + 10.0, badge_w, badge_h)
 			draw_rect(badge_rect, COLOR_ARMY_LABEL_BG, true)
+			draw_rect(badge_rect, COLOR_ARMY_LABEL_BORDER, false, 1.0)
 			draw_string(font, Vector2(badge_rect.position.x + 6.0, badge_rect.position.y + ARMY_FONT_SIZE),
 				army_text, HORIZONTAL_ALIGNMENT_LEFT, -1, ARMY_FONT_SIZE, COLOR_ARMY_LABEL)
 

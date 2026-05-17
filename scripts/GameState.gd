@@ -172,9 +172,8 @@ var lightning_raid_ready_at: int = 0
 var diet_ready_at: int = 0
 var greek_fire_ready_at: int = 0
 var recruitment_ready_at: int = 0
-var gunpowder_used: bool = false
+var song_power_ready_at: int = 0
 var gunpowder_pending: bool = false    # next player attack is buffed
-var greek_fire_pending: bool = false   # next attack on player is repelled
 
 
 func _ready() -> void:
@@ -433,11 +432,11 @@ func can_use_faction_power() -> bool:
 		"hre":
 			return tick >= diet_ready_at
 		"byzantium":
-			return tick >= greek_fire_ready_at and not greek_fire_pending
+			return tick >= greek_fire_ready_at
 		"mamluk":
 			return tick >= recruitment_ready_at
 		"song":
-			return not gunpowder_used
+			return tick >= song_power_ready_at and not gunpowder_pending
 	return false
 
 
@@ -453,11 +452,11 @@ func faction_power_name() -> String:
 
 func faction_power_blurb() -> String:
 	match player_faction:
-		"mongol": return "Riders flock to your standard. +60 army to your strongest province. 20-turn cooldown."
-		"hre": return "Imperial Diet convenes. +30% defense everywhere for 8 turns. 25-turn cooldown."
-		"byzantium": return "Roll the fire-ships into the harbor. The next attack on you is repelled. 25-turn cooldown."
+		"mongol": return "Horde tactics unleashed. Attack +50% for 5 turns. 20-turn cooldown."
+		"hre": return "Imperial Diet convenes. +30% defense everywhere for 8 turns AND +80 gold from princes' taxes. 25-turn cooldown."
+		"byzantium": return "Roll the fire-ships into the harbor. Defense +60% for 4 turns — overwhelming repel. 22-turn cooldown."
 		"mamluk": return "Slave-soldier markets reopen. +15 army to ALL your provinces. 25-turn cooldown."
-		"song": return "The Imperial Foundry primes. Your next attack deals +200% damage. Once per game."
+		"song": return "The Imperial Foundry primes. Your next attack deals +200% damage. 30-turn cooldown."
 	return ""
 
 
@@ -468,8 +467,9 @@ func faction_power_cooldown() -> int:
 		"byzantium": return maxi(0, greek_fire_ready_at - tick)
 		"mamluk": return maxi(0, recruitment_ready_at - tick)
 		"song":
-			if gunpowder_used: return -1
-			return 0
+			if gunpowder_pending:
+				return -1  # not on cooldown but waiting for player to spend it
+			return maxi(0, song_power_ready_at - tick)
 	return 0
 
 
@@ -478,30 +478,28 @@ func use_faction_power() -> bool:
 		return false
 	match player_faction:
 		"mongol":
-			var r = _strongest_owned()
-			if r != null:
-				r.army = int(r.army) + 60
-				emit_signal("region_army_changed", r.id)
+			apply_modifier("attack", 0.50, 5)
 			lightning_raid_ready_at = tick + 20
-			emit_signal("news_emitted", "Banner-call! Riders flock to your standard.")
+			emit_signal("news_emitted", "The Horde rides! Cavalry crests every hill — +50% attack for five years.")
 		"hre":
 			apply_modifier("defense", 0.30, 8)
+			add_treasury(80)
 			diet_ready_at = tick + 25
-			emit_signal("news_emitted", "The Diet of Princes convenes. Walls thicken across the realm.")
+			emit_signal("news_emitted", "The Diet of Princes convenes. Defense +30% and 80 gold in tribute.")
 		"byzantium":
-			greek_fire_pending = true
-			greek_fire_ready_at = tick + 25
-			emit_signal("news_emitted", "Greek fire is rolled to the docks. The next assault will burn.")
+			apply_modifier("defense", 0.60, 4)
+			greek_fire_ready_at = tick + 22
+			emit_signal("news_emitted", "Greek fire is rolled to every harbor wall. Defense +60% for four years.")
 		"mamluk":
 			for r in owned_regions(player_faction):
 				r.army = int(r.army) + 15
 				emit_signal("region_army_changed", r.id)
 			recruitment_ready_at = tick + 25
-			emit_signal("news_emitted", "Recruitment drive. Fifteen lances per province join the standard.")
+			emit_signal("news_emitted", "Slave-soldier markets reopen. Fifteen lances per province join the standard.")
 		"song":
 			gunpowder_pending = true
-			gunpowder_used = true
-			emit_signal("news_emitted", "The Imperial Foundry primes the dragons of war.")
+			song_power_ready_at = tick + 30
+			emit_signal("news_emitted", "The Imperial Foundry primes the dragons of war. Your next attack will be devastating.")
 	emit_signal("faction_power_state_changed")
 	return true
 

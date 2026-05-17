@@ -343,8 +343,8 @@ func _refresh_power_button() -> void:
 	power_name_label.text = GameState.faction_power_name()
 	power_blurb_label.text = GameState.faction_power_blurb()
 	var cd: int = GameState.faction_power_cooldown()
-	if GameState.player_faction == "song" and GameState.gunpowder_used:
-		power_btn.text = "Already used"
+	if GameState.player_faction == "song" and GameState.gunpowder_pending:
+		power_btn.text = "Primed — your next attack will be 3x"
 		power_btn.disabled = true
 	elif cd <= 0:
 		power_btn.text = "Use power"

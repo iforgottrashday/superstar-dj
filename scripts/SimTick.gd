@@ -152,20 +152,6 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 		"def_strength": def_strength,
 	}
 
-	# Byzantium Greek Fire: a single attack on the player is repelled regardless.
-	var greek_fire_save: bool = (
-		gs.greek_fire_pending
-		and defender_faction == gs.player_faction
-		and atk_strength > def_strength
-	)
-	if greek_fire_save:
-		gs.greek_fire_pending = false
-		to_r.army = max(1, int(float(to_r.army) * 0.4))
-		gs.emit_signal("news_emitted",
-			"GREEK FIRE! %s's assault on %s burns in the harbor." % [atk_name, String(to_r.name)])
-		gs.emit_signal("region_army_changed", to_r.id)
-		return result
-
 	if atk_strength > def_strength:
 		# Attacker wins. Survivors occupy.
 		var survivors: int = max(1, int((atk_strength - def_strength) * 0.55))
