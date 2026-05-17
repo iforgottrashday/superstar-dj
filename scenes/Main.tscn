@@ -17,7 +17,7 @@ script = ExtResource("1_main")
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 36.0
+offset_bottom = 44.0
 grow_horizontal = 2
 clip_contents = true
 script = ExtResource("2_ticker")
@@ -32,18 +32,19 @@ color = Color(0.1, 0, 0.2, 1)
 [node name="Label" type="Label" parent="Ticker"]
 layout_mode = 0
 offset_left = 0.0
-offset_top = 6.0
+offset_top = 8.0
 offset_right = 4000.0
-offset_bottom = 30.0
+offset_bottom = 40.0
 text = ""
 theme_override_colors/font_color = Color(1, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 17
 
 [node name="HSplit" type="HSplitContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 40.0
+offset_top = 48.0
 grow_horizontal = 2
 grow_vertical = 2
 split_offset = 880
@@ -65,23 +66,28 @@ layout_mode = 2
 
 [node name="HypeLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
-text = "Hype: 0"
+text = "—"
+theme_override_font_sizes/font_size = 15
 
 [node name="BacklashLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
-text = "Backlash: 0 / 100"
+text = ""
+theme_override_font_sizes/font_size = 15
 
 [node name="TickLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
-text = "Day: 0"
+text = ""
+theme_override_font_sizes/font_size = 15
 
 [node name="SpeedLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
-text = "Speed: 0x"
+text = ""
+theme_override_font_sizes/font_size = 15
 
 [node name="Help" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
 text = "[Space] pause   [1/2/3] speed"
+theme_override_font_sizes/font_size = 13
 
 [node name="Sep" type="HSeparator" parent="HSplit/Right"]
 layout_mode = 2
@@ -96,33 +102,35 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = -80.0
-offset_right = 220.0
-offset_bottom = 80.0
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Margin" type="MarginContainer" parent="DebutPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="DebutPanel/Margin"]
 layout_mode = 2
 
 [node name="Title" type="Label" parent="DebutPanel/Margin/VBox"]
 layout_mode = 2
-text = "Where do you drop?"
+text = "CHOOSE YOUR FACTION"
 horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
 
 [node name="Subtitle" type="Label" parent="DebutPanel/Margin/VBox"]
 layout_mode = 2
-text = "Click any unlocked region on the map to debut. Locked regions need traits."
+text = ""
 horizontal_alignment = 1
 autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
 
 [node name="RegionPanel" type="PanelContainer" parent="."]
 visible = false
@@ -156,24 +164,27 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Region"
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 22
 
 [node name="CloseBtn" type="Button" parent="RegionPanel/Margin/VBox/Header"]
 layout_mode = 2
 text = "✕"
 flat = true
+theme_override_font_sizes/font_size = 18
 
 [node name="Stats" type="Label" parent="RegionPanel/Margin/VBox"]
 layout_mode = 2
 text = ""
 autowrap_mode = 3
+theme_override_font_sizes/font_size = 15
 
 [node name="Sep" type="HSeparator" parent="RegionPanel/Margin/VBox"]
 layout_mode = 2
 
 [node name="ChannelsLabel" type="Label" parent="RegionPanel/Margin/VBox"]
 layout_mode = 2
-text = "DISTRIBUTION CHANNELS"
+text = ""
+theme_override_font_sizes/font_size = 14
 
 [node name="ChannelsScroll" type="ScrollContainer" parent="RegionPanel/Margin/VBox"]
 layout_mode = 2
@@ -213,3 +224,4 @@ layout_mode = 2
 text = ""
 horizontal_alignment = 1
 autowrap_mode = 3
+theme_override_font_sizes/font_size = 16

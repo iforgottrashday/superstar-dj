@@ -28,13 +28,13 @@ static func step(gs: Node) -> void:
 
 static func _recruit(gs: Node) -> void:
 	for r in gs.regions:
-		var owner: String = String(r.owner)
-		if owner == "neutral":
+		var owner_id: String = String(r.owner)
+		if owner_id == "neutral":
 			continue  # neutrals stay static, only defend
-		var faction_def: Dictionary = gs.FACTION_CATALOG[owner]
+		var faction_def: Dictionary = gs.FACTION_CATALOG[owner_id]
 		var production_bonus: float = float(faction_def["production_bonus"])
 		# Player gets tech-based production bonus too.
-		if owner == gs.player_faction:
+		if owner_id == gs.player_faction:
 			production_bonus = gs.player_production_bonus()
 		var pop: float = float(r.population)
 		var recruits: float = pop * BASE_RECRUIT_PER_POP * (1.0 + production_bonus)

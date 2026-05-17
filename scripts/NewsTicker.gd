@@ -1,7 +1,9 @@
 extends Control
 ##
 ## Rolling news ticker. Listens for GameState.news_emitted and also
-## randomly fires ambient/backlash headlines from headlines.json.
+## randomly fires ambient/backlash chronicle entries from headlines.json.
+## Backlash pool fires once the player owns enough provinces that they're
+## attracting coalitions, peasant revolts, and excommunications.
 ##
 
 @onready var label: Label = $Label
@@ -17,15 +19,18 @@ func _ready() -> void:
 	_load_headlines()
 	GameState.news_emitted.connect(_on_news)
 	# Seed the ticker so it's not empty on launch.
-	_enqueue("DROP THE WORLD — booting up. Pick a region to debut in.")
+	_enqueue("KHANS — the chronicles begin. Choose your house.")
 
 func _process(delta: float) -> void:
 	_ambient_timer -= delta
 	if _ambient_timer <= 0.0:
 		_ambient_timer = randf_range(8.0, 16.0)
 		var pool := _ambient
-		if GameState.backlash > 30.0 and randf() < 0.4:
-			pool = _backlash
+		# Once the player gets big (5+ provinces), the world starts pushing back.
+		if GameState.player_faction != "":
+			var owned: int = GameState.owned_regions(GameState.player_faction).size()
+			if owned >= 5 and randf() < 0.35:
+				pool = _backlash
 		if pool.size() > 0:
 			_enqueue(String(pool[randi() % pool.size()]))
 	_scroll(delta)
