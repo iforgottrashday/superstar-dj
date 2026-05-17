@@ -68,27 +68,31 @@ layout_mode = 2
 [node name="HypeLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
 text = "—"
-theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
 
 [node name="BacklashLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
 text = ""
-theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
 
 [node name="TickLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
 text = ""
-theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
 
 [node name="SpeedLabel" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
 text = ""
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 14
 
 [node name="Help" type="Label" parent="HSplit/Right/HUD"]
 layout_mode = 2
 text = "[Space] pause   [1/2/3] speed"
-theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 12
 
 [node name="Sep" type="HSeparator" parent="HSplit/Right"]
 layout_mode = 2

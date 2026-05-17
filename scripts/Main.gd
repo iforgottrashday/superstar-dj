@@ -209,13 +209,15 @@ func _build_attack_row(from_r, to_r) -> Control:
 	]
 	if is_reinforce:
 		target_label = "yours, garrison %d" % int(to_r.army)
-	label.text = "%s (army %d) → %s (%s)" % [
+	label.text = "%s (army %d)\n→ %s (%s)" % [
 		String(from_r.name),
 		int(from_r.army),
 		String(to_r.name),
 		target_label,
 	]
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_font_size_override("font_size", 12)
 	header.add_child(label)
 	# Slider sets send size; default 70% of source army for attacks, 50% for moves.
 	var default_pct: float = 0.5 if is_reinforce else 0.7
@@ -367,8 +369,8 @@ func _refresh_hud() -> void:
 	var owned: int = GameState.owned_regions(GameState.player_faction).size()
 	var total: int = GameState.regions.size()
 	var army: int = GameState.total_army(GameState.player_faction)
-	hype_label.text = "%s   ·   Gold: %d" % [String(faction_def["name"]), GameState.treasury]
-	backlash_label.text = "Provinces: %d / %d   ·   Total army: %d" % [owned, total, army]
+	hype_label.text = "%s\nGold: %d" % [String(faction_def["name"]), GameState.treasury]
+	backlash_label.text = "Provinces: %d / %d\nTotal army: %d" % [owned, total, army]
 	tick_label.text = "Year %d" % GameState.tick
 	if GameState.speed == 0.0:
 		speed_label.text = "Speed: paused"
