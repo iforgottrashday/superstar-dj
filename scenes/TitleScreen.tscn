@@ -60,7 +60,7 @@ grow_vertical = 2
 [node name="PlayBtn" type="Button" parent="CenterContainer"]
 layout_mode = 2
 text = "ENTER THE WILD"
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 26
 theme_override_colors/font_color = Color(0.97, 0.90, 0.72, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_play")
 theme_override_styles/hover = SubResource("StyleBoxFlat_play")
@@ -81,4 +81,4 @@ grow_horizontal = 2
 text = "click anywhere or press Enter to begin"
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.95, 0.88, 0.70, 0.7)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 17

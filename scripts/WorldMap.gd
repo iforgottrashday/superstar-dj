@@ -62,8 +62,8 @@ const COLOR_ARMY_LABEL := Color(0.96, 0.88, 0.70)
 const COLOR_ARMY_LABEL_BG := Color(0.22, 0.13, 0.05, 1.0)
 const COLOR_ARMY_LABEL_BORDER := Color(0.50, 0.32, 0.10, 1.0)
 const COLOR_PLAYER_GLOW := Color(0.65, 0.15, 0.05)
-const LABEL_FONT_SIZE := 14
-const ARMY_FONT_SIZE := 17
+const LABEL_FONT_SIZE := 16
+const ARMY_FONT_SIZE := 19
 const EMBLEM_FONT_SIZE := 56     # design-space size; scales with _map_scale
 const EMBLEM_ALPHA := 0.22       # faint enough not to compete with the name
 

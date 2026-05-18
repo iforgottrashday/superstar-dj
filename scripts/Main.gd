@@ -154,7 +154,7 @@ func _make_faction_row(faction_id: String, def: Dictionary) -> PanelContainer:
 
 	var name_lbl := Label.new()
 	name_lbl.text = String(def["name"]) + "  —  " + String(GameState.regions_by_id[String(def["start_region"])].name)
-	name_lbl.add_theme_font_size_override("font_size", 18)
+	name_lbl.add_theme_font_size_override("font_size", 22)
 	name_lbl.add_theme_color_override("font_color", text_color)
 	name_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 	name_lbl.add_theme_constant_override("outline_size", 4)
@@ -163,7 +163,7 @@ func _make_faction_row(faction_id: String, def: Dictionary) -> PanelContainer:
 
 	var blurb_lbl := Label.new()
 	blurb_lbl.text = String(def["blurb"])
-	blurb_lbl.add_theme_font_size_override("font_size", 12)
+	blurb_lbl.add_theme_font_size_override("font_size", 15)
 	blurb_lbl.add_theme_color_override("font_color", Color(0.92, 0.88, 0.75, 0.92))
 	blurb_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	blurb_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -313,7 +313,7 @@ func _build_attack_row(from_r, to_r) -> Control:
 	]
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_font_size_override("font_size", 15)
 	header.add_child(label)
 	# Slider sets send size; default 70% of source army for attacks, 50% for moves.
 	var default_pct: float = 0.5 if is_reinforce else 0.7
@@ -385,8 +385,8 @@ func _build_tech_shop() -> void:
 		var btn := Button.new()
 		btn.text = "%s — %d g" % [String(def["name"]), int(def["cost"])]
 		btn.tooltip_text = String(def["blurb"])
-		btn.custom_minimum_size = Vector2(200, 50)
-		btn.add_theme_font_size_override("font_size", 13)
+		btn.custom_minimum_size = Vector2(220, 56)
+		btn.add_theme_font_size_override("font_size", 16)
 		btn.pressed.connect(_on_buy_tech.bind(tech_id))
 		tech_bar.add_child(btn)
 		_tech_buttons[tech_id] = btn
@@ -424,7 +424,7 @@ func _on_pending_event_changed() -> void:
 		var c: Dictionary = choices[i]
 		var btn := Button.new()
 		btn.text = String(c["label"])
-		btn.add_theme_font_size_override("font_size", 14)
+		btn.add_theme_font_size_override("font_size", 17)
 		var requires_gold: int = int(c.get("requires_gold", 0))
 		if requires_gold > 0 and GameState.treasury < requires_gold:
 			btn.disabled = true
