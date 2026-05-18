@@ -85,6 +85,14 @@ func _ready() -> void:
 	pause_new_game_btn.pressed.connect(_on_play_again_pressed)
 	pause_quit_btn.pressed.connect(_on_quit_pressed)
 	GameState.speed = 0.0
+	# Hide every modal up front. _show_faction_picker will turn DebutPanel
+	# back on for fresh runs; the save-load branch leaves it hidden so the
+	# subtitle ("Choose your species...") doesn't leak through over gameplay.
+	event_panel.visible = false
+	game_over_panel.visible = false
+	pause_menu_panel.visible = false
+	debut_panel.visible = false
+	debut_backdrop.visible = false
 	# If GameState was hydrated from a save (TitleScreen sets player_faction
 	# via load_from_disk before changing scenes), skip the picker and drop
 	# the player into the running state. Otherwise show the species picker.
@@ -96,9 +104,6 @@ func _ready() -> void:
 	_build_tech_shop()
 	_refresh_hud()
 	_rebuild_region_panel()  # render the empty/placeholder state
-	event_panel.visible = false
-	game_over_panel.visible = false
-	pause_menu_panel.visible = false
 	_refresh_power_button()
 
 func _rebuild_tech_shop_purchased_state() -> void:
