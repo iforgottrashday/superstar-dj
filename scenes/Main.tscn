@@ -436,27 +436,55 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -120.0
-offset_right = 260.0
-offset_bottom = 120.0
+offset_left = -300.0
+offset_top = -240.0
+offset_right = 300.0
+offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
 [node name="Margin" type="MarginContainer" parent="GameOverPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
 
 [node name="VBox" type="VBoxContainer" parent="GameOverPanel/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="Label" type="Label" parent="GameOverPanel/Margin/VBox"]
 layout_mode = 2
 text = ""
 horizontal_alignment = 1
 autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+
+[node name="Sep1" type="HSeparator" parent="GameOverPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="StatsLabel" type="Label" parent="GameOverPanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.92, 0.86, 0.68, 1)
+
+[node name="Sep2" type="HSeparator" parent="GameOverPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="GameOverPanel/Margin/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="PlayAgainBtn" type="Button" parent="GameOverPanel/Margin/VBox/Buttons"]
+layout_mode = 2
+text = "Play Again"
+theme_override_font_sizes/font_size = 16
+
+[node name="QuitBtn" type="Button" parent="GameOverPanel/Margin/VBox/Buttons"]
+layout_mode = 2
+text = "Quit"
 theme_override_font_sizes/font_size = 16

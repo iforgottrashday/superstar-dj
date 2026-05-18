@@ -221,6 +221,34 @@ func advance_tick() -> void:
 	emit_signal("tick_advanced", tick)
 
 
+func reset_for_new_run() -> void:
+	# Wipe per-run state. all_events stays loaded; only the play-through
+	# variables get reset. Regions are rehydrated from the JSON so all
+	# territories return to their starting owners + armies.
+	tick = 0
+	speed = 0.0
+	player_faction = ""
+	owned_techs.clear()
+	treasury = 0
+	temp_modifiers.clear()
+	events_seen.clear()
+	pending_event = null
+	pre_event_speed = 0.0
+	ticks_until_next_event = 10
+	crusade_threshold = 5
+	crusade_triggered = false
+	khan_threshold = 8
+	khan_triggered = false
+	wolf_howl_ready_at = 0
+	bear_rage_ready_at = 0
+	lion_defense_ready_at = 0
+	eagle_brood_ready_at = 0
+	croc_strike_ready_at = 0
+	croc_strike_primed = false
+	_accum = 0.0
+	_load_regions()
+
+
 func owned_regions(faction_id: String) -> Array:
 	var out: Array = []
 	for r in regions:

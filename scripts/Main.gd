@@ -47,6 +47,9 @@ extends Control
 
 @onready var game_over_panel: PanelContainer = $GameOverPanel
 @onready var game_over_label: Label = $GameOverPanel/Margin/VBox/Label
+@onready var game_over_stats: Label = $GameOverPanel/Margin/VBox/StatsLabel
+@onready var play_again_btn: Button = $GameOverPanel/Margin/VBox/Buttons/PlayAgainBtn
+@onready var quit_btn: Button = $GameOverPanel/Margin/VBox/Buttons/QuitBtn
 
 var _tech_buttons: Dictionary = {}    # tech_id -> Button
 var _picking_faction: bool = true
@@ -67,6 +70,8 @@ func _ready() -> void:
 	speed1_btn.pressed.connect(_set_speed.bind(1.0))
 	speed2_btn.pressed.connect(_set_speed.bind(2.0))
 	speed4_btn.pressed.connect(_set_speed.bind(4.0))
+	play_again_btn.pressed.connect(_on_play_again_pressed)
+	quit_btn.pressed.connect(_on_quit_pressed)
 	GameState.speed = 0.0
 	_show_faction_picker()
 	_build_tech_shop()
@@ -493,4 +498,40 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_game_over(reason: String, won: bool) -> void:
 	GameState.speed = 0.0
 	game_over_label.text = ("🐾  APEX PREDATOR\n\n" if won else "💀  YOUR PACK FALLS\n\n") + reason
+	game_over_stats.text = _build_summary_stats()
 	game_over_panel.visible = true
+
+func _build_summary_stats() -> String:
+	var species_name: String = "—"
+	if GameState.player_faction != "" and GameState.FACTION_CATALOG.has(GameState.player_faction):
+		species_name = String(GameState.FACTION_CATALOG[GameState.player_faction]["name"])
+	var owned: Array = []
+	if GameState.player_faction != "":
+		owned = GameState.owned_regions(GameState.player_faction)
+	var total_regions: int = GameState.regions.size()
+	var pack_total: int = 0
+	for r in owned:
+		pack_total += int(r.army)
+	var adaptations_owned: int = GameState.owned_techs.size()
+	var adaptations_total: int = GameState.TECH_CATALOG.size()
+	var hunters_arrived: String = "yes" if GameState.crusade_triggered else "no"
+	var wild_dogs_arrived: String = "yes" if GameState.khan_triggered else "no"
+	var lines: PackedStringArray = []
+	lines.append("Species:           %s" % species_name)
+	lines.append("Survived:          %d seasons" % int(GameState.tick))
+	lines.append("Territories:       %d / %d" % [owned.size(), total_regions])
+	lines.append("Pack size:         %d hunters" % pack_total)
+	lines.append("Prey hoarded:      %d" % int(GameState.treasury))
+	lines.append("Adaptations:       %d / %d" % [adaptations_owned, adaptations_total])
+	lines.append("Hunters arrived:   %s" % hunters_arrived)
+	lines.append("Wild Dogs arrived: %s" % wild_dogs_arrived)
+	return "\n".join(lines)
+
+func _on_play_again_pressed() -> void:
+	# GameState is an autoload and persists across scene reloads, so wipe
+	# per-run state manually before re-entering Main.
+	GameState.reset_for_new_run()
+	get_tree().reload_current_scene()
+
+func _on_quit_pressed() -> void:
+	get_tree().quit()
