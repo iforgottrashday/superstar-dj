@@ -37,6 +37,8 @@ extends Control
 @onready var region_title: Label = $HSplit/RegionPanel/Margin/VBox/Header/Title
 @onready var region_close: Button = $HSplit/RegionPanel/Margin/VBox/Header/CloseBtn
 @onready var region_stats: Label = $HSplit/RegionPanel/Margin/VBox/Stats
+@onready var region_bonuses: Label = $HSplit/RegionPanel/Margin/VBox/Bonuses
+@onready var region_modifiers: Label = $HSplit/RegionPanel/Margin/VBox/Modifiers
 @onready var region_channels_box: VBoxContainer = $HSplit/RegionPanel/Margin/VBox/ChannelsScroll/Channels
 @onready var region_channels_label: Label = $HSplit/RegionPanel/Margin/VBox/ChannelsLabel
 
@@ -220,6 +222,8 @@ func _rebuild_region_panel() -> void:
 		region_title.text = "Select a region"
 		region_title.remove_theme_color_override("font_color")
 		region_stats.text = ""
+		region_bonuses.text = _player_bonus_summary()
+		region_modifiers.text = _active_modifiers_summary()
 		region_channels_label.text = ""
 		region_close.visible = false
 		var hint := Label.new()
@@ -242,6 +246,8 @@ func _rebuild_region_panel() -> void:
 		int(r.army),
 		float(r.population),
 	]
+	region_bonuses.text = _player_bonus_summary()
+	region_modifiers.text = _active_modifiers_summary()
 	if owner_id == GameState.player_faction:
 		region_channels_label.text = "HUNT FROM HERE"
 		_build_outgoing_rows(r)
@@ -374,7 +380,7 @@ func _on_region_army_changed(_region_id: String) -> void:
 	pass
 
 func _build_tech_shop() -> void:
-	# tech_bar is the bottom strip — preserve its static "TECHNOLOGY" Label,
+	# tech_bar is the bottom strip — preserve its static "ADAPTATIONS" Label,
 	# only clear and rebuild the Button children.
 	for child in tech_bar.get_children():
 		if child is Button:
@@ -383,7 +389,7 @@ func _build_tech_shop() -> void:
 	for tech_id in GameState.TECH_CATALOG.keys():
 		var def: Dictionary = GameState.TECH_CATALOG[tech_id]
 		var btn := Button.new()
-		btn.text = "%s — %d g" % [String(def["name"]), int(def["cost"])]
+		btn.text = _tech_button_text(def, false)
 		btn.tooltip_text = String(def["blurb"])
 		btn.custom_minimum_size = Vector2(220, 56)
 		btn.add_theme_font_size_override("font_size", 16)
@@ -393,19 +399,87 @@ func _build_tech_shop() -> void:
 
 func _on_buy_tech(tech_id: String) -> void:
 	if GameState.buy_tech(tech_id):
+		var def: Dictionary = GameState.TECH_CATALOG[tech_id]
 		var btn: Button = _tech_buttons[tech_id]
 		btn.disabled = true
-		btn.text = "✓ " + btn.text
+		btn.text = _tech_button_text(def, true)
+		_rebuild_region_panel()  # bonuses summary needs to reflect new tech
 	_refresh_hud()
+
+func _tech_button_text(def: Dictionary, owned: bool) -> String:
+	# "Sharp Claws\n+10% ATK · 80 g"  (unowned)
+	# "✓ Sharp Claws  +10% ATK"        (owned)
+	var name_text: String = String(def["name"])
+	var effect_text: String = _tech_effect_summary(def)
+	if owned:
+		if effect_text == "":
+			return "✓ " + name_text
+		return "✓ %s  %s" % [name_text, effect_text]
+	if effect_text == "":
+		return "%s\n%d g" % [name_text, int(def["cost"])]
+	return "%s\n%s · %d g" % [name_text, effect_text, int(def["cost"])]
+
+func _tech_effect_summary(def: Dictionary) -> String:
+	# Translate the effects dict into a compact badge string.
+	var fx: Dictionary = def.get("effects", {})
+	var parts: PackedStringArray = []
+	if fx.has("attack_bonus"):
+		parts.append("+%d%% ATK" % int(round(float(fx["attack_bonus"]) * 100.0)))
+	if fx.has("defense_bonus"):
+		parts.append("+%d%% DEF" % int(round(float(fx["defense_bonus"]) * 100.0)))
+	if fx.has("production_bonus"):
+		parts.append("+%d%% PROD" % int(round(float(fx["production_bonus"]) * 100.0)))
+	if fx.has("siege_bonus"):
+		parts.append("+%d%% vs 🏰" % int(round(float(fx["siege_bonus"]) * 100.0)))
+	if bool(fx.get("fortify_owned", false)):
+		parts.append("🏰 ALL")
+	return " · ".join(parts)
+
+func _player_bonus_summary() -> String:
+	# "ATK +35% · DEF +25% · PROD +20% · vs 🏰 +40%"
+	if GameState.player_faction == "":
+		return ""
+	var parts: PackedStringArray = []
+	parts.append("ATK %+d%%" % int(round(GameState.player_attack_bonus() * 100.0)))
+	parts.append("DEF %+d%%" % int(round(GameState.player_defense_bonus() * 100.0)))
+	parts.append("PROD %+d%%" % int(round(GameState.player_production_bonus() * 100.0)))
+	var siege: float = GameState.player_siege_bonus()
+	if siege != 0.0:
+		parts.append("vs 🏰 %+d%%" % int(round(siege * 100.0)))
+	return "Your bonuses:  " + " · ".join(parts)
+
+func _active_modifiers_summary() -> String:
+	# One line per temporary modifier currently in effect, showing type, magnitude,
+	# and ticks remaining. Hidden when nothing is active.
+	if GameState.temp_modifiers.is_empty():
+		return ""
+	const TYPE_LABEL := {
+		"attack": "ATK",
+		"defense": "DEF",
+		"production": "PROD",
+		"siege": "vs 🏰",
+	}
+	var lines: PackedStringArray = []
+	for m in GameState.temp_modifiers:
+		var type_id: String = String(m["type"])
+		var value: float = float(m["value"])
+		var ticks_left: int = int(m["expires_at"]) - int(GameState.tick)
+		if ticks_left <= 0:
+			continue
+		var label: String = String(TYPE_LABEL.get(type_id, type_id.to_upper()))
+		var turn_word: String = "turn" if ticks_left == 1 else "turns"
+		lines.append("⚡ %s %+d%%   ·   %d %s left" % [
+			label, int(round(value * 100.0)), ticks_left, turn_word])
+	return "\n".join(lines)
 
 func _on_tick(_t: int) -> void:
 	_refresh_hud()
 	_refresh_power_button()
 	# Rebuild the action panel each tick so "used this turn" buttons re-enable
-	# (acted_this_tick is cleared in SimTick.step) and the slider's max tracks
-	# the region's current army size after recruitment.
-	if _open_region_id != "":
-		_rebuild_region_panel()
+	# (acted_this_tick is cleared in SimTick.step), the slider's max tracks the
+	# region's current army size after recruitment, AND the active-modifiers
+	# countdown ticks visibly even when no region is selected.
+	_rebuild_region_panel()
 
 
 # ─── Event modal ───
@@ -461,9 +535,12 @@ func _refresh_power_button() -> void:
 		power_btn.disabled = true
 
 func _on_faction_power_pressed() -> void:
+	# After activation, refresh the action panel so the new temp modifier
+	# shows up immediately in the active-modifiers list.
 	GameState.use_faction_power()
 	_refresh_power_button()
 	_refresh_hud()
+	_rebuild_region_panel()
 
 func _refresh_hud() -> void:
 	if GameState.player_faction == "":
