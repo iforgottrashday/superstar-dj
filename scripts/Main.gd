@@ -346,6 +346,11 @@ func _on_buy_tech(tech_id: String) -> void:
 func _on_tick(_t: int) -> void:
 	_refresh_hud()
 	_refresh_power_button()
+	# Rebuild the action panel each tick so "used this turn" buttons re-enable
+	# (acted_this_tick is cleared in SimTick.step) and the slider's max tracks
+	# the region's current army size after recruitment.
+	if _open_region_id != "":
+		_rebuild_region_panel()
 
 
 # ─── Event modal ───
