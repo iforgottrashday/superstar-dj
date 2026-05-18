@@ -147,8 +147,9 @@ func _hex_polygon(center: Vector2, radius: float) -> PackedVector2Array:
 # ─── drawing ────────────────────────────────────────────────────────────────
 
 func _draw() -> void:
-	# Parchment background with stains + vignette.
-	draw_rect(Rect2(Vector2.ZERO, size), COLOR_PARCHMENT, true)
+	# Background image sits in a sibling TextureRect behind this Control.
+	# We skip the opaque parchment fill so that image shows through, but
+	# still draw the translucent age-stains + vignette on top for atmosphere.
 	var s: float = _map_scale()
 	var off: Vector2 = _map_offset()
 	for stain in _stains:
