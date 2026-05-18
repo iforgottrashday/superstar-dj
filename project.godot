@@ -14,7 +14,7 @@ config/name="Global Siege"
 config/description="Medieval real-time conquest sim. Pick a faction, take the world."
 run/main_scene="res://scenes/TitleScreen.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://assets/global_siege_icon.png"
 
 [autoload]
 
