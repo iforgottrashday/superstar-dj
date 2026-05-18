@@ -14,7 +14,7 @@ config/name="Apex"
 config/description="Predator territorial conquest. Pick a species, become the apex predator of a single wild kingdom."
 run/main_scene="res://scenes/TitleScreen.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://assets/global_siege_icon.png"
+config/icon="res://assets/apex_predator_icon.png"
 
 [autoload]
 
