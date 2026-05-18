@@ -535,9 +535,19 @@ func _refresh_power_button() -> void:
 		power_btn.disabled = true
 
 func _on_faction_power_pressed() -> void:
-	# After activation, refresh the action panel so the new temp modifier
-	# shows up immediately in the active-modifiers list.
-	GameState.use_faction_power()
+	# Auto-pause on successful activation. Wolf howl / lion pride buffs are
+	# "X turns" long — at 1×–4× speed that's 1–5 real seconds, which forced
+	# the player to mash attacks. Pausing here freezes the modifier countdown
+	# while the player plans, and the pre-press speed is restored when they
+	# manually un-pause. After activation, also rebuild the action panel so
+	# the new temp modifier shows up immediately in the active-modifiers list.
+	var pre_speed: float = GameState.speed
+	if GameState.use_faction_power():
+		if pre_speed > 0.0:
+			_last_active_speed = pre_speed
+			GameState.speed = 0.0
+			GameState.emit_signal("news_emitted",
+				"⏸ Time stills. Hunt while the world holds its breath.")
 	_refresh_power_button()
 	_refresh_hud()
 	_rebuild_region_panel()
