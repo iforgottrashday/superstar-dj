@@ -14,7 +14,7 @@ extends Control
 @onready var world_map: Control = $HSplit/Left/WorldMap
 
 # Top status bar — replaces the right-column HUD.
-@onready var faction_label: Label = $HudBar/Margin/HBox/FactionLabel
+@onready var faction_badge: Control = $HudBar/Margin/HBox/FactionBadge
 @onready var gold_label: Label = $HudBar/Margin/HBox/GoldLabel
 @onready var provinces_label: Label = $HudBar/Margin/HBox/ProvincesLabel
 @onready var army_label: Label = $HudBar/Margin/HBox/ArmyLabel
@@ -461,14 +461,16 @@ func _on_buy_tech(tech_id: String) -> void:
 	_refresh_hud()
 
 func _tech_button_text(def: Dictionary, owned: bool) -> String:
-	# "Sharp Claws\n+10% ATK · 80 g"  (unowned)
-	# "✓ Sharp Claws  +10% ATK"        (owned)
+	# Two-line layout for both states so owned and unowned buttons have the
+	# same width, which leaves room for the ADAPTATIONS label in the bar.
+	# Owned:    "✓ Sharp Claws / +10% ATK"
+	# Unowned:  "Sharp Claws    / +10% ATK · 80 g"
 	var name_text: String = String(def["name"])
 	var effect_text: String = _tech_effect_summary(def)
 	if owned:
 		if effect_text == "":
 			return "✓ " + name_text
-		return "✓ %s  %s" % [name_text, effect_text]
+		return "✓ %s\n%s" % [name_text, effect_text]
 	if effect_text == "":
 		return "%s\n%d g" % [name_text, int(def["cost"])]
 	return "%s\n%s · %d g" % [name_text, effect_text, int(def["cost"])]
@@ -614,8 +616,8 @@ func _on_faction_power_pressed() -> void:
 func _refresh_hud() -> void:
 	if GameState.player_faction == "":
 		# No faction yet — clear the bar.
-		faction_label.text = "—"
-		faction_label.remove_theme_color_override("font_color")
+		faction_badge.set("faction_id", "")
+		faction_badge.queue_redraw()
 		gold_label.text = ""
 		provinces_label.text = ""
 		army_label.text = ""
@@ -636,8 +638,13 @@ func _refresh_hud() -> void:
 	var owned: int = GameState.owned_regions(GameState.player_faction).size()
 	var total: int = GameState.regions.size()
 	var army: int = GameState.total_army(GameState.player_faction)
-	faction_label.text = String(faction_def["name"])
-	faction_label.add_theme_color_override("font_color", faction_def["color"])
+	var raw_color: Color = faction_def["color"]
+	faction_badge.set("faction_id", GameState.player_faction)
+	faction_badge.set("fill_color", Color(0.05, 0.03, 0.01, 0.85))
+	faction_badge.set("border_color", raw_color.lerp(Color(1, 1, 1), 0.4))
+	faction_badge.set("glyph_color", raw_color.lerp(Color(1, 1, 1), 0.55))
+	faction_badge.tooltip_text = String(faction_def["name"])
+	faction_badge.queue_redraw()
 	gold_label.text = "Prey: %d" % GameState.treasury
 	provinces_label.text = "Territories: %d / %d" % [owned, total]
 	army_label.text = "Pack: %d" % army

@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://b8x0dropworldmain"]
+[gd_scene load_steps=7 format=3 uid="uid://b8x0dropworldmain"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/NewsTicker.gd" id="2_ticker"]
 [ext_resource type="Script" path="res://scripts/WorldMap.gd" id="3_worldmap"]
 [ext_resource type="Texture2D" path="res://assets/Apex_Predator_background.png" id="4_menu"]
+[ext_resource type="Script" path="res://scripts/HexBadge.gd" id="5_hexbadge"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
 bg_color = Color(0.06, 0.05, 0.12, 1.0)
@@ -115,10 +116,11 @@ theme_override_constants/margin_bottom = 6
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="FactionLabel" type="Label" parent="HudBar/Margin/HBox"]
+[node name="FactionBadge" type="Control" parent="HudBar/Margin/HBox"]
 layout_mode = 2
-text = "—"
-theme_override_font_sizes/font_size = 19
+custom_minimum_size = Vector2(48, 48)
+size_flags_vertical = 4
+script = ExtResource("5_hexbadge")
 
 [node name="Sep1" type="VSeparator" parent="HudBar/Margin/HBox"]
 layout_mode = 2
