@@ -253,13 +253,28 @@ func _draw() -> void:
 
 	# Labels + army badges (fixed font sizes for readability).
 	var font: Font = ThemeDB.fallback_font
+	var max_label_width: float = HEX_WIDTH * s * 0.92
 	for region_id in HEX_CENTERS.keys():
 		var center_canvas: Vector2 = _to_canvas(HEX_CENTERS[region_id])
 		var r = GameState.regions_by_id.get(region_id)
 		var label_text: String = String(r.name) if r != null else region_id
-		var label_size: Vector2 = font.get_string_size(label_text, HORIZONTAL_ALIGNMENT_CENTER, -1, LABEL_FONT_SIZE)
-		draw_string(font, center_canvas - Vector2(label_size.x * 0.5, 4.0), label_text,
-			HORIZONTAL_ALIGNMENT_CENTER, -1, LABEL_FONT_SIZE, COLOR_LABEL)
+		var single_w: float = font.get_string_size(label_text,
+			HORIZONTAL_ALIGNMENT_CENTER, -1, LABEL_FONT_SIZE).x
+		# Names like "Stone Meadow" / "Boulder Field" overflow the flat-to-flat
+		# hex width on a single line. Wrap them onto two lines via the space.
+		# Short names still render single-line, no behavior change for them.
+		if single_w > max_label_width and " " in label_text:
+			var first_baseline: Vector2 = Vector2(
+				center_canvas.x - max_label_width * 0.5,
+				center_canvas.y - 18.0)
+			draw_multiline_string(font, first_baseline, label_text,
+				HORIZONTAL_ALIGNMENT_CENTER, max_label_width, LABEL_FONT_SIZE,
+				2, COLOR_LABEL)
+		else:
+			draw_string(font,
+				center_canvas - Vector2(single_w * 0.5, 4.0),
+				label_text,
+				HORIZONTAL_ALIGNMENT_CENTER, -1, LABEL_FONT_SIZE, COLOR_LABEL)
 		if r != null:
 			var army_text: String = str(int(r.army))
 			if bool(r.fortified):
