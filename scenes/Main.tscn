@@ -336,22 +336,12 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -260.0
-offset_right = 340.0
-offset_bottom = 260.0
+offset_left = -380.0
+offset_top = -310.0
+offset_right = 380.0
+offset_bottom = 310.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Background" type="TextureRect" parent="DebutPanel"]
-layout_mode = 1
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-texture = ExtResource("4_menu")
-expand_mode = 1
-stretch_mode = 0
 
 [node name="Margin" type="MarginContainer" parent="DebutPanel"]
 layout_mode = 1
@@ -360,13 +350,13 @@ anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 220
+theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
 [node name="VBox" type="VBoxContainer" parent="DebutPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="DebutPanel/Margin/VBox"]
 visible = false

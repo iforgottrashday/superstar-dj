@@ -81,55 +81,105 @@ func _ready() -> void:
 	game_over_panel.visible = false
 	_refresh_power_button()
 
+const _HEX_BADGE_SCRIPT: Script = preload("res://scripts/HexBadge.gd")
+
 func _show_faction_picker() -> void:
-	# Title is hidden behind the banner image; subtitle text is set in the scene.
-	# Build a button per playable faction.
 	for child in debut_subtitle.get_parent().get_children():
 		if child.has_meta("faction_btn"):
 			child.queue_free()
 	for faction_id in GameState.FACTION_CATALOG.keys():
 		var def: Dictionary = GameState.FACTION_CATALOG[faction_id]
-		# Skip non-playable factions: neutral + the antagonist coalitions that
-		# spawn only via escalation (Crusader, Steppe Horde).
+		# Skip non-playable factions (neutral + escalation antagonists).
 		if String(def["start_region"]) == "":
 			continue
-		var btn := Button.new()
-		btn.set_meta("faction_btn", true)
-		btn.text = String(def["name"]) + "  —  " + String(GameState.regions_by_id[String(def["start_region"])].name)
-		btn.tooltip_text = String(def["blurb"])
-		# Raw faction colors are tuned for the map; many (bears, eagles, crocs) are
-		# too dark to read on the parchment banner. Brighten them for text use.
-		var raw_color: Color = def["color"]
-		var text_color: Color = raw_color.lerp(Color(1, 1, 1), 0.55)
-		# Opaque dark stylebox so the parchment doesn't compete with the text.
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Color(0.10, 0.06, 0.04, 0.95)
-		sb.border_width_left = 2
-		sb.border_width_top = 2
-		sb.border_width_right = 2
-		sb.border_width_bottom = 2
-		sb.border_color = raw_color
-		sb.corner_radius_top_left = 4
-		sb.corner_radius_top_right = 4
-		sb.corner_radius_bottom_right = 4
-		sb.corner_radius_bottom_left = 4
-		sb.content_margin_left = 14
-		sb.content_margin_right = 14
-		sb.content_margin_top = 8
-		sb.content_margin_bottom = 8
-		btn.add_theme_stylebox_override("normal", sb)
-		btn.add_theme_stylebox_override("hover", sb)
-		btn.add_theme_stylebox_override("pressed", sb)
-		btn.add_theme_stylebox_override("focus", sb)
-		btn.add_theme_color_override("font_color", text_color)
-		btn.add_theme_color_override("font_hover_color", text_color)
-		btn.add_theme_color_override("font_pressed_color", text_color)
-		btn.add_theme_color_override("font_focus_color", text_color)
-		btn.add_theme_font_size_override("font_size", 16)
-		btn.pressed.connect(_on_faction_picked.bind(faction_id))
-		debut_subtitle.get_parent().add_child(btn)
+		debut_subtitle.get_parent().add_child(_make_faction_row(faction_id, def))
 	debut_backdrop.visible = true
 	debut_panel.visible = true
+
+func _make_faction_row(faction_id: String, def: Dictionary) -> PanelContainer:
+	var raw_color: Color = def["color"]
+	var text_color: Color = raw_color.lerp(Color(1, 1, 1), 0.6)
+
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.06, 0.04, 0.02, 0.78)
+	sb.border_width_left = 2
+	sb.border_width_top = 2
+	sb.border_width_right = 2
+	sb.border_width_bottom = 2
+	sb.border_color = raw_color
+	sb.corner_radius_top_left = 8
+	sb.corner_radius_top_right = 8
+	sb.corner_radius_bottom_right = 8
+	sb.corner_radius_bottom_left = 8
+	sb.content_margin_left = 10
+	sb.content_margin_right = 16
+	sb.content_margin_top = 8
+	sb.content_margin_bottom = 8
+	var sb_hover: StyleBoxFlat = sb.duplicate()
+	sb_hover.bg_color = Color(0.12, 0.08, 0.04, 0.88)
+	sb_hover.border_width_left = 3
+	sb_hover.border_width_top = 3
+	sb_hover.border_width_right = 3
+	sb_hover.border_width_bottom = 3
+	sb_hover.border_color = raw_color.lerp(Color(1, 1, 1), 0.4)
+
+	var row := PanelContainer.new()
+	row.set_meta("faction_btn", true)
+	row.mouse_filter = Control.MOUSE_FILTER_STOP
+	row.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	row.custom_minimum_size = Vector2(0, 84)
+	row.add_theme_stylebox_override("panel", sb)
+
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 14)
+	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(hbox)
+
+	var badge := Control.new()
+	badge.set_script(_HEX_BADGE_SCRIPT)
+	badge.custom_minimum_size = Vector2(64, 64)
+	badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	badge.set("fill_color", Color(0.05, 0.03, 0.01, 0.85))
+	badge.set("border_color", raw_color.lerp(Color(1, 1, 1), 0.3))
+	badge.set("glyph", String(def.get("emblem", "")))
+	hbox.add_child(badge)
+
+	var vbox := VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	vbox.add_theme_constant_override("separation", 2)
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.add_child(vbox)
+
+	var name_lbl := Label.new()
+	name_lbl.text = String(def["name"]) + "  —  " + String(GameState.regions_by_id[String(def["start_region"])].name)
+	name_lbl.add_theme_font_size_override("font_size", 18)
+	name_lbl.add_theme_color_override("font_color", text_color)
+	name_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	name_lbl.add_theme_constant_override("outline_size", 4)
+	name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(name_lbl)
+
+	var blurb_lbl := Label.new()
+	blurb_lbl.text = String(def["blurb"])
+	blurb_lbl.add_theme_font_size_override("font_size", 12)
+	blurb_lbl.add_theme_color_override("font_color", Color(0.92, 0.88, 0.75, 0.92))
+	blurb_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	blurb_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(blurb_lbl)
+
+	row.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			_on_faction_picked(faction_id)
+	)
+	row.mouse_entered.connect(func() -> void:
+		row.add_theme_stylebox_override("panel", sb_hover)
+	)
+	row.mouse_exited.connect(func() -> void:
+		row.add_theme_stylebox_override("panel", sb)
+	)
+	return row
 
 func _on_faction_picked(faction_id: String) -> void:
 	GameState.player_faction = faction_id
