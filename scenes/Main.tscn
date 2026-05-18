@@ -207,6 +207,7 @@ dragger_visibility = 2
 
 [node name="Left" type="PanelContainer" parent="HSplit"]
 layout_mode = 2
+size_flags_horizontal = 3
 clip_contents = true
 
 [node name="WorldMap" type="Control" parent="HSplit/Left"]
@@ -217,6 +218,8 @@ script = ExtResource("3_worldmap")
 
 [node name="RegionPanel" type="PanelContainer" parent="HSplit"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
 
 [node name="Margin" type="MarginContainer" parent="HSplit/RegionPanel"]
 layout_mode = 2
@@ -306,7 +309,7 @@ text = "TECHNOLOGY"
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.85, 0.78, 0.55, 1)
 
-[node name="DebutPanel" type="PanelContainer" parent="."]
+[node name="DebutPanel" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -319,25 +322,31 @@ offset_right = 340.0
 offset_bottom = 260.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="Background" type="TextureRect" parent="DebutPanel"]
+layout_mode = 1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("4_menu")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="Margin" type="MarginContainer" parent="DebutPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
+layout_mode = 1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 220
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
 
 [node name="VBox" type="VBoxContainer" parent="DebutPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Banner" type="TextureRect" parent="DebutPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 200)
-layout_mode = 2
-texture = ExtResource("4_menu")
-expand_mode = 1
-stretch_mode = 5
+theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="DebutPanel/Margin/VBox"]
 visible = false
@@ -351,8 +360,8 @@ layout_mode = 2
 text = "Choose your house. The world is restless."
 horizontal_alignment = 1
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 15
-theme_override_colors/font_color = Color(0.96, 0.88, 0.70, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.18, 0.08, 0.03, 1)
 
 [node name="EventPanel" type="PanelContainer" parent="."]
 visible = false
