@@ -41,6 +41,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.20,
 		"aggression": 0.9,
 		"blurb": "Pack hunters. Coordinated and relentless. Strong attack, decent defense, fast cub production. The standard apex starter.",
+		"emblem": "🐺",
 	},
 	"bears": {
 		"name": "Bears",
@@ -51,6 +52,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.00,
 		"aggression": 0.4,
 		"blurb": "Solitary brutes. Highest attack, thick fur, but slow breeders. Best playing defensively from a fortified den.",
+		"emblem": "🐻",
 	},
 	"lions": {
 		"name": "Lions",
@@ -61,6 +63,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.15,
 		"aggression": 0.7,
 		"blurb": "Pride territorial. Strong defenders of held ground. Balanced offense + defense. The savanna lords.",
+		"emblem": "🦁",
 	},
 	"eagles": {
 		"name": "Eagles",
@@ -71,6 +74,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.30,
 		"aggression": 0.85,
 		"blurb": "Sky hunters. Fragile in melee but raise many young. Signature power lets them strike non-adjacent territory.",
+		"emblem": "🦅",
 	},
 	"crocs": {
 		"name": "Crocodiles",
@@ -81,6 +85,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.05,
 		"aggression": 0.5,
 		"blurb": "Ambush predators. Bristling jaws, armored hide. Strongest defense in the kingdom; patient hunters from the water.",
+		"emblem": "🐊",
 	},
 	"neutral": {
 		"name": "Wild Game",
@@ -91,6 +96,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.0,
 		"aggression": 0.0,
 		"blurb": "",
+		"emblem": "",
 	},
 	"hunters": {
 		"name": "Human Hunters",
@@ -101,6 +107,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.30,
 		"aggression": 1.0,
 		"blurb": "Two-legged invaders from beyond the ridge. They carry steel and fire. They have come for you.",
+		"emblem": "🏹",
 	},
 	"wild_dogs": {
 		"name": "Wild Dog Pack",
@@ -111,6 +118,7 @@ const FACTION_CATALOG := {
 		"production_bonus": 0.40,
 		"aggression": 1.0,
 		"blurb": "Rival predators have united against the new apex. Hyenas, jackals, scavenger packs — all hungry.",
+		"emblem": "🐕",
 	},
 }
 

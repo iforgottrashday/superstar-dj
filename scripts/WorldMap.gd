@@ -64,6 +64,8 @@ const COLOR_ARMY_LABEL_BORDER := Color(0.50, 0.32, 0.10, 1.0)
 const COLOR_PLAYER_GLOW := Color(0.65, 0.15, 0.05)
 const LABEL_FONT_SIZE := 14
 const ARMY_FONT_SIZE := 17
+const EMBLEM_FONT_SIZE := 56     # design-space size; scales with _map_scale
+const EMBLEM_ALPHA := 0.22       # faint enough not to compete with the name
 
 var _displayed_pulse: Dictionary = {}
 var _rings: Array = []
@@ -179,6 +181,30 @@ func _draw() -> void:
 		if region_id == _hovered:
 			fill = fill.lerp(Color(0.10, 0.05, 0.02), 0.18)
 		draw_colored_polygon(pts, fill)
+
+	# Faint faction emblem inside each owned hex. Drawn after the fill but
+	# before the player-glow halo and labels so the emblem sits behind the
+	# name/army badge as background flavor, not above them.
+	var emblem_font: Font = ThemeDB.fallback_font
+	var emblem_px: int = maxi(20, int(float(EMBLEM_FONT_SIZE) * s))
+	for region_id in HEX_CENTERS.keys():
+		var r = GameState.regions_by_id.get(region_id)
+		if r == null:
+			continue
+		var owner_id: String = String(r.owner)
+		if not GameState.FACTION_CATALOG.has(owner_id):
+			continue
+		var def: Dictionary = GameState.FACTION_CATALOG[owner_id]
+		var emblem: String = String(def.get("emblem", ""))
+		if emblem == "":
+			continue
+		var center_canvas: Vector2 = _to_canvas(HEX_CENTERS[region_id])
+		var emblem_size: Vector2 = emblem_font.get_string_size(emblem,
+			HORIZONTAL_ALIGNMENT_CENTER, -1, emblem_px)
+		var emblem_color: Color = Color(1, 1, 1, EMBLEM_ALPHA)
+		draw_string(emblem_font,
+			center_canvas - Vector2(emblem_size.x * 0.5, -emblem_size.y * 0.25),
+			emblem, HORIZONTAL_ALIGNMENT_CENTER, -1, emblem_px, emblem_color)
 
 	# Player glow halo on owned hexes.
 	for region_id in HEX_CENTERS.keys():
