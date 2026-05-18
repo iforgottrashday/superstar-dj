@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://if4kd0n3i6po"]
 
 [ext_resource type="Script" path="res://scripts/TitleScreen.gd" id="1_title"]
-[ext_resource type="Texture2D" path="res://assets/Apex_Predator_background.png" id="2_home"]
+[ext_resource type="Texture2D" path="res://assets/Apex_Predator_home.png" id="2_home"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_play"]
 bg_color = Color(0.06, 0.04, 0.10, 0.92)
