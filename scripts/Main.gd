@@ -53,6 +53,12 @@ extends Control
 @onready var play_again_btn: Button = $GameOverPanel/Margin/VBox/Buttons/PlayAgainBtn
 @onready var quit_btn: Button = $GameOverPanel/Margin/VBox/Buttons/QuitBtn
 
+@onready var menu_btn: Button = $HudBar/Margin/HBox/MenuBtn
+@onready var pause_menu_panel: PanelContainer = $PauseMenuPanel
+@onready var pause_resume_btn: Button = $PauseMenuPanel/Margin/VBox/ResumeBtn
+@onready var pause_new_game_btn: Button = $PauseMenuPanel/Margin/VBox/NewGameBtn
+@onready var pause_quit_btn: Button = $PauseMenuPanel/Margin/VBox/QuitBtn
+
 var _tech_buttons: Dictionary = {}    # tech_id -> Button
 var _picking_faction: bool = true
 var _open_region_id: String = ""
@@ -74,6 +80,10 @@ func _ready() -> void:
 	speed4_btn.pressed.connect(_set_speed.bind(4.0))
 	play_again_btn.pressed.connect(_on_play_again_pressed)
 	quit_btn.pressed.connect(_on_quit_pressed)
+	menu_btn.pressed.connect(_on_menu_pressed)
+	pause_resume_btn.pressed.connect(_on_pause_menu_resume)
+	pause_new_game_btn.pressed.connect(_on_play_again_pressed)
+	pause_quit_btn.pressed.connect(_on_quit_pressed)
 	GameState.speed = 0.0
 	_show_faction_picker()
 	_build_tech_shop()
@@ -81,6 +91,7 @@ func _ready() -> void:
 	_rebuild_region_panel()  # render the empty/placeholder state
 	event_panel.visible = false
 	game_over_panel.visible = false
+	pause_menu_panel.visible = false
 	_refresh_power_button()
 
 const _HEX_BADGE_SCRIPT: Script = preload("res://scripts/HexBadge.gd")
@@ -673,3 +684,22 @@ func _on_play_again_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+func _on_menu_pressed() -> void:
+	# Open the in-game pause menu. Auto-pause if the game is running so the
+	# player can leisurely choose Resume / Start Over / Quit. Stash the
+	# pre-pause speed so Resume restores whatever they had (1×, 2×, or 4×).
+	if GameState.speed > 0.0:
+		_last_active_speed = GameState.speed
+		GameState.speed = 0.0
+		_refresh_hud()
+	pause_menu_panel.visible = true
+
+func _on_pause_menu_resume() -> void:
+	pause_menu_panel.visible = false
+	# Only auto-unpause if we were the ones who paused (i.e. game was running
+	# when the menu opened). If the player paused first then opened the menu,
+	# leave them paused.
+	if GameState.speed == 0.0 and _last_active_speed > 0.0:
+		GameState.speed = _last_active_speed
+		_refresh_hud()
