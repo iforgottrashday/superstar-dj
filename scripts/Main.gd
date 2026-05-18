@@ -91,7 +91,34 @@ func _show_faction_picker() -> void:
 		btn.set_meta("faction_btn", true)
 		btn.text = String(def["name"]) + "  —  " + String(GameState.regions_by_id[String(def["start_region"])].name)
 		btn.tooltip_text = String(def["blurb"])
-		btn.add_theme_color_override("font_color", def["color"])
+		# Raw faction colors are tuned for the map; many (bears, eagles, crocs) are
+		# too dark to read on the parchment banner. Brighten them for text use.
+		var raw_color: Color = def["color"]
+		var text_color: Color = raw_color.lerp(Color(1, 1, 1), 0.55)
+		# Opaque dark stylebox so the parchment doesn't compete with the text.
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0.10, 0.06, 0.04, 0.95)
+		sb.border_width_left = 2
+		sb.border_width_top = 2
+		sb.border_width_right = 2
+		sb.border_width_bottom = 2
+		sb.border_color = raw_color
+		sb.corner_radius_top_left = 4
+		sb.corner_radius_top_right = 4
+		sb.corner_radius_bottom_right = 4
+		sb.corner_radius_bottom_left = 4
+		sb.content_margin_left = 14
+		sb.content_margin_right = 14
+		sb.content_margin_top = 8
+		sb.content_margin_bottom = 8
+		btn.add_theme_stylebox_override("normal", sb)
+		btn.add_theme_stylebox_override("hover", sb)
+		btn.add_theme_stylebox_override("pressed", sb)
+		btn.add_theme_stylebox_override("focus", sb)
+		btn.add_theme_color_override("font_color", text_color)
+		btn.add_theme_color_override("font_hover_color", text_color)
+		btn.add_theme_color_override("font_pressed_color", text_color)
+		btn.add_theme_color_override("font_focus_color", text_color)
 		btn.add_theme_font_size_override("font_size", 16)
 		btn.pressed.connect(_on_faction_picked.bind(faction_id))
 		debut_subtitle.get_parent().add_child(btn)
