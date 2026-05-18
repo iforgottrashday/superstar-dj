@@ -377,8 +377,10 @@ layout_mode = 2
 text = "Choose your species. The kingdom is restless."
 horizontal_alignment = 1
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.18, 0.08, 0.03, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.99, 0.95, 0.80, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 6
 
 [node name="EventPanel" type="PanelContainer" parent="."]
 visible = false
