@@ -24,3 +24,19 @@ func from_dict(d: Dictionary) -> void:
 	fortified = bool(d.get("fortified", false))
 	climate = String(d.get("climate", "temperate"))
 	neighbors = d.get("neighbors", [])
+
+
+func to_dict() -> Dictionary:
+	# Used for save serialization. Mirrors from_dict() so a saved Region
+	# round-trips cleanly. Skips acted_this_tick — that's per-tick scratch
+	# state and will be reset by SimTick on the next step anyway.
+	return {
+		"id": id,
+		"name": name,
+		"population": population,
+		"owner": owner,
+		"army": army,
+		"fortified": fortified,
+		"climate": climate,
+		"neighbors": neighbors,
+	}

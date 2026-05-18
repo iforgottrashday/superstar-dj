@@ -85,7 +85,14 @@ func _ready() -> void:
 	pause_new_game_btn.pressed.connect(_on_play_again_pressed)
 	pause_quit_btn.pressed.connect(_on_quit_pressed)
 	GameState.speed = 0.0
-	_show_faction_picker()
+	# If GameState was hydrated from a save (TitleScreen sets player_faction
+	# via load_from_disk before changing scenes), skip the picker and drop
+	# the player into the running state. Otherwise show the species picker.
+	if GameState.player_faction != "":
+		_picking_faction = false
+		_rebuild_tech_shop_purchased_state()
+	else:
+		_show_faction_picker()
 	_build_tech_shop()
 	_refresh_hud()
 	_rebuild_region_panel()  # render the empty/placeholder state
@@ -93,6 +100,21 @@ func _ready() -> void:
 	game_over_panel.visible = false
 	pause_menu_panel.visible = false
 	_refresh_power_button()
+
+func _rebuild_tech_shop_purchased_state() -> void:
+	# After loading a save, the tech buttons need to reflect already-owned
+	# adaptations as disabled with the ✓ marker. _build_tech_shop runs after
+	# this and creates the buttons fresh, so we patch them once they exist
+	# via a deferred call.
+	call_deferred("_apply_saved_tech_state")
+
+func _apply_saved_tech_state() -> void:
+	for tech_id in GameState.owned_techs.keys():
+		if _tech_buttons.has(tech_id):
+			var btn: Button = _tech_buttons[tech_id]
+			var def: Dictionary = GameState.TECH_CATALOG[tech_id]
+			btn.disabled = true
+			btn.text = _tech_button_text(def, true)
 
 const _HEX_BADGE_SCRIPT: Script = preload("res://scripts/HexBadge.gd")
 
@@ -492,6 +514,11 @@ func _on_tick(_t: int) -> void:
 	# region's current army size after recruitment, AND the active-modifiers
 	# countdown ticks visibly even when no region is selected.
 	_rebuild_region_panel()
+	# Periodic auto-save so a crash, OS-kill, or close-app loses at most a
+	# handful of ticks of progress. The NOTIFICATION_APPLICATION_PAUSED hook
+	# in GameState also saves on backgrounding for mobile.
+	if _t > 0 and _t % GameState.AUTOSAVE_TICK_INTERVAL == 0:
+		GameState.save_to_disk()
 
 
 # ─── Event modal ───
@@ -649,6 +676,9 @@ func _on_game_over(reason: String, won: bool) -> void:
 	game_over_label.text = ("🐾  APEX PREDATOR\n\n" if won else "💀  YOUR PACK FALLS\n\n") + reason
 	game_over_stats.text = _build_summary_stats()
 	game_over_panel.visible = true
+	# Run is finished — wipe the save so reopening the app doesn't auto-resume
+	# back into the ended run.
+	GameState.delete_saved_game()
 
 func _build_summary_stats() -> String:
 	var species_name: String = "—"
@@ -678,7 +708,9 @@ func _build_summary_stats() -> String:
 
 func _on_play_again_pressed() -> void:
 	# GameState is an autoload and persists across scene reloads, so wipe
-	# per-run state manually before re-entering Main.
+	# per-run state manually before re-entering Main. Also delete the save
+	# so the next launch doesn't auto-resume into the dead run.
+	GameState.delete_saved_game()
 	GameState.reset_for_new_run()
 	get_tree().reload_current_scene()
 
