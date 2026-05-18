@@ -76,16 +76,16 @@ const FACTION_CATALOG := {
 		"blurb": "Sky hunters. Fragile in melee but raise many young. Signature power lets them strike non-adjacent territory.",
 		"emblem": "🦅",
 	},
-	"crocs": {
-		"name": "Crocodiles",
+	"snakes": {
+		"name": "Snakes",
 		"color": Color(0.25, 0.50, 0.30),
 		"start_region": "river_bend",
 		"attack_bonus": 0.30,
 		"defense_bonus": 0.40,
 		"production_bonus": 0.05,
 		"aggression": 0.5,
-		"blurb": "Ambush predators. Bristling jaws, armored hide. Strongest defense in the kingdom; patient hunters from the water.",
-		"emblem": "🐊",
+		"blurb": "Silent ambushers. Venomous bite, coiled patience. Hard to corner, deadly to provoke. Strongest defense in the kingdom and a brutal first strike.",
+		"emblem": "🐍",
 	},
 	"neutral": {
 		"name": "Wild Game",
@@ -181,8 +181,8 @@ var wolf_howl_ready_at: int = 0
 var bear_rage_ready_at: int = 0
 var lion_defense_ready_at: int = 0
 var eagle_brood_ready_at: int = 0
-var croc_strike_ready_at: int = 0
-var croc_strike_primed: bool = false    # next player attack is buffed
+var snake_strike_ready_at: int = 0
+var snake_strike_primed: bool = false    # next player attack is buffed
 
 
 func _ready() -> void:
@@ -274,8 +274,8 @@ func reset_for_new_run() -> void:
 	bear_rage_ready_at = 0
 	lion_defense_ready_at = 0
 	eagle_brood_ready_at = 0
-	croc_strike_ready_at = 0
-	croc_strike_primed = false
+	snake_strike_ready_at = 0
+	snake_strike_primed = false
 	_accum = 0.0
 	_load_regions()
 
@@ -498,8 +498,8 @@ func can_use_faction_power() -> bool:
 			return tick >= lion_defense_ready_at
 		"eagles":
 			return tick >= eagle_brood_ready_at
-		"crocs":
-			return tick >= croc_strike_ready_at and not croc_strike_primed
+		"snakes":
+			return tick >= snake_strike_ready_at and not snake_strike_primed
 	return false
 
 
@@ -509,7 +509,7 @@ func faction_power_name() -> String:
 		"bears": return "Awakening Rage"
 		"lions": return "Territorial Stand"
 		"eagles": return "Brood of Fledglings"
-		"crocs": return "Death Roll"
+		"snakes": return "Venom Strike"
 	return ""
 
 
@@ -519,7 +519,7 @@ func faction_power_blurb() -> String:
 		"bears": return "The bear erupts. +60 pack at your strongest territory. 25-turn cooldown."
 		"lions": return "The pride forms a wall. Defense +60% for 4 turns. 22-turn cooldown."
 		"eagles": return "All nests fledge at once. +15 hunters to EVERY territory you hold. 25-turn cooldown."
-		"crocs": return "Patient water-strike. Your next attack deals +200% damage. 30-turn cooldown."
+		"snakes": return "Coiled venom-strike. Your next attack deals +200% damage. 30-turn cooldown."
 	return ""
 
 
@@ -529,10 +529,10 @@ func faction_power_cooldown() -> int:
 		"bears": return maxi(0, bear_rage_ready_at - tick)
 		"lions": return maxi(0, lion_defense_ready_at - tick)
 		"eagles": return maxi(0, eagle_brood_ready_at - tick)
-		"crocs":
-			if croc_strike_primed:
+		"snakes":
+			if snake_strike_primed:
 				return -1  # not on cooldown but waiting for player to spend it
-			return maxi(0, croc_strike_ready_at - tick)
+			return maxi(0, snake_strike_ready_at - tick)
 	return 0
 
 
@@ -561,10 +561,10 @@ func use_faction_power() -> bool:
 				emit_signal("region_army_changed", r.id)
 			eagle_brood_ready_at = tick + 25
 			emit_signal("news_emitted", "Every nest fledges at once. Fifteen young hunters in every territory.")
-		"crocs":
-			croc_strike_primed = true
-			croc_strike_ready_at = tick + 30
-			emit_signal("news_emitted", "The river goes still. Something is waiting. Your next strike will be brutal.")
+		"snakes":
+			snake_strike_primed = true
+			snake_strike_ready_at = tick + 30
+			emit_signal("news_emitted", "The grass goes still. Something is coiled. Your next strike will be brutal.")
 	emit_signal("faction_power_state_changed")
 	return true
 

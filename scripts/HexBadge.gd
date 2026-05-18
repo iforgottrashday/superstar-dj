@@ -108,8 +108,8 @@ static func draw_faction_glyph(
 			canvas.draw_line(
 				center + Vector2(radius * 0.55, radius * 0.65),
 				center + Vector2(0, radius * 0.05), color, w, true)
-		"crocs":
-			# Zigzag teeth.
+		"snakes":
+			# Zigzag — fang/coil shorthand.
 			var w: float = max(2.0, radius * 0.20)
 			var teeth := PackedVector2Array([
 				center + Vector2(-radius * 0.85, radius * 0.15),
