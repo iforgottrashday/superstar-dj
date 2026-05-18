@@ -186,9 +186,32 @@ var croc_strike_primed: bool = false    # next player attack is buffed
 
 
 func _ready() -> void:
+	_install_emoji_font_fallback()
 	_load_regions()
 	all_events = EventSystem.load_events()
 	set_process(true)
+
+
+func _install_emoji_font_fallback() -> void:
+	# Godot's bundled fallback font has no color-emoji coverage, so glyphs like
+	# 🐺 / 🐻 / 🦁 / 🦅 / 🐊 render as boxes. Append a SystemFont that asks the
+	# OS for its color-emoji font by name — Windows ships Segoe UI Emoji,
+	# Android/Linux ship Noto Color Emoji, iOS/macOS ship Apple Color Emoji.
+	var emoji := SystemFont.new()
+	emoji.font_names = PackedStringArray([
+		"Segoe UI Emoji",
+		"Apple Color Emoji",
+		"Noto Color Emoji",
+	])
+	var fb: Font = ThemeDB.fallback_font
+	if fb == null:
+		return
+	var fallbacks: Array = fb.fallbacks.duplicate()
+	for existing in fallbacks:
+		if existing is SystemFont:
+			return  # already installed (e.g. on scene reload)
+	fallbacks.append(emoji)
+	fb.fallbacks = fallbacks
 
 
 func _process(delta: float) -> void:
