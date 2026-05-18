@@ -565,7 +565,7 @@ func _refresh_power_button() -> void:
 		power_btn.disabled = true
 		power_btn.tooltip_text = ""
 		return
-	power_name_label.text = "POWER: " + GameState.faction_power_name()
+	power_name_label.text = GameState.faction_power_name()
 	power_btn.tooltip_text = GameState.faction_power_blurb()
 	var cd: int = GameState.faction_power_cooldown()
 	if GameState.player_faction == "crocs" and GameState.croc_strike_primed:
