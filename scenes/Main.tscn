@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/NewsTicker.gd" id="2_ticker"]
 [ext_resource type="Script" path="res://scripts/WorldMap.gd" id="3_worldmap"]
-[ext_resource type="Texture2D" path="res://assets/global_siege_menu.png" id="4_menu"]
+[ext_resource type="Texture2D" path="res://assets/Apex_Predator_home.png" id="4_menu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
 bg_color = Color(0.06, 0.05, 0.12, 1.0)
