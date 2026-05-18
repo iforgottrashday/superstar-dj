@@ -147,9 +147,9 @@ func _hex_polygon(center: Vector2, radius: float) -> PackedVector2Array:
 # ─── drawing ────────────────────────────────────────────────────────────────
 
 func _draw() -> void:
-	# Solid black behind the hex grid. Translucent age-stains + edge vignette
-	# still draw on top for a bit of atmospheric texture.
-	draw_rect(Rect2(Vector2.ZERO, size), Color.BLACK, true)
+	# Background image sits in a sibling TextureRect behind this Control.
+	# We skip the opaque fill so that image shows through, but still draw the
+	# translucent age-stains + edge vignette on top for atmosphere.
 	var s: float = _map_scale()
 	var off: Vector2 = _map_offset()
 	for stain in _stains:

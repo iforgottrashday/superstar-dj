@@ -29,6 +29,7 @@ extends Control
 @onready var tech_bar: HBoxContainer = $TechBar/Margin/HBox
 
 @onready var debut_panel: Control = $DebutPanel
+@onready var debut_backdrop: ColorRect = $DebutBackdrop
 @onready var debut_title: Label = $DebutPanel/Margin/VBox/Title
 @onready var debut_subtitle: Label = $DebutPanel/Margin/VBox/Subtitle
 
@@ -122,11 +123,13 @@ func _show_faction_picker() -> void:
 		btn.add_theme_font_size_override("font_size", 16)
 		btn.pressed.connect(_on_faction_picked.bind(faction_id))
 		debut_subtitle.get_parent().add_child(btn)
+	debut_backdrop.visible = true
 	debut_panel.visible = true
 
 func _on_faction_picked(faction_id: String) -> void:
 	GameState.player_faction = faction_id
 	debut_panel.visible = false
+	debut_backdrop.visible = false
 	_picking_faction = false
 	GameState.speed = 1.0
 	var def: Dictionary = GameState.FACTION_CATALOG[faction_id]
