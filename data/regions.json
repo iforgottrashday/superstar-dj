@@ -1,182 +1,182 @@
 [
   {
-    "id": "england",
-    "name": "England",
+    "id": "north_crag",
+    "name": "North Crag",
+    "population": 2,
+    "owner": "neutral",
+    "army": 18,
+    "fortified": true,
+    "climate": "cold",
+    "neighbors": ["high_pass", "wolf_pine", "birch_stand"]
+  },
+  {
+    "id": "high_pass",
+    "name": "High Pass",
     "population": 3,
     "owner": "neutral",
-    "army": 25,
-    "fortified": true,
-    "climate": "temperate",
-    "neighbors": ["france", "north_america"]
-  },
-  {
-    "id": "france",
-    "name": "France",
-    "population": 12,
-    "owner": "neutral",
-    "army": 35,
-    "fortified": false,
-    "climate": "temperate",
-    "neighbors": ["england", "iberia", "hre"]
-  },
-  {
-    "id": "iberia",
-    "name": "Iberia",
-    "population": 5,
-    "owner": "neutral",
-    "army": 30,
-    "fortified": false,
-    "climate": "temperate",
-    "neighbors": ["france", "maghreb"]
-  },
-  {
-    "id": "maghreb",
-    "name": "Maghreb",
-    "population": 5,
-    "owner": "neutral",
-    "army": 25,
-    "fortified": false,
-    "climate": "arid",
-    "neighbors": ["iberia", "egypt"]
-  },
-  {
-    "id": "hre",
-    "name": "HRE",
-    "population": 30,
-    "owner": "hre",
-    "army": 60,
-    "fortified": true,
-    "climate": "temperate",
-    "neighbors": ["france", "eastern_eu", "byzantium", "russia"]
-  },
-  {
-    "id": "eastern_eu",
-    "name": "Poland",
-    "population": 8,
-    "owner": "neutral",
-    "army": 30,
-    "fortified": false,
-    "climate": "temperate",
-    "neighbors": ["hre", "russia", "byzantium"]
-  },
-  {
-    "id": "russia",
-    "name": "Russia",
-    "population": 8,
-    "owner": "neutral",
-    "army": 25,
+    "army": 22,
     "fortified": false,
     "climate": "cold",
-    "neighbors": ["hre", "eastern_eu", "central_asia", "mongolia", "north_america"]
+    "neighbors": ["north_crag", "eagle_perch", "birch_stand", "deep_woods"]
   },
   {
-    "id": "north_america",
-    "name": "N. America",
-    "population": 4,
-    "owner": "neutral",
-    "army": 30,
-    "fortified": false,
-    "climate": "temperate",
-    "neighbors": ["russia", "mesoamerica", "england"]
-  },
-  {
-    "id": "mesoamerica",
-    "name": "Aztec",
-    "population": 6,
-    "owner": "neutral",
-    "army": 45,
+    "id": "eagle_perch",
+    "name": "Eagle Perch",
+    "population": 2,
+    "owner": "eagles",
+    "army": 28,
     "fortified": true,
-    "climate": "tropical",
-    "neighbors": ["north_america", "south_america"]
+    "climate": "cold",
+    "neighbors": ["high_pass", "deep_woods", "old_oaks"]
   },
   {
-    "id": "south_america",
-    "name": "Inca",
+    "id": "wolf_pine",
+    "name": "Wolf Pine",
     "population": 7,
     "owner": "neutral",
-    "army": 50,
-    "fortified": true,
-    "climate": "tropical",
-    "neighbors": ["mesoamerica"]
-  },
-  {
-    "id": "byzantium",
-    "name": "Byzantium",
-    "population": 15,
-    "owner": "byzantium",
-    "army": 55,
-    "fortified": true,
-    "climate": "temperate",
-    "neighbors": ["hre", "eastern_eu", "levant", "persia"]
-  },
-  {
-    "id": "levant",
-    "name": "Levant",
-    "population": 3,
-    "owner": "mamluk",
-    "army": 20,
+    "army": 28,
     "fortified": false,
-    "climate": "arid",
-    "neighbors": ["byzantium", "egypt", "persia"]
+    "climate": "forest",
+    "neighbors": ["north_crag", "birch_stand", "wild_meadow", "fern_grove"]
   },
   {
-    "id": "egypt",
-    "name": "Egypt",
-    "population": 5,
-    "owner": "mamluk",
-    "army": 40,
-    "fortified": true,
-    "climate": "arid",
-    "neighbors": ["maghreb", "levant"]
-  },
-  {
-    "id": "persia",
-    "name": "Persia",
+    "id": "birch_stand",
+    "name": "Birch Stand",
     "population": 6,
-    "owner": "neutral",
-    "army": 35,
-    "fortified": false,
-    "climate": "arid",
-    "neighbors": ["byzantium", "levant", "central_asia", "india"]
-  },
-  {
-    "id": "central_asia",
-    "name": "C. Asia",
-    "population": 4,
     "owner": "neutral",
     "army": 25,
     "fortified": false,
-    "climate": "arid",
-    "neighbors": ["russia", "mongolia", "persia", "india", "china"]
+    "climate": "forest",
+    "neighbors": ["north_crag", "high_pass", "wolf_pine", "deep_woods", "fern_grove", "cave_system"]
   },
   {
-    "id": "india",
-    "name": "India",
-    "population": 80,
-    "owner": "neutral",
-    "army": 60,
-    "fortified": false,
-    "climate": "tropical",
-    "neighbors": ["persia", "central_asia", "china"]
-  },
-  {
-    "id": "china",
-    "name": "China",
-    "population": 100,
-    "owner": "china",
-    "army": 90,
+    "id": "deep_woods",
+    "name": "Deep Woods",
+    "population": 10,
+    "owner": "wolves",
+    "army": 42,
     "fortified": true,
-    "climate": "temperate",
-    "neighbors": ["mongolia", "central_asia", "india"]
+    "climate": "forest",
+    "neighbors": ["high_pass", "eagle_perch", "birch_stand", "old_oaks", "cave_system", "boulder_field"]
   },
   {
-    "id": "mongolia",
-    "name": "Mongolia",
-    "population": 1,
-    "owner": "mongol",
+    "id": "old_oaks",
+    "name": "Old Oaks",
+    "population": 7,
+    "owner": "neutral",
+    "army": 28,
+    "fortified": false,
+    "climate": "forest",
+    "neighbors": ["eagle_perch", "deep_woods", "boulder_field"]
+  },
+  {
+    "id": "wild_meadow",
+    "name": "Wild Meadow",
+    "population": 6,
+    "owner": "neutral",
+    "army": 25,
+    "fortified": false,
+    "climate": "plains",
+    "neighbors": ["wolf_pine", "fern_grove", "burnt_wood"]
+  },
+  {
+    "id": "fern_grove",
+    "name": "Fern Grove",
+    "population": 5,
+    "owner": "neutral",
+    "army": 25,
+    "fortified": false,
+    "climate": "forest",
+    "neighbors": ["wolf_pine", "birch_stand", "wild_meadow", "cave_system", "burnt_wood", "tall_grass"]
+  },
+  {
+    "id": "cave_system",
+    "name": "Cave System",
+    "population": 4,
+    "owner": "bears",
+    "army": 45,
+    "fortified": true,
+    "climate": "cold",
+    "neighbors": ["birch_stand", "deep_woods", "fern_grove", "boulder_field", "tall_grass", "salt_lick"]
+  },
+  {
+    "id": "boulder_field",
+    "name": "Boulder Field",
+    "population": 3,
+    "owner": "neutral",
+    "army": 22,
+    "fortified": false,
+    "climate": "plains",
+    "neighbors": ["deep_woods", "old_oaks", "cave_system", "salt_lick", "stone_meadow"]
+  },
+  {
+    "id": "burnt_wood",
+    "name": "Burnt Wood",
+    "population": 3,
+    "owner": "neutral",
+    "army": 20,
+    "fortified": false,
+    "climate": "plains",
+    "neighbors": ["wild_meadow", "fern_grove", "tall_grass", "mud_wallow"]
+  },
+  {
+    "id": "tall_grass",
+    "name": "Tall Grass",
+    "population": 9,
+    "owner": "lions",
+    "army": 35,
+    "fortified": false,
+    "climate": "plains",
+    "neighbors": ["fern_grove", "cave_system", "burnt_wood", "salt_lick", "mud_wallow", "river_bend"]
+  },
+  {
+    "id": "salt_lick",
+    "name": "Salt Lick",
+    "population": 8,
+    "owner": "neutral",
     "army": 30,
     "fortified": false,
-    "climate": "cold",
-    "neighbors": ["russia", "central_asia", "china"]
+    "climate": "plains",
+    "neighbors": ["cave_system", "boulder_field", "tall_grass", "stone_meadow", "river_bend", "reed_marsh"]
+  },
+  {
+    "id": "stone_meadow",
+    "name": "Stone Meadow",
+    "population": 5,
+    "owner": "neutral",
+    "army": 25,
+    "fortified": false,
+    "climate": "plains",
+    "neighbors": ["boulder_field", "salt_lick", "reed_marsh"]
+  },
+  {
+    "id": "mud_wallow",
+    "name": "Mud Wallow",
+    "population": 4,
+    "owner": "neutral",
+    "army": 20,
+    "fortified": false,
+    "climate": "marsh",
+    "neighbors": ["burnt_wood", "tall_grass", "river_bend"]
+  },
+  {
+    "id": "river_bend",
+    "name": "River Bend",
+    "population": 7,
+    "owner": "crocs",
+    "army": 38,
+    "fortified": true,
+    "climate": "water",
+    "neighbors": ["tall_grass", "salt_lick", "mud_wallow", "reed_marsh"]
+  },
+  {
+    "id": "reed_marsh",
+    "name": "Reed Marsh",
+    "population": 5,
+    "owner": "neutral",
+    "army": 24,
+    "fortified": false,
+    "climate": "marsh",
+    "neighbors": ["salt_lick", "stone_meadow", "river_bend"]
   }
 ]

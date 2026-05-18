@@ -24,29 +24,29 @@ const HEX_HEIGHT := HEX_RADIUS * 2.0       # point-to-point
 # Hex centers in design space. Geographic-ish order: top row = north,
 # bottom row = south. Empty corners (top-left, bottom-left) are intentional.
 const HEX_CENTERS := {
-	# Row 0 (north): Russia, Mongolia, China
-	"russia":        Vector2(155, 60),
-	"mongolia":      Vector2(238, 60),
-	"china":         Vector2(321, 60),
-	# Row 1: NA, England, HRE, E.Eu
-	"north_america": Vector2(113, 130),
-	"england":       Vector2(196, 130),
-	"hre":           Vector2(279, 130),
-	"eastern_eu":    Vector2(362, 130),
-	# Row 2: Aztec, France, Byzantium, C. Asia
-	"mesoamerica":   Vector2(72, 200),
-	"france":        Vector2(155, 200),
-	"byzantium":     Vector2(238, 200),
-	"central_asia":  Vector2(321, 200),
-	# Row 3: Inca, Iberia, Persia, India
-	"south_america": Vector2(113, 270),
-	"iberia":        Vector2(196, 270),
-	"persia":        Vector2(279, 270),
-	"india":         Vector2(362, 270),
-	# Row 4 (south): Maghreb, Egypt, Levant
-	"maghreb":       Vector2(155, 340),
-	"egypt":         Vector2(238, 340),
-	"levant":        Vector2(321, 340),
+	# Row 0 (peaks): North Crag, High Pass, Eagle Perch
+	"north_crag":    Vector2(155, 60),
+	"high_pass":     Vector2(238, 60),
+	"eagle_perch":   Vector2(321, 60),
+	# Row 1 (boreal forest): Wolf Pine, Birch Stand, Deep Woods, Old Oaks
+	"wolf_pine":     Vector2(113, 130),
+	"birch_stand":   Vector2(196, 130),
+	"deep_woods":    Vector2(279, 130),
+	"old_oaks":      Vector2(362, 130),
+	# Row 2 (mixed): Wild Meadow, Fern Grove, Cave System, Boulder Field
+	"wild_meadow":   Vector2(72, 200),
+	"fern_grove":    Vector2(155, 200),
+	"cave_system":   Vector2(238, 200),
+	"boulder_field": Vector2(321, 200),
+	# Row 3 (plains): Burnt Wood, Tall Grass, Salt Lick, Stone Meadow
+	"burnt_wood":    Vector2(113, 270),
+	"tall_grass":    Vector2(196, 270),
+	"salt_lick":     Vector2(279, 270),
+	"stone_meadow":  Vector2(362, 270),
+	# Row 4 (wet): Mud Wallow, River Bend, Reed Marsh
+	"mud_wallow":    Vector2(155, 340),
+	"river_bend":    Vector2(238, 340),
+	"reed_marsh":    Vector2(321, 340),
 }
 
 # Palette
@@ -197,6 +197,22 @@ func _draw() -> void:
 			border = COLOR_BORDER_HOVER
 			width = 4.0
 		draw_polyline(_closed_loop(pts), border, width, true)
+
+	# Adjacency overlay — when the player hovers a hex, show its geographic
+	# neighbors with a gold border and a connecting line. The hex layout
+	# itself is decorative; this overlay is the gameplay truth.
+	if _hovered != "":
+		var hovered_r = GameState.regions_by_id.get(_hovered)
+		if hovered_r != null:
+			var adjacency_color: Color = Color(0.97, 0.80, 0.20, 0.95)
+			var hov_center: Vector2 = _to_canvas(HEX_CENTERS[_hovered])
+			for nid in hovered_r.neighbors:
+				if HEX_CENTERS.has(nid):
+					var n_center: Vector2 = _to_canvas(HEX_CENTERS[nid])
+					# Connection line first (so it goes under the border).
+					draw_line(hov_center, n_center, Color(adjacency_color.r, adjacency_color.g, adjacency_color.b, 0.6), 3.0, true)
+					var n_pts: PackedVector2Array = _hex_polygon(n_center, hex_canvas_radius)
+					draw_polyline(_closed_loop(n_pts), adjacency_color, 3.5, true)
 
 	# Combat rings (centered on hex).
 	for ring in _rings:

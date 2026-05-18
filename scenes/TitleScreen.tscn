@@ -59,7 +59,7 @@ grow_vertical = 2
 
 [node name="PlayBtn" type="Button" parent="CenterContainer"]
 layout_mode = 2
-text = "BEGIN THE SIEGE"
+text = "ENTER THE WILD"
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.97, 0.90, 0.72, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_play")

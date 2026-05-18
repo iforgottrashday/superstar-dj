@@ -104,12 +104,12 @@ func _on_faction_picked(faction_id: String) -> void:
 	GameState.speed = 1.0
 	var def: Dictionary = GameState.FACTION_CATALOG[faction_id]
 	GameState.emit_signal("news_emitted",
-		"You take the throne of the %s. Banners unfurl over %s." % [
+		"You are the %s. The pack stirs in %s." % [
 			String(def["name"]),
 			GameState.regions_by_id[String(def["start_region"])].name,
 		])
 	GameState.emit_signal("news_emitted",
-		"TIP: Click any region to inspect or order an attack. Adjacent regions only.")
+		"TIP: Click any territory to inspect or order a hunt. Adjacent only — adjacency is shown by hex contact.")
 	world_map.queue_redraw()
 	_refresh_hud()
 	_refresh_power_button()
@@ -138,7 +138,7 @@ func _rebuild_region_panel() -> void:
 		region_channels_label.text = ""
 		region_close.visible = false
 		var hint := Label.new()
-		hint.text = "Click any region on the map to inspect or order an action."
+		hint.text = "Click any territory on the map to inspect or order a hunt."
 		hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
 		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		region_channels_box.add_child(hint)
@@ -152,16 +152,16 @@ func _rebuild_region_panel() -> void:
 	var fort_tag: String = "  🏰 fortified" if bool(r.fortified) else ""
 	region_title.text = "%s%s" % [String(r.name), fort_tag]
 	region_title.add_theme_color_override("font_color", owner_def["color"])
-	region_stats.text = "Owner: %s   ·   Army: %d   ·   Pop: %.1fM" % [
+	region_stats.text = "Held by: %s   ·   Pack: %d   ·   Prey: %.0f" % [
 		String(owner_def["name"]),
 		int(r.army),
 		float(r.population),
 	]
 	if owner_id == GameState.player_faction:
-		region_channels_label.text = "DEPLOY FROM HERE"
+		region_channels_label.text = "HUNT FROM HERE"
 		_build_outgoing_rows(r)
 	else:
-		region_channels_label.text = "ATTACK THIS PROVINCE"
+		region_channels_label.text = "TAKE THIS TERRITORY"
 		_build_incoming_attack_rows(r)
 
 func _build_outgoing_rows(from_r) -> void:
@@ -193,7 +193,7 @@ func _build_incoming_attack_rows(to_r) -> void:
 		region_channels_box.add_child(_build_attack_row(n, to_r))
 	if not any_sources:
 		var l := Label.new()
-		l.text = "You have no adjacent provinces. Conquer your way over first."
+		l.text = "No adjacent territories of yours. Claim ground nearer first."
 		l.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
 		region_channels_box.add_child(l)
 
@@ -271,7 +271,7 @@ func _on_player_send(from_r, to_r, send: int) -> void:
 		GameState.emit_signal("region_army_changed", from_r.id)
 		GameState.emit_signal("region_army_changed", to_r.id)
 		GameState.emit_signal("news_emitted",
-			"%d troops march from %s to %s." % [send, String(from_r.name), String(to_r.name)])
+			"%d hunters move from %s to %s." % [send, String(from_r.name), String(to_r.name)])
 	else:
 		SimTick.resolve_player_attack(GameState, from_r, to_r, send)
 	_rebuild_region_panel()
@@ -338,7 +338,7 @@ func _on_pending_event_changed() -> void:
 		var requires_gold: int = int(c.get("requires_gold", 0))
 		if requires_gold > 0 and GameState.treasury < requires_gold:
 			btn.disabled = true
-			btn.text += "   (need %d gold)" % requires_gold
+			btn.text += "   (need %d prey)" % requires_gold
 		btn.pressed.connect(_on_event_choice.bind(i))
 		event_choices_box.add_child(btn)
 	event_panel.visible = true
@@ -360,7 +360,7 @@ func _refresh_power_button() -> void:
 	power_name_label.text = "POWER: " + GameState.faction_power_name()
 	power_btn.tooltip_text = GameState.faction_power_blurb()
 	var cd: int = GameState.faction_power_cooldown()
-	if GameState.player_faction == "song" and GameState.gunpowder_pending:
+	if GameState.player_faction == "crocs" and GameState.croc_strike_primed:
 		power_btn.text = "Primed (3× next)"
 		power_btn.disabled = true
 	elif cd <= 0:
@@ -402,10 +402,10 @@ func _refresh_hud() -> void:
 	var army: int = GameState.total_army(GameState.player_faction)
 	faction_label.text = String(faction_def["name"])
 	faction_label.add_theme_color_override("font_color", faction_def["color"])
-	gold_label.text = "Gold: %d" % GameState.treasury
-	provinces_label.text = "Provinces: %d / %d" % [owned, total]
-	army_label.text = "Army: %d" % army
-	year_label.text = "Year %d" % GameState.tick
+	gold_label.text = "Prey: %d" % GameState.treasury
+	provinces_label.text = "Territories: %d / %d" % [owned, total]
+	army_label.text = "Pack: %d" % army
+	year_label.text = "Season %d" % GameState.tick
 	# Tech buttons.
 	for tech_id in _tech_buttons.keys():
 		var btn: Button = _tech_buttons[tech_id]
@@ -457,5 +457,5 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_game_over(reason: String, won: bool) -> void:
 	GameState.speed = 0.0
-	game_over_label.text = ("⚔  THE WORLD IS YOURS\n\n" if won else "✠  YOUR LINE ENDS\n\n") + reason
+	game_over_label.text = ("🐾  APEX PREDATOR\n\n" if won else "💀  YOUR PACK FALLS\n\n") + reason
 	game_over_panel.visible = true

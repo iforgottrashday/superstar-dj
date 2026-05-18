@@ -19,7 +19,7 @@ func _ready() -> void:
 	_load_headlines()
 	GameState.news_emitted.connect(_on_news)
 	# Seed the ticker so it's not empty on launch.
-	_enqueue("KHANS — the chronicles begin. Choose your house.")
+	_enqueue("APEX — the kingdom wakes. Choose your species.")
 
 func _process(delta: float) -> void:
 	_ambient_timer -= delta

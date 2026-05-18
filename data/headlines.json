@@ -1,38 +1,41 @@
 {
   "ambient": [
-    "Court astrologer claims unfavorable conjunction. Two horses, no harvest.",
-    "A blind monk in a coastal abbey is heard predicting your coronation.",
-    "Bandits in the high passes have begun robbing only nobles. Popular.",
-    "A pope and an antipope mutually excommunicate each other. Again.",
-    "Plague reported in three port cities. Three more port cities deny it.",
-    "Emissaries arrive bearing gifts of silk, salt, and several scorpions.",
-    "A spice ship runs aground. The cargo is auctioned at four times its weight.",
-    "Pilgrims report seeing a comet shaped like a galloping horse.",
-    "Mercenary company offers their service to whoever can prove they have coin.",
-    "The Khan of the Steppe is said to be 'considering options.' Coastal cities buy candles.",
-    "Cartographer presents an updated world map. Twelve cities are misspelled.",
-    "Royal mint reports counterfeit coins flooding the markets. The counterfeits are better.",
-    "Two princes ride into a forest. One returns. The court does not press the matter.",
-    "Heretical text discovered in an abbey library. Two abbots quietly transcribe it.",
-    "A camel caravan vanishes between waystations. Survivors carry tea, not goods.",
-    "A new translation of an Arabic mathematics treatise reaches Paris. Five priests faint.",
-    "Merchant guild seizes a customs house. They issue receipts for everything they take.",
-    "Bishops fail to agree on the date of Easter. Easter happens anyway.",
-    "Royal falconer found drunk in a tower. The falcon is also drunk."
+    "A flock of starlings darkens the sky over the burnt wood.",
+    "The river runs cold this season. The trout are larger.",
+    "Bear sign on the south path — claw marks four feet up the pine.",
+    "Wolves heard last night across three valleys. Coordinated. Hunting.",
+    "An eagle drops a hare at the foot of the high pass. Hungry, evidently.",
+    "A dead deer in the meadow, intact, no marks. The crows won't touch it.",
+    "Salt deposits in the lower stones. Every prey species came through this week.",
+    "Frost in the high pass already. Two weeks early.",
+    "A doe stares at the cave system for an hour, then runs.",
+    "The reed marsh smells of rot. Something big died and sank.",
+    "Twin lion cubs spotted on the tall grass ridge. Heavy with milk.",
+    "Three wolverines crossed the open meadow at dawn, fearless.",
+    "A pup tries its first howl. Comes out as a yelp.",
+    "An old wolf is left behind by the pack. He does not follow.",
+    "Mating calls from the boulder field every night for a week.",
+    "Strange tracks near old oaks. Five toes. Not a paw print.",
+    "A bear ignores a salmon to chase a butterfly. Drunk on spring.",
+    "The marsh ducks have arrived. Their meat is fat after the long flight.",
+    "An eagle and a falcon fight over a hare. The hare escapes."
   ],
-  "battle_reports": [
-    "A messenger arrives at court covered in mud and good news.",
-    "The chronicler grimaces. He has only one quill left and the ink is freezing.",
-    "Crows gather over a valley to the east. Local farmers stay inside.",
-    "A young captain returns missing a horse, a cloak, and one finger.",
-    "Banners are taken at a crossroads. Some are kept; some are burned."
+  "milestone_50": [
+    "%s now belongs to you in every footprint and scent post.",
+    "Your scent dominates %s. Even the wind carries it.",
+    "Every den in %s has heard your call."
+  ],
+  "milestone_90": [
+    "%s is utterly yours. Even the prey have changed their routes.",
+    "The young of %s are born knowing your name.",
+    "Every other species avoids %s after dark."
   ],
   "backlash": [
-    "Coalition forming against you in the west. The Pope writes a strongly worded letter.",
-    "Mercenaries demand back pay or they will work for whoever defeated you.",
-    "Peasant revolt in your interior. Tax collectors arrive home in pieces.",
-    "An old enemy returns with new allies. Trumpets sound at dawn over the eastern hills.",
-    "Excommunication. Your trade routes north begin asking awkward questions.",
-    "A rival sultan publishes your private letters. Most of them are forgeries. The bad ones are real."
+    "Other species have noticed your dominance. They are gathering.",
+    "Smoke on the horizon. Not lightning — something organized.",
+    "A pup found dead, killed by something larger and unknown.",
+    "Rival packs leaving warnings — claw marks, marked trees, dead prey.",
+    "The crows are unusually loud. They know something.",
+    "An old hunter remembers what apex predators look like just before they fall."
   ]
 }

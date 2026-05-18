@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Global Siege"
-config/description="Medieval real-time conquest sim. Pick a faction, take the world."
+config/name="Apex"
+config/description="Predator territorial conquest. Pick a species, become the apex predator of a single wild kingdom."
 run/main_scene="res://scenes/TitleScreen.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://assets/global_siege_icon.png"

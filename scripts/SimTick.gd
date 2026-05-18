@@ -133,11 +133,11 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 	if bool(to_r.fortified):
 		if attacker_faction == gs.player_faction:
 			atk_strength *= 1.0 + gs.player_siege_bonus()
-	# Song Gunpowder Stratagem — one-shot 3x multiplier on the player's next attack.
-	if attacker_faction == gs.player_faction and gs.gunpowder_pending:
+	# Crocodile Death Roll — one-shot 3x multiplier on the player's next attack.
+	if attacker_faction == gs.player_faction and gs.croc_strike_primed:
 		atk_strength *= 3.0
-		gs.gunpowder_pending = false
-		gs.emit_signal("news_emitted", "GUNPOWDER DRAGONS roar from %s." % String(from_r.name))
+		gs.croc_strike_primed = false
+		gs.emit_signal("news_emitted", "DEATH ROLL from %s. The water boils red." % String(from_r.name))
 	atk_strength *= randf_range(1.0 - COMBAT_NOISE, 1.0 + COMBAT_NOISE)
 
 	# Defender strength.
@@ -177,11 +177,12 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 		to_r.army = defender_survivors
 		gs.emit_signal("news_emitted",
 			"%s breaks the assault on %s. %s retreats with heavy losses." % [def_name, String(to_r.name), atk_name])
-		# Mamluk Slave Soldier Reinforcement — passive: surviving defenders get reinforced.
-		if defender_faction == "mamluk" and defender_faction == gs.player_faction:
+		# Eagles passive: surviving defenders raise extra young after a failed
+		# attack (the colony rallies). +25 hunters at the defended hex.
+		if defender_faction == "eagles" and defender_faction == gs.player_faction:
 			to_r.army = int(to_r.army) + 25
 			gs.emit_signal("news_emitted",
-				"Slave-soldier markets reopen overnight. %s gains 25 troops." % String(to_r.name))
+				"The eagle colony rallies. Fledglings fill the cliffs above %s." % String(to_r.name))
 
 	gs.emit_signal("region_army_changed", to_r.id)
 	return result
@@ -193,41 +194,46 @@ static func _passive_income(gs: Node) -> void:
 		gs.add_treasury(owned * TREASURY_PER_REGION_PER_TICK)
 
 
-# Each faction has a passive curse that periodically rolls a check against them.
+# Each species has a passive weakness that periodically rolls against them.
 static func _faction_curse_check(gs: Node) -> void:
 	if gs.tick <= 0:
 		return
 	var f: String = String(gs.player_faction)
-	if f == "mongol" and gs.tick % 15 == 0 and randf() < 0.25:
+	if f == "wolves" and gs.tick % 15 == 0 and randf() < 0.25:
+		# Wolves: alpha rivalry. A territory breaks off as a splinter pack.
 		var owned: Array = gs.owned_regions(f)
 		if owned.size() > 1:
 			var r = owned[randi() % owned.size()]
 			gs.set_region_owner(r.id, "neutral")
 			gs.emit_signal("news_emitted",
-				"%s tires of steppe rule and raises its own banners." % String(r.name))
-	elif f == "hre" and gs.tick % 30 == 0 and randf() < 0.30:
+				"Alpha rivalry. A splinter pack claims %s." % String(r.name))
+	elif f == "bears" and gs.tick % 30 == 0 and randf() < 0.30:
+		# Bears: hibernation. Prey production stalls for a season.
 		gs.apply_modifier("production", -1.0, 5)
 		gs.emit_signal("news_emitted",
-			"The princes squabble at Augsburg. Tax collection stalls for five years.")
-	elif f == "byzantium" and gs.tick % 25 == 0 and randf() < 0.25:
+			"The bears hibernate. Cub-rearing halts for five seasons.")
+	elif f == "lions" and gs.tick % 25 == 0 and randf() < 0.25:
+		# Lions: cub mortality / pride fight. Garrison thins in one territory.
 		var r2 = _random_owned(gs)
 		if r2 != null:
 			r2.army = max(1, int(float(r2.army) * 0.85))
 			gs.emit_signal("region_army_changed", r2.id)
 			gs.emit_signal("news_emitted",
-				"Iconoclast riots in %s. The garrison thins." % String(r2.name))
-	elif f == "mamluk" and gs.tick % 40 == 0 and randf() < 0.30:
+				"A challenger drives the pride from %s. The hunters scatter." % String(r2.name))
+	elif f == "eagles" and gs.tick % 40 == 0 and randf() < 0.30:
+		# Eagles: prey scarcity. Lose prey + slow breeding.
 		gs.treasury = maxi(0, gs.treasury - 50)
 		gs.apply_modifier("production", -0.5, 5)
 		gs.emit_signal("news_emitted",
-			"A coup in Cairo. The new sultan empties the treasury — and the granaries.")
-	elif f == "song" and gs.tick % 20 == 0 and randf() < 0.25:
+			"Prey scarce on the wind. Eagles abandon fledglings; cache reserves dwindle.")
+	elif f == "crocs" and gs.tick % 20 == 0 and randf() < 0.25:
+		# Crocs: rival in the water. Brood thins.
 		var r3 = _random_owned(gs)
 		if r3 != null:
 			r3.army = max(1, int(float(r3.army) * 0.90))
 			gs.emit_signal("region_army_changed", r3.id)
 			gs.emit_signal("news_emitted",
-				"Peasant revolt in %s. Tax collectors flee for the capital." % String(r3.name))
+				"A larger croc challenges the bank at %s. The young flee." % String(r3.name))
 
 
 static func _random_owned(gs: Node):

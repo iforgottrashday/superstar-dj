@@ -1,7 +1,7 @@
 extends Node
 ##
-## Global game state for the conquest engine.
-## Player picks a faction; all factions vie for control of medieval Eurasia.
+## Global game state for APEX — predator territorial conquest.
+## Player picks a species; all predators vie for control of the wild kingdom.
 ##
 
 signal tick_advanced(tick: int)
@@ -28,61 +28,62 @@ var regions_by_id: Dictionary = {}
 # Tech the player has researched. Each tech id maps to its definition below.
 var owned_techs: Dictionary = {}
 
-# Playable + AI factions. The player picks one; the rest are AI-driven.
-# Each has color, start region, combat bonuses, and AI personality.
+# Playable + AI predator species. The player picks one; the rest are
+# AI-driven. Each has color, starting territory, combat bonuses, and AI
+# personality (aggression = how often it considers hunting per tick).
 const FACTION_CATALOG := {
-	"mongol": {
-		"name": "Mongol Horde",
-		"color": Color(0.82, 0.20, 0.18),
-		"start_region": "mongolia",
-		"attack_bonus": 0.35,
-		"defense_bonus": -0.10,
+	"wolves": {
+		"name": "Wolves",
+		"color": Color(0.55, 0.62, 0.70),
+		"start_region": "deep_woods",
+		"attack_bonus": 0.25,
+		"defense_bonus": 0.10,
 		"production_bonus": 0.20,
-		"aggression": 1.0,
-		"blurb": "Steppe horse archers. Massive attack bonus, weak holding cities. Best at rapid expansion across open country.",
+		"aggression": 0.9,
+		"blurb": "Pack hunters. Coordinated and relentless. Strong attack, decent defense, fast cub production. The standard apex starter.",
 	},
-	"hre": {
-		"name": "Holy Roman Empire",
-		"color": Color(0.92, 0.78, 0.20),
-		"start_region": "hre",
-		"attack_bonus": 0.0,
-		"defense_bonus": 0.30,
-		"production_bonus": 0.10,
+	"bears": {
+		"name": "Bears",
+		"color": Color(0.45, 0.30, 0.18),
+		"start_region": "cave_system",
+		"attack_bonus": 0.40,
+		"defense_bonus": 0.25,
+		"production_bonus": 0.00,
 		"aggression": 0.4,
-		"blurb": "Heavy infantry and stone castles. Strong defense, slow offense. Surrounded by potential allies and rivals.",
+		"blurb": "Solitary brutes. Highest attack, thick fur, but slow breeders. Best playing defensively from a fortified den.",
 	},
-	"byzantium": {
-		"name": "Byzantine Empire",
-		"color": Color(0.50, 0.20, 0.65),
-		"start_region": "byzantium",
-		"attack_bonus": 0.10,
-		"defense_bonus": 0.25,
+	"lions": {
+		"name": "Lions",
+		"color": Color(0.90, 0.65, 0.20),
+		"start_region": "tall_grass",
+		"attack_bonus": 0.20,
+		"defense_bonus": 0.30,
 		"production_bonus": 0.15,
-		"aggression": 0.5,
-		"blurb": "Greek fire, walled Constantinople. Balanced and rich, but surrounded on every front.",
+		"aggression": 0.7,
+		"blurb": "Pride territorial. Strong defenders of held ground. Balanced offense + defense. The savanna lords.",
 	},
-	"mamluk": {
-		"name": "Mamluk Sultanate",
-		"color": Color(0.12, 0.62, 0.42),
-		"start_region": "egypt",
+	"eagles": {
+		"name": "Eagles",
+		"color": Color(0.30, 0.30, 0.50),
+		"start_region": "eagle_perch",
 		"attack_bonus": 0.15,
-		"defense_bonus": 0.20,
-		"production_bonus": 0.10,
-		"aggression": 0.6,
-		"blurb": "Slave-soldier cavalry. Stopped the Mongols at Ain Jalut. Strong all-rounder, two starting provinces.",
+		"defense_bonus": -0.05,
+		"production_bonus": 0.30,
+		"aggression": 0.85,
+		"blurb": "Sky hunters. Fragile in melee but raise many young. Signature power lets them strike non-adjacent territory.",
 	},
-	"china": {
-		"name": "Song Dynasty",
-		"color": Color(0.92, 0.50, 0.12),
-		"start_region": "china",
-		"attack_bonus": 0.0,
-		"defense_bonus": 0.25,
-		"production_bonus": 0.40,
-		"aggression": 0.3,
-		"blurb": "Gunpowder pioneers. Largest population on the map — production juggernaut. Hemmed in by the steppe.",
+	"crocs": {
+		"name": "Crocodiles",
+		"color": Color(0.25, 0.50, 0.30),
+		"start_region": "river_bend",
+		"attack_bonus": 0.30,
+		"defense_bonus": 0.40,
+		"production_bonus": 0.05,
+		"aggression": 0.5,
+		"blurb": "Ambush predators. Bristling jaws, armored hide. Strongest defense in the kingdom; patient hunters from the water.",
 	},
 	"neutral": {
-		"name": "Independent",
+		"name": "Wild Game",
 		"color": Color(0.55, 0.55, 0.58),
 		"start_region": "",
 		"attack_bonus": 0.0,
@@ -91,59 +92,59 @@ const FACTION_CATALOG := {
 		"aggression": 0.0,
 		"blurb": "",
 	},
-	"crusader": {
-		"name": "Crusader Coalition",
+	"hunters": {
+		"name": "Human Hunters",
 		"color": Color(0.95, 0.92, 0.78),
 		"start_region": "",
 		"attack_bonus": 0.40,
 		"defense_bonus": 0.30,
 		"production_bonus": 0.30,
 		"aggression": 1.0,
-		"blurb": "The Pope's coalition. They have come for you.",
+		"blurb": "Two-legged invaders from beyond the ridge. They carry steel and fire. They have come for you.",
 	},
-	"steppe_horde": {
-		"name": "The Great Horde",
+	"wild_dogs": {
+		"name": "Wild Dog Pack",
 		"color": Color(0.35, 0.18, 0.10),
 		"start_region": "",
 		"attack_bonus": 0.50,
 		"defense_bonus": 0.0,
 		"production_bonus": 0.40,
 		"aggression": 1.0,
-		"blurb": "The steppe has unified to crush the upstart.",
+		"blurb": "Rival predators have united against the new apex. Hyenas, jackals, scavenger packs — all hungry.",
 	},
 }
 
-# Tech upgrades the player can research. Bonuses stack with faction modifiers.
+# Adaptations the player can develop. Bonuses stack with species modifiers.
 const TECH_CATALOG := {
-	"composite_bow": {
-		"name": "Composite Bow",
+	"sharp_claws": {
+		"name": "Sharp Claws",
 		"cost": 80,
 		"effects": {"attack_bonus": 0.10},
-		"blurb": "Sinew-and-horn bows. Attack +10% globally.",
+		"blurb": "Heavy keratin claws. Attack +10% across all hunts.",
 	},
-	"castle_network": {
-		"name": "Castle Network",
+	"thick_fur": {
+		"name": "Thick Fur",
 		"cost": 120,
 		"effects": {"defense_bonus": 0.15, "fortify_owned": true},
-		"blurb": "Fortify every region you currently own. Permanent defense +15%.",
+		"blurb": "Dense undercoat. Fortify every territory you currently hold. Permanent defense +15%.",
 	},
-	"trebuchet": {
-		"name": "Trebuchet",
+	"night_vision": {
+		"name": "Night Vision",
 		"cost": 100,
 		"effects": {"siege_bonus": 0.40},
-		"blurb": "Counterweight siege engines. Attack vs fortified regions +40%.",
+		"blurb": "Tapetum lucidum. Attacks on fortified dens +40% (the prey can't see you coming).",
 	},
-	"steppe_logistics": {
-		"name": "Steppe Logistics",
+	"pack_coordination": {
+		"name": "Pack Coordination",
 		"cost": 90,
 		"effects": {"production_bonus": 0.15},
-		"blurb": "Long-distance grain caravans and remount stations. Army production +15%.",
+		"blurb": "Better hunt signaling. Cub / young production +15%.",
 	},
-	"greek_fire": {
-		"name": "Greek Fire",
+	"endurance": {
+		"name": "Endurance",
 		"cost": 140,
-		"effects": {"defense_bonus": 0.20, "naval_block": true},
-		"blurb": "Liquid fire defending coastal walls. Defense +20%. England + Japan stop being safe.",
+		"effects": {"defense_bonus": 0.20},
+		"blurb": "Built-in stamina. Defense +20%. You outlast every challenger.",
 	},
 }
 
@@ -162,18 +163,18 @@ var pre_event_speed: float = 0.0
 var ticks_until_next_event: int = 10  # seeded; refreshed after each event
 
 # World-reaction escalations. Thresholds tick down player province count.
-var crusade_threshold: int = 5
+var crusade_threshold: int = 5    # Hunters arrive (renamed from crusade)
 var crusade_triggered: bool = false
-var khan_threshold: int = 8
+var khan_threshold: int = 8       # Wild Dog pack rises (renamed from khan of khans)
 var khan_triggered: bool = false
 
 # Faction signature ability state.
-var lightning_raid_ready_at: int = 0
-var diet_ready_at: int = 0
-var greek_fire_ready_at: int = 0
-var recruitment_ready_at: int = 0
-var song_power_ready_at: int = 0
-var gunpowder_pending: bool = false    # next player attack is buffed
+var wolf_howl_ready_at: int = 0
+var bear_rage_ready_at: int = 0
+var lion_defense_ready_at: int = 0
+var eagle_brood_ready_at: int = 0
+var croc_strike_ready_at: int = 0
+var croc_strike_primed: bool = false    # next player attack is buffed
 
 
 func _ready() -> void:
@@ -350,26 +351,29 @@ func check_escalations() -> void:
 
 func _trigger_crusade() -> void:
 	crusade_triggered = true
-	var target = _pick_escalation_target(["hre", "france", "iberia", "byzantium", "eastern_eu", "england"])
+	# Hunters appear in the territory closest to human civilization (the
+	# burned woods, the plains near roads).
+	var target = _pick_escalation_target(["burnt_wood", "wild_meadow", "tall_grass", "fern_grove", "stone_meadow"])
 	if target == null:
 		return
-	set_region_owner(target.id, "crusader")
+	set_region_owner(target.id, "hunters")
 	target.army = 200
 	emit_signal("region_army_changed", target.id)
 	emit_signal("news_emitted",
-		"⚔  POPE URBAN PREACHES A CRUSADE. 200 swords gather in %s. They ride for you." % String(target.name))
+		"⚠  HUNTERS HAVE COME. 200 armed men have crossed the ridge at %s. They are tracking you." % String(target.name))
 
 
 func _trigger_khan_of_khans() -> void:
 	khan_triggered = true
-	var target = _pick_escalation_target(["mongolia", "central_asia", "russia"])
+	# Rival packs gather in the wild interior — scavenger country.
+	var target = _pick_escalation_target(["mud_wallow", "boulder_field", "burnt_wood", "stone_meadow"])
 	if target == null:
 		return
-	set_region_owner(target.id, "steppe_horde")
+	set_region_owner(target.id, "wild_dogs")
 	target.army = 260
 	emit_signal("region_army_changed", target.id)
 	emit_signal("news_emitted",
-		"⚔  THE GREAT HORDE RIDES. The steppe is one. 260 lances at %s." % String(target.name))
+		"⚠  RIVAL PACKS UNITE. 260 jaws gather at %s. They want what you have." % String(target.name))
 
 
 func _pick_escalation_target(preferred_ids: Array):
@@ -427,49 +431,49 @@ func resolve_event_choice(choice_index: int) -> void:
 
 func can_use_faction_power() -> bool:
 	match player_faction:
-		"mongol":
-			return tick >= lightning_raid_ready_at
-		"hre":
-			return tick >= diet_ready_at
-		"byzantium":
-			return tick >= greek_fire_ready_at
-		"mamluk":
-			return tick >= recruitment_ready_at
-		"song":
-			return tick >= song_power_ready_at and not gunpowder_pending
+		"wolves":
+			return tick >= wolf_howl_ready_at
+		"bears":
+			return tick >= bear_rage_ready_at
+		"lions":
+			return tick >= lion_defense_ready_at
+		"eagles":
+			return tick >= eagle_brood_ready_at
+		"crocs":
+			return tick >= croc_strike_ready_at and not croc_strike_primed
 	return false
 
 
 func faction_power_name() -> String:
 	match player_faction:
-		"mongol": return "Lightning Raid"
-		"hre": return "Diet of Princes"
-		"byzantium": return "Greek Fire"
-		"mamluk": return "Recruitment Drive"
-		"song": return "Gunpowder Stratagem"
+		"wolves": return "Pack Howl"
+		"bears": return "Awakening Rage"
+		"lions": return "Territorial Stand"
+		"eagles": return "Brood of Fledglings"
+		"crocs": return "Death Roll"
 	return ""
 
 
 func faction_power_blurb() -> String:
 	match player_faction:
-		"mongol": return "Horde tactics unleashed. Attack +50% for 5 turns. 20-turn cooldown."
-		"hre": return "Imperial Diet convenes. +30% defense everywhere for 8 turns AND +80 gold from princes' taxes. 25-turn cooldown."
-		"byzantium": return "Roll the fire-ships into the harbor. Defense +60% for 4 turns — overwhelming repel. 22-turn cooldown."
-		"mamluk": return "Slave-soldier markets reopen. +15 army to ALL your provinces. 25-turn cooldown."
-		"song": return "The Imperial Foundry primes. Your next attack deals +200% damage. 30-turn cooldown."
+		"wolves": return "Every wolf raises its head and answers. Attack +50% for 5 turns. 20-turn cooldown."
+		"bears": return "The bear erupts. +60 pack at your strongest territory. 25-turn cooldown."
+		"lions": return "The pride forms a wall. Defense +60% for 4 turns. 22-turn cooldown."
+		"eagles": return "All nests fledge at once. +15 hunters to EVERY territory you hold. 25-turn cooldown."
+		"crocs": return "Patient water-strike. Your next attack deals +200% damage. 30-turn cooldown."
 	return ""
 
 
 func faction_power_cooldown() -> int:
 	match player_faction:
-		"mongol": return maxi(0, lightning_raid_ready_at - tick)
-		"hre": return maxi(0, diet_ready_at - tick)
-		"byzantium": return maxi(0, greek_fire_ready_at - tick)
-		"mamluk": return maxi(0, recruitment_ready_at - tick)
-		"song":
-			if gunpowder_pending:
+		"wolves": return maxi(0, wolf_howl_ready_at - tick)
+		"bears": return maxi(0, bear_rage_ready_at - tick)
+		"lions": return maxi(0, lion_defense_ready_at - tick)
+		"eagles": return maxi(0, eagle_brood_ready_at - tick)
+		"crocs":
+			if croc_strike_primed:
 				return -1  # not on cooldown but waiting for player to spend it
-			return maxi(0, song_power_ready_at - tick)
+			return maxi(0, croc_strike_ready_at - tick)
 	return 0
 
 
@@ -477,29 +481,31 @@ func use_faction_power() -> bool:
 	if not can_use_faction_power():
 		return false
 	match player_faction:
-		"mongol":
+		"wolves":
 			apply_modifier("attack", 0.50, 5)
-			lightning_raid_ready_at = tick + 20
-			emit_signal("news_emitted", "The Horde rides! Cavalry crests every hill — +50% attack for five years.")
-		"hre":
-			apply_modifier("defense", 0.30, 8)
-			add_treasury(80)
-			diet_ready_at = tick + 25
-			emit_signal("news_emitted", "The Diet of Princes convenes. Defense +30% and 80 gold in tribute.")
-		"byzantium":
+			wolf_howl_ready_at = tick + 20
+			emit_signal("news_emitted", "The pack howls! Every wolf raises its head. Attack +50% for five seasons.")
+		"bears":
+			var r = _strongest_owned()
+			if r != null:
+				r.army = int(r.army) + 60
+				emit_signal("region_army_changed", r.id)
+			bear_rage_ready_at = tick + 25
+			emit_signal("news_emitted", "The bear erupts from its den. Sixty new claws join the strongest territory.")
+		"lions":
 			apply_modifier("defense", 0.60, 4)
-			greek_fire_ready_at = tick + 22
-			emit_signal("news_emitted", "Greek fire is rolled to every harbor wall. Defense +60% for four years.")
-		"mamluk":
+			lion_defense_ready_at = tick + 22
+			emit_signal("news_emitted", "The pride forms a wall. Defense +60% for four seasons.")
+		"eagles":
 			for r in owned_regions(player_faction):
 				r.army = int(r.army) + 15
 				emit_signal("region_army_changed", r.id)
-			recruitment_ready_at = tick + 25
-			emit_signal("news_emitted", "Slave-soldier markets reopen. Fifteen lances per province join the standard.")
-		"song":
-			gunpowder_pending = true
-			song_power_ready_at = tick + 30
-			emit_signal("news_emitted", "The Imperial Foundry primes the dragons of war. Your next attack will be devastating.")
+			eagle_brood_ready_at = tick + 25
+			emit_signal("news_emitted", "Every nest fledges at once. Fifteen young hunters in every territory.")
+		"crocs":
+			croc_strike_primed = true
+			croc_strike_ready_at = tick + 30
+			emit_signal("news_emitted", "The river goes still. Something is waiting. Your next strike will be brutal.")
 	emit_signal("faction_power_state_changed")
 	return true
 
@@ -519,8 +525,8 @@ func check_victory() -> void:
 	var owned_count: int = owned_regions(player_faction).size()
 	var total: int = regions.size()
 	if owned_count == 0 and tick > 1:
-		emit_signal("game_over", "Your last province has fallen. The chronicles record your name only briefly.", false)
+		emit_signal("game_over", "Your last territory has fallen. The forest forgets you.", false)
 		return
 	if float(owned_count) / float(total) >= 0.7:
-		emit_signal("game_over", "%d of %d provinces are yours. The world bows." % [owned_count, total], true)
+		emit_signal("game_over", "%d of %d territories are yours. You are the apex predator." % [owned_count, total], true)
 		return
