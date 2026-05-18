@@ -29,7 +29,7 @@ extends Control
 @onready var tech_bar: HBoxContainer = $TechBar/Margin/HBox
 
 @onready var debut_panel: Control = $DebutPanel
-@onready var debut_backdrop: ColorRect = $DebutBackdrop
+@onready var debut_backdrop: TextureRect = $DebutBackdrop
 @onready var debut_title: Label = $DebutPanel/Margin/VBox/Title
 @onready var debut_subtitle: Label = $DebutPanel/Margin/VBox/Subtitle
 
