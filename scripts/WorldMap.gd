@@ -65,7 +65,9 @@ const COLOR_PLAYER_GLOW := Color(0.65, 0.15, 0.05)
 const LABEL_FONT_SIZE := 16
 const ARMY_FONT_SIZE := 19
 const EMBLEM_FONT_SIZE := 56     # design-space size; scales with _map_scale
-const EMBLEM_ALPHA := 0.22       # faint enough not to compete with the name
+const EMBLEM_ALPHA := 0.62       # primary glyph alpha
+const EMBLEM_SHADOW_ALPHA := 0.55 # dark drop-shadow alpha behind the glyph
+const EMBLEM_SHADOW_OFFSET := 2.0 # design-space offset; scales with _map_scale
 
 var _displayed_pulse: Dictionary = {}
 var _rings: Array = []
@@ -188,6 +190,7 @@ func _draw() -> void:
 	# (via HexBadge.draw_faction_glyph) so we don't depend on emoji font
 	# rendering, which is unreliable on Android.
 	var emblem_radius: float = HEX_RADIUS * s * 0.55
+	var shadow_offset: Vector2 = Vector2.ONE * EMBLEM_SHADOW_OFFSET * s
 	for region_id in HEX_CENTERS.keys():
 		var r = GameState.regions_by_id.get(region_id)
 		if r == null:
@@ -196,7 +199,13 @@ func _draw() -> void:
 		if not GameState.FACTION_CATALOG.has(owner_id):
 			continue
 		var center_canvas: Vector2 = _to_canvas(HEX_CENTERS[region_id])
+		# Dark drop-shadow first, then bright glyph on top. Two passes give
+		# the watermark enough contrast to stand out against the faction
+		# color-wash hex fill, which has wildly different tones per owner.
+		var shadow_color: Color = Color(0, 0, 0, EMBLEM_SHADOW_ALPHA)
 		var emblem_color: Color = Color(1, 1, 1, EMBLEM_ALPHA)
+		HexBadge.draw_faction_glyph(self, owner_id,
+			center_canvas + shadow_offset, emblem_radius, shadow_color)
 		HexBadge.draw_faction_glyph(self, owner_id, center_canvas,
 			emblem_radius, emblem_color)
 
