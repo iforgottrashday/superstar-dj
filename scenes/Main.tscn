@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://b8x0dropworldmain"]
+[gd_scene load_steps=6 format=3 uid="uid://b8x0dropworldmain"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/NewsTicker.gd" id="2_ticker"]
 [ext_resource type="Script" path="res://scripts/WorldMap.gd" id="3_worldmap"]
+[ext_resource type="Texture2D" path="res://assets/global_siege_menu.png" id="4_menu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
 bg_color = Color(0.06, 0.05, 0.12, 1.0)
@@ -313,36 +314,46 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -220.0
-offset_right = 300.0
-offset_bottom = 220.0
+offset_left = -340.0
+offset_top = -260.0
+offset_right = 340.0
+offset_bottom = 260.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
 [node name="Margin" type="MarginContainer" parent="DebutPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 22
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 22
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
 
 [node name="VBox" type="VBoxContainer" parent="DebutPanel/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Banner" type="TextureRect" parent="DebutPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+texture = ExtResource("4_menu")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Title" type="Label" parent="DebutPanel/Margin/VBox"]
+visible = false
 layout_mode = 2
-text = "CHOOSE YOUR FACTION"
+text = ""
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 22
 
 [node name="Subtitle" type="Label" parent="DebutPanel/Margin/VBox"]
 layout_mode = 2
-text = ""
+text = "Choose your house. The world is restless."
 horizontal_alignment = 1
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.96, 0.88, 0.70, 1)
 
 [node name="EventPanel" type="PanelContainer" parent="."]
 visible = false

@@ -76,8 +76,7 @@ func _ready() -> void:
 	_refresh_power_button()
 
 func _show_faction_picker() -> void:
-	debut_title.text = "CHOOSE YOUR FACTION"
-	debut_subtitle.text = ""
+	# Title is hidden behind the banner image; subtitle text is set in the scene.
 	# Build a button per playable faction.
 	for child in debut_subtitle.get_parent().get_children():
 		if child.has_meta("faction_btn"):
