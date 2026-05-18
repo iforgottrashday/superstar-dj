@@ -208,6 +208,7 @@ dragger_visibility = 2
 [node name="Left" type="PanelContainer" parent="HSplit"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
 clip_contents = true
 
 [node name="WorldMap" type="Control" parent="HSplit/Left"]
