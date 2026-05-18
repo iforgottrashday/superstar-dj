@@ -133,11 +133,11 @@ static func _resolve_attack(gs: Node, from_r, to_r, send: int, attacker_faction:
 	if bool(to_r.fortified):
 		if attacker_faction == gs.player_faction:
 			atk_strength *= 1.0 + gs.player_siege_bonus()
-	# Snake Venom Strike — one-shot 3x multiplier on the player's next attack.
-	if attacker_faction == gs.player_faction and gs.snake_strike_primed:
+	# Crocodile Death Roll — one-shot 3x multiplier on the player's next attack.
+	if attacker_faction == gs.player_faction and gs.croc_strike_primed:
 		atk_strength *= 3.0
-		gs.snake_strike_primed = false
-		gs.emit_signal("news_emitted", "VENOM STRIKE from %s. The grass shudders red." % String(from_r.name))
+		gs.croc_strike_primed = false
+		gs.emit_signal("news_emitted", "DEATH ROLL from %s. The water boils red." % String(from_r.name))
 	atk_strength *= randf_range(1.0 - COMBAT_NOISE, 1.0 + COMBAT_NOISE)
 
 	# Defender strength.
@@ -226,14 +226,14 @@ static func _faction_curse_check(gs: Node) -> void:
 		gs.apply_modifier("production", -0.5, 5)
 		gs.emit_signal("news_emitted",
 			"Prey scarce on the wind. Eagles abandon fledglings; cache reserves dwindle.")
-	elif f == "snakes" and gs.tick % 20 == 0 and randf() < 0.25:
-		# Snakes: rival in the long grass. Brood thins.
+	elif f == "crocs" and gs.tick % 20 == 0 and randf() < 0.25:
+		# Crocs: rival in the water. Brood thins.
 		var r3 = _random_owned(gs)
 		if r3 != null:
 			r3.army = max(1, int(float(r3.army) * 0.90))
 			gs.emit_signal("region_army_changed", r3.id)
 			gs.emit_signal("news_emitted",
-				"A larger viper claims the basking rock at %s. The young scatter." % String(r3.name))
+				"A larger croc challenges the bank at %s. The young flee." % String(r3.name))
 
 
 static func _random_owned(gs: Node):

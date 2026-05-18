@@ -163,7 +163,7 @@
     "id": "river_bend",
     "name": "River Bend",
     "population": 7,
-    "owner": "snakes",
+    "owner": "crocs",
     "army": 38,
     "fortified": true,
     "climate": "water",
