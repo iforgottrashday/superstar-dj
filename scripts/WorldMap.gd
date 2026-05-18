@@ -184,9 +184,10 @@ func _draw() -> void:
 
 	# Faint faction emblem inside each owned hex. Drawn after the fill but
 	# before the player-glow halo and labels so the emblem sits behind the
-	# name/army badge as background flavor, not above them.
-	var emblem_font: Font = ThemeDB.fallback_font
-	var emblem_px: int = maxi(20, int(float(EMBLEM_FONT_SIZE) * s))
+	# name/army badge as background flavor, not above them. Procedural shapes
+	# (via HexBadge.draw_faction_glyph) so we don't depend on emoji font
+	# rendering, which is unreliable on Android.
+	var emblem_radius: float = HEX_RADIUS * s * 0.55
 	for region_id in HEX_CENTERS.keys():
 		var r = GameState.regions_by_id.get(region_id)
 		if r == null:
@@ -194,17 +195,10 @@ func _draw() -> void:
 		var owner_id: String = String(r.owner)
 		if not GameState.FACTION_CATALOG.has(owner_id):
 			continue
-		var def: Dictionary = GameState.FACTION_CATALOG[owner_id]
-		var emblem: String = String(def.get("emblem", ""))
-		if emblem == "":
-			continue
 		var center_canvas: Vector2 = _to_canvas(HEX_CENTERS[region_id])
-		var emblem_size: Vector2 = emblem_font.get_string_size(emblem,
-			HORIZONTAL_ALIGNMENT_CENTER, -1, emblem_px)
 		var emblem_color: Color = Color(1, 1, 1, EMBLEM_ALPHA)
-		draw_string(emblem_font,
-			center_canvas - Vector2(emblem_size.x * 0.5, -emblem_size.y * 0.25),
-			emblem, HORIZONTAL_ALIGNMENT_CENTER, -1, emblem_px, emblem_color)
+		HexBadge.draw_faction_glyph(self, owner_id, center_canvas,
+			emblem_radius, emblem_color)
 
 	# Player glow halo on owned hexes.
 	for region_id in HEX_CENTERS.keys():

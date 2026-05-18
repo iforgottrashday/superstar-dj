@@ -129,7 +129,7 @@ func _make_faction_row(faction_id: String, def: Dictionary) -> PanelContainer:
 	row.set_meta("faction_btn", true)
 	row.mouse_filter = Control.MOUSE_FILTER_STOP
 	row.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	row.custom_minimum_size = Vector2(0, 84)
+	row.custom_minimum_size = Vector2(0, 96)
 	row.add_theme_stylebox_override("panel", sb)
 
 	var hbox := HBoxContainer.new()
@@ -139,12 +139,13 @@ func _make_faction_row(faction_id: String, def: Dictionary) -> PanelContainer:
 
 	var badge := Control.new()
 	badge.set_script(_HEX_BADGE_SCRIPT)
-	badge.custom_minimum_size = Vector2(64, 64)
+	badge.custom_minimum_size = Vector2(76, 76)
 	badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	badge.set("fill_color", Color(0.05, 0.03, 0.01, 0.85))
 	badge.set("border_color", raw_color.lerp(Color(1, 1, 1), 0.3))
-	badge.set("glyph", String(def.get("emblem", "")))
+	badge.set("faction_id", faction_id)
+	badge.set("glyph_color", raw_color.lerp(Color(1, 1, 1), 0.55))
 	hbox.add_child(badge)
 
 	var vbox := VBoxContainer.new()

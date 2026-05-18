@@ -1,15 +1,18 @@
+class_name HexBadge
 extends Control
 ##
-## Pointy-top hex badge with a centered glyph (emoji). Used in the species
-## picker rows so each faction has a "logo tile" matching the in-game hex
-## map tiles. Properties are plain vars set from script before the badge
-## is added to the tree; _draw redraws whenever size or values change.
+## Pointy-top hex badge with a procedural faction glyph centered inside.
+## We avoid emoji fonts entirely — Godot's SystemFont emoji fallback is
+## flaky on Android — by drawing simple vector shapes per faction.
+## Used in the species-picker rows and reusable from WorldMap to overlay
+## the same glyph on owned hexes.
 ##
 
 var fill_color: Color = Color(0.05, 0.03, 0.01, 0.85)
 var border_color: Color = Color(1, 1, 1, 1)
 var border_width: float = 3.0
-var glyph: String = ""
+var faction_id: String = ""
+var glyph_color: Color = Color(1, 1, 1, 1)
 
 func _draw() -> void:
 	var radius: float = min(size.x, size.y) * 0.5 - border_width
@@ -24,11 +27,98 @@ func _draw() -> void:
 	var closed := pts.duplicate()
 	closed.append(pts[0])
 	draw_polyline(closed, border_color, border_width, true)
-	if glyph != "":
-		var font: Font = ThemeDB.fallback_font
-		var font_px: int = int(radius * 0.95)
-		var sz: Vector2 = font.get_string_size(glyph,
-			HORIZONTAL_ALIGNMENT_CENTER, -1, font_px)
-		draw_string(font,
-			center - Vector2(sz.x * 0.5, -sz.y * 0.32),
-			glyph, HORIZONTAL_ALIGNMENT_CENTER, -1, font_px)
+	if faction_id != "":
+		draw_faction_glyph(self, faction_id, center, radius * 0.78, glyph_color)
+
+
+static func draw_faction_glyph(
+		canvas: CanvasItem, faction: String, center: Vector2,
+		radius: float, color: Color) -> void:
+	# All shapes fit within a circle of the given radius, centered on `center`.
+	match faction:
+		"wolves":
+			# Crescent moon (the howl).
+			var pts := PackedVector2Array()
+			var rr: float = radius * 0.95
+			for i in 24:
+				var a: float = lerpf(-PI * 0.55, PI * 0.55, float(i) / 23.0)
+				pts.append(center + Vector2(cos(a), sin(a)) * rr)
+			var inner_offset := Vector2(rr * 0.45, 0)
+			var inner_r: float = rr * 0.82
+			for i in 24:
+				var a: float = lerpf(PI * 0.55, -PI * 0.55, float(i) / 23.0)
+				pts.append(center + inner_offset + Vector2(cos(a), sin(a)) * inner_r)
+			canvas.draw_colored_polygon(pts, color)
+		"bears":
+			# Mountain triangle (strength, den).
+			var tri := PackedVector2Array([
+				center + Vector2(0, -radius * 0.85),
+				center + Vector2(radius * 0.85, radius * 0.55),
+				center + Vector2(-radius * 0.85, radius * 0.55),
+			])
+			canvas.draw_colored_polygon(tri, color)
+		"lions":
+			# 8-point star (pride, sun).
+			var star := PackedVector2Array()
+			for i in 16:
+				var a: float = float(i) * PI / 8.0 - PI / 2.0
+				var r: float = radius if i % 2 == 0 else radius * 0.45
+				star.append(center + Vector2(cos(a), sin(a)) * r)
+			canvas.draw_colored_polygon(star, color)
+		"eagles":
+			# Up-pointing chevron (wings).
+			var w: float = max(2.0, radius * 0.20)
+			canvas.draw_line(
+				center + Vector2(-radius * 0.85, radius * 0.35),
+				center + Vector2(0, -radius * 0.45), color, w, true)
+			canvas.draw_line(
+				center + Vector2(radius * 0.85, radius * 0.35),
+				center + Vector2(0, -radius * 0.45), color, w, true)
+			# A second, tighter chevron below for emphasis.
+			canvas.draw_line(
+				center + Vector2(-radius * 0.55, radius * 0.65),
+				center + Vector2(0, radius * 0.05), color, w, true)
+			canvas.draw_line(
+				center + Vector2(radius * 0.55, radius * 0.65),
+				center + Vector2(0, radius * 0.05), color, w, true)
+		"crocs":
+			# Zigzag teeth.
+			var w: float = max(2.0, radius * 0.20)
+			var teeth := PackedVector2Array([
+				center + Vector2(-radius * 0.85, radius * 0.15),
+				center + Vector2(-radius * 0.42, -radius * 0.45),
+				center + Vector2(0, radius * 0.15),
+				center + Vector2(radius * 0.42, -radius * 0.45),
+				center + Vector2(radius * 0.85, radius * 0.15),
+			])
+			for i in teeth.size() - 1:
+				canvas.draw_line(teeth[i], teeth[i + 1], color, w, true)
+		"hunters":
+			# Crosshair (target).
+			var w: float = max(2.0, radius * 0.14)
+			canvas.draw_circle(center, radius * 0.22, color)
+			canvas.draw_arc(center, radius * 0.55, 0.0, TAU, 48, color, w, true)
+			canvas.draw_line(
+				center + Vector2(-radius * 0.95, 0),
+				center + Vector2(-radius * 0.4, 0), color, w, true)
+			canvas.draw_line(
+				center + Vector2(radius * 0.95, 0),
+				center + Vector2(radius * 0.4, 0), color, w, true)
+			canvas.draw_line(
+				center + Vector2(0, -radius * 0.95),
+				center + Vector2(0, -radius * 0.4), color, w, true)
+			canvas.draw_line(
+				center + Vector2(0, radius * 0.95),
+				center + Vector2(0, radius * 0.4), color, w, true)
+		"wild_dogs":
+			# Diamond / rhombus (scavenger pack convergence).
+			var diamond := PackedVector2Array([
+				center + Vector2(0, -radius * 0.9),
+				center + Vector2(radius * 0.65, 0),
+				center + Vector2(0, radius * 0.9),
+				center + Vector2(-radius * 0.65, 0),
+			])
+			canvas.draw_colored_polygon(diamond, color)
+		_:
+			# Neutral / unknown — draw nothing.
+			pass
