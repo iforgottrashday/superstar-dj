@@ -31,10 +31,37 @@ func _draw() -> void:
 		draw_faction_glyph(self, faction_id, center, radius * 0.78, glyph_color)
 
 
+static var _texture_cache: Dictionary = {}
+
+static func _glyph_texture(faction: String) -> Texture2D:
+	# Cached lookup for res://assets/glyphs/<faction>.png. Returns null when
+	# the file doesn't exist, letting draw_faction_glyph fall through to its
+	# procedural shape branch. Cache stores null too so we don't re-probe.
+	if _texture_cache.has(faction):
+		return _texture_cache[faction]
+	var path: String = "res://assets/glyphs/%s.png" % faction
+	var tex: Texture2D = null
+	if ResourceLoader.exists(path):
+		tex = load(path)
+	_texture_cache[faction] = tex
+	return tex
+
+
 static func draw_faction_glyph(
 		canvas: CanvasItem, faction: String, center: Vector2,
 		radius: float, color: Color) -> void:
-	# All shapes fit within a circle of the given radius, centered on `center`.
+	# Prefer hand-drawn art when present at res://assets/glyphs/<faction>.png.
+	# Expected: 512x512 PNG, white silhouette on transparent, ~10% padding.
+	# We draw with `color` as the modulate so the same source file tints to
+	# faction color in the picker and to faint white on the in-map watermark.
+	var tex: Texture2D = _glyph_texture(faction)
+	if tex != null:
+		var draw_size := Vector2(radius * 2.0, radius * 2.0)
+		var dest := Rect2(center - draw_size * 0.5, draw_size)
+		canvas.draw_texture_rect(tex, dest, false, color)
+		return
+	# Procedural fallback — guarantees something renders for every faction
+	# even before art files exist.
 	match faction:
 		"wolves":
 			# Crescent moon (the howl).
