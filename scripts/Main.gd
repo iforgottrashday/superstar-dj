@@ -39,6 +39,7 @@ extends Control
 @onready var region_stats: Label = $HSplit/RegionPanel/Margin/VBox/Stats
 @onready var region_bonuses: Label = $HSplit/RegionPanel/Margin/VBox/Bonuses
 @onready var region_modifiers: Label = $HSplit/RegionPanel/Margin/VBox/Modifiers
+@onready var region_channels_scroll: ScrollContainer = $HSplit/RegionPanel/Margin/VBox/ChannelsScroll
 @onready var region_channels_box: VBoxContainer = $HSplit/RegionPanel/Margin/VBox/ChannelsScroll/Channels
 @onready var region_channels_label: Label = $HSplit/RegionPanel/Margin/VBox/ChannelsLabel
 
@@ -93,6 +94,12 @@ func _ready() -> void:
 	pause_menu_panel.visible = false
 	debut_panel.visible = false
 	debut_backdrop.visible = false
+	# Widen the action-panel scrollbar so it's actually grabbable on touch.
+	# Default Godot vertical scrollbar is ~10px wide; that's a brutal target
+	# on a phone. 28px gives a thumb-friendly grab strip.
+	var vbar := region_channels_scroll.get_v_scroll_bar()
+	if vbar != null:
+		vbar.custom_minimum_size = Vector2(28, 0)
 	# If GameState was hydrated from a save (TitleScreen sets player_faction
 	# via load_from_disk before changing scenes), skip the picker and drop
 	# the player into the running state. Otherwise show the species picker.
@@ -334,12 +341,13 @@ func _build_attack_row(from_r, to_r) -> Control:
 	var is_reinforce: bool = String(to_r.owner) == GameState.player_faction
 	var row := PanelContainer.new()
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 6)
-	margin.add_theme_constant_override("margin_right", 6)
-	margin.add_theme_constant_override("margin_top", 4)
-	margin.add_theme_constant_override("margin_bottom", 4)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
 	row.add_child(margin)
 	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
 	margin.add_child(vbox)
 	var header := HBoxContainer.new()
 	vbox.add_child(header)
@@ -368,14 +376,21 @@ func _build_attack_row(from_r, to_r) -> Control:
 	slider.value = int(int(from_r.army) * default_pct)
 	slider.step = 1
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Tall slider track = bigger touch target. HSlider responds to clicks
+	# anywhere on the slider, not just the grabber, so a taller area means
+	# you don't need pixel-precise taps to drag.
+	slider.custom_minimum_size = Vector2(0, 40)
 	vbox.add_child(slider)
 	var amount_label := Label.new()
 	amount_label.text = "Send %d troops (keeping %d)" % [int(slider.value), int(from_r.army) - int(slider.value)]
+	amount_label.add_theme_font_size_override("font_size", 15)
 	vbox.add_child(amount_label)
 	slider.value_changed.connect(func(v: float):
 		amount_label.text = "Send %d troops (keeping %d)" % [int(v), int(from_r.army) - int(v)]
 	)
 	var btn := Button.new()
+	btn.custom_minimum_size = Vector2(0, 52)
+	btn.add_theme_font_size_override("font_size", 17)
 	if bool(from_r.acted_this_tick):
 		btn.text = ("Reinforce" if is_reinforce else "Attack") + " — used this turn"
 		btn.disabled = true
